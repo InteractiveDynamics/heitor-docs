@@ -1,0 +1,14 @@
+andamento:
+  label: Andamento
+  permalink: /andamento
+  description: Registros do progresso da pesquisa
+
+leituras:
+  label: Leituras
+  permalink: /leituras
+  description: Fichamentos e referências estudadas
+
+experimentos:
+  label: Experimentos
+  permalink: /experimentos
+  description: Testes, coletas e análises
