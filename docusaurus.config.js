@@ -67,10 +67,32 @@ const config = {
           onUntruncatedBlogPosts: 'warn',
         },
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: [
+            './src/css/custom.css',
+            './src/css/dossie.css',
+          ],
         },
       }),
     ],
+  ],
+
+  // Fontes do design system (Space Grotesk display, Inter body, JetBrains Mono dados)
+  stylesheets: [
+    'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap',
+  ],
+  headTags: [
+    {
+      tagName: 'link',
+      attributes: {rel: 'preconnect', href: 'https://fonts.googleapis.com'},
+    },
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'preconnect',
+        href: 'https://fonts.gstatic.com',
+        crossorigin: 'anonymous',
+      },
+    },
   ],
 
   themeConfig:
@@ -78,11 +100,15 @@ const config = {
     ({
       // Card social (opcional, troque a imagem quando quiser)
       image: 'img/docusaurus-social-card.jpg',
+      // A estética é um painel escuro de telemetria — modo escuro fixo.
       colorMode: {
-        respectPrefersColorScheme: true,
+        defaultMode: 'dark',
+        disableSwitch: true,
+        respectPrefersColorScheme: false,
       },
       navbar: {
         title: 'PIBIC',
+        hideOnScroll: true,
         logo: {
           alt: 'Logo do projeto',
           src: 'img/logo.svg',
@@ -106,11 +132,15 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Conteúdo',
+            title: 'Documentação',
             items: [
               {
-                label: 'Documentação',
+                label: 'Índice de frentes',
                 to: '/docs/intro',
+              },
+              {
+                label: 'Estudos & notas',
+                to: '/docs/notas/dossie-godot',
               },
               {
                 label: 'Diário de bordo',
@@ -128,11 +158,11 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Heitor M. Feito com Docusaurus.`,
+        copyright: `PIBIC · Dinâmica veicular · ${new Date().getFullYear()} Heitor M.`,
       },
       prism: {
-        theme: prismThemes.github,
-        darkTheme: prismThemes.dracula,
+        theme: prismThemes.oneDark,
+        darkTheme: prismThemes.oneDark,
       },
     }),
 };

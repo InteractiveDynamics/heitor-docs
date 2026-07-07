@@ -1,33 +1,40 @@
 ---
 sidebar_position: 1
-title: Início
+title: Índice de frentes
+slug: /intro
 ---
 
 # Documentação do PIBIC
 
-Bem-vindo(a) à documentação do meu projeto de **Iniciação Científica (PIBIC)**.
-Este site reúne, de forma organizada, tudo o que envolve a pesquisa: o problema
-estudado, a metodologia, os experimentos, os resultados e as referências.
+Este é o índice das **frentes de trabalho** da minha Iniciação Científica em
+dinâmica veicular. A ideia é que cada frente vire uma seção de documentação que
+cresce com o tempo — desde as explorações iniciais pra ganhar intuição até a
+documentação técnica densa do modelo de verdade.
 
-## O que você encontra aqui
-
-- **Visão geral** — objetivo, motivação e perguntas de pesquisa.
-- **Metodologia** — como o trabalho está sendo conduzido.
-- **Resultados** — dados, análises e conclusões parciais.
-- **Diário de bordo** — registros cronológicos do andamento (na aba _Diário de bordo_).
-
-## Dados do projeto
-
-| Campo | Valor |
-| --- | --- |
-| Título | _(preencher)_ |
-| Bolsista | Heitor M. |
-| Orientador(a) | _(preencher)_ |
-| Instituição | _(preencher)_ |
-| Período | _(preencher)_ |
-
-:::tip Como editar
-Cada página é um arquivo Markdown na pasta `docs/`. Edite o texto, dê um
-`git push` na branch `main` e o site é reconstruído e publicado
-automaticamente pelo GitHub Actions.
+:::info Estado do projeto
+A primeira entrada publicada é uma **nota de aprendizado**: o
+[dossiê do sandbox no Godot](/docs/notas/dossie-godot). É deliberadamente
+introdutório — um _arcade car_ pra pegar intuição, ainda **não** o trabalho
+pesado. As demais frentes abaixo já estão com a estrutura preparada e vão sendo
+preenchidas.
 :::
+
+## As frentes
+
+| Frente | Do que trata | Estado |
+| --- | --- | --- |
+| **[Estudos & notas](/docs/notas/dossie-godot)** | Explorações e notas de aprendizado avulsas (como o dossiê do Godot). | 🟢 Ativa |
+| **Dinâmica multicorpo (C++)** | Corpos rígidos, articulações, o salto do arcade car pro modelo rigoroso. | 🟡 Planejada |
+| **Powertrain e tração** | Motor → transmissão → roda → força de tração via torque. | 🟡 Planejada |
+| **Suspensão** | Modelo mola-amortecedor; rocker-bogie pra rovers. | 🟡 Planejada |
+| **Contrato de API** | Interface entre o modelo veicular e a camada ExoPhysics/plataforma. | 🟡 Planejada |
+| **Integração roda–solo** | Simulação acoplada veículo–solo deformável. | 🟡 Planejada |
+| **Validação comparativa** | Comparação com Chrono, SCM e métricas. | 🟡 Planejada |
+
+## Como este site cresce
+
+Cada frente é uma pasta em `docs/`. Para adicionar uma página nova, basta criar
+um arquivo Markdown na pasta da frente correspondente — a barra lateral e este
+índice acompanham. Os componentes visuais do dossiê (medidores de parâmetro,
+árvore de nós, log de bugs, callouts) ficam disponíveis pra qualquer doc, então
+o padrão visual se mantém sem esforço.

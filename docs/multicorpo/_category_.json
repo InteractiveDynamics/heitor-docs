@@ -1,0 +1,8 @@
+{
+  "label": "Dinâmica multicorpo (C++)",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Modelagem da dinâmica multicorpo do veículo em C++: corpos rígidos, articulações e o salto do arcade car pro modelo rigoroso."
+  }
+}

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dossiê · Sandbox de Dinâmica Veicular no Godot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d1119;
+    --bg-2:#0a0e15;
+    --surface:#151d2b;
+    --surface-2:#1b2536;
+    --line:#26324a;
+    --line-soft:#1e2839;
+    --ink:#e7edf5;
+    --ink-mid:#aab6c8;
+    --ink-dim:#6f7d93;
+    --cyan:#3fd0c0;
+    --cyan-deep:#1c8f84;
+    --amber:#eaa93c;
+    --coral:#e8635b;
+    --violet:#8f8cf0;
+    --green:#57c98a;
+    --shadow:0 1px 0 rgba(255,255,255,.03), 0 18px 40px -22px rgba(0,0,0,.9);
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(1100px 600px at 78% -8%, rgba(63,208,192,.07), transparent 60%),
+      radial-gradient(900px 500px at 12% 4%, rgba(143,140,240,.06), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px}
+
+  /* ---------- data strip ---------- */
+  .telemetry{
+    border-bottom:1px solid var(--line-soft);
+    background:linear-gradient(180deg,var(--bg-2),transparent);
+  }
+  .telemetry .wrap{
+    display:flex;flex-wrap:wrap;gap:6px 26px;align-items:center;
+    padding:11px 24px;font-family:var(--mono);font-size:11.5px;
+    letter-spacing:.04em;color:var(--ink-dim);text-transform:uppercase;
+  }
+  .telemetry b{color:var(--cyan);font-weight:500}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;margin-right:7px;box-shadow:0 0 8px var(--green)}
+
+  /* ---------- hero ---------- */
+  header.hero{padding:74px 0 58px;border-bottom:1px solid var(--line-soft)}
+  .eyebrow{
+    font-family:var(--mono);font-size:12px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--cyan);margin-bottom:22px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .eyebrow::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,var(--cyan-deep),transparent)}
+  h1{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;
+    font-size:clamp(2.3rem,5.4vw,4rem);line-height:1.02;letter-spacing:-.02em;
+    margin-bottom:24px;
+  }
+  h1 .accent{color:var(--cyan)}
+  .lede{font-size:1.12rem;color:var(--ink-mid);max-width:60ch}
+  .lede strong{color:var(--ink);font-weight:600}
+
+  .hero-meta{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    gap:1px;background:var(--line-soft);border:1px solid var(--line-soft);
+    border-radius:12px;overflow:hidden;margin-top:44px;
+  }
+  .hero-meta div{background:var(--bg);padding:16px 18px}
+  .hero-meta dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px}
+  .hero-meta dd{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:1.02rem}
+
+  /* ---------- sections ---------- */
+  section{padding:64px 0;border-bottom:1px solid var(--line-soft)}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+  .sec-num{
+    font-family:var(--mono);font-size:13px;color:var(--cyan);font-weight:500;
+    border:1px solid var(--line);border-radius:6px;padding:3px 9px;flex:none;
+  }
+  h2{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(1.5rem,3vw,2rem);letter-spacing:-.015em}
+  .sec-intro{color:var(--ink-mid);max-width:66ch;margin:14px 0 34px;font-size:1.02rem}
+  .sec-intro code,p code,li code,td code{
+    font-family:var(--mono);font-size:.86em;background:var(--surface-2);
+    border:1px solid var(--line-soft);padding:1px 6px;border-radius:5px;color:var(--cyan);
+  }
+
+  /* ---------- node tree ---------- */
+  .tree{
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:26px 28px;font-family:var(--mono);font-size:14px;box-shadow:var(--shadow);
+    overflow-x:auto;
+  }
+  .tree .row{display:flex;align-items:center;gap:10px;padding:3px 0;white-space:nowrap}
+  .tree .row span.g{color:var(--ink-dim)}
+  .tree .tag{font-size:11px;color:var(--ink-dim);font-family:'Inter',sans-serif;margin-left:6px}
+  .tree .n-root{color:var(--cyan);font-weight:700}
+  .tree .n-body{color:var(--violet)}
+  .tree .n-col{color:var(--amber)}
+  .tree .n-wheel{color:var(--green)}
+  .tree .n-mesh{color:var(--ink-mid)}
+  .tree .n-world{color:var(--cyan)}
+  .tree .n-static{color:var(--amber)}
+  .tree .n-cam{color:var(--ink-mid)}
+
+  .tree-legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:20px;font-family:'Inter',sans-serif;font-size:12.5px;color:var(--ink-dim)}
+  .tree-legend b{font-weight:600;color:var(--ink-mid)}
+  .swatch{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+  /* ---------- step list ---------- */
+  .steps{display:grid;gap:14px;counter-reset:s}
+  .step{
+    background:var(--surface);border:1px solid var(--line-soft);border-radius:12px;
+    padding:20px 22px 20px 62px;position:relative;
+  }
+  .step::before{
+    counter-increment:s;content:counter(s,decimal-leading-zero);
+    position:absolute;left:20px;top:19px;font-family:var(--mono);font-size:13px;
+    color:var(--cyan);font-weight:500;
+  }
+  .step h4{font-family:'Space Grotesk',sans-serif;font-size:1.06rem;font-weight:600;margin-bottom:4px}
+  .step p{color:var(--ink-mid);font-size:.96rem}
+  .step .learn{
+    margin-top:11px;padding-top:11px;border-top:1px dashed var(--line);
+    font-size:.9rem;color:var(--amber);display:flex;gap:9px;
+  }
+  .step .learn::before{content:"↳";color:var(--amber);flex:none}
+
+  /* ---------- parameter meters (signature) ---------- */
+  .param{
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:24px 26px;margin-bottom:16px;box-shadow:var(--shadow);
+  }
+  .param-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 14px;margin-bottom:6px}
+  .param-top h4{font-family:'Space Grotesk',sans-serif;font-size:1.16rem;font-weight:600}
+  .param-code{font-family:var(--mono);font-size:12.5px;color:var(--cyan);background:var(--bg-2);border:1px solid var(--line-soft);padding:2px 9px;border-radius:6px}
+  .param-used{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--ink-dim)}
+  .param-used b{color:var(--green);font-weight:700}
+  .param-desc{color:var(--ink-mid);font-size:.96rem;margin-bottom:20px;max-width:74ch}
+
+  .meter{position:relative;height:3px;background:linear-gradient(90deg,var(--coral),var(--surface-2) 50%,var(--cyan));border-radius:2px;margin:0 4px 12px}
+  .meter .mid{position:absolute;left:50%;top:-4px;width:1px;height:11px;background:var(--ink-dim);transform:translateX(-50%)}
+  .effects{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:560px){.effects{grid-template-columns:1fr}}
+  .eff{background:var(--bg-2);border:1px solid var(--line-soft);border-radius:10px;padding:14px 16px}
+  .eff .dir{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+  .eff.down .dir{color:var(--coral)}
+  .eff.up .dir{color:var(--cyan)}
+  .eff p{font-size:.92rem;color:var(--ink-mid)}
+  .arrow{font-weight:700;font-size:14px}
+
+  /* ---------- control block ---------- */
+  .ctrl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+  .ctrl{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+  .ctrl h4{font-family:var(--mono);font-size:14px;color:var(--cyan);margin-bottom:8px}
+  .ctrl p{font-size:.94rem;color:var(--ink-mid)}
+
+  /* ---------- rollover physics ---------- */
+  .physics{
+    display:grid;grid-template-columns:1.1fr .9fr;gap:26px;align-items:center;
+    background:linear-gradient(135deg,var(--surface),var(--bg-2));
+    border:1px solid var(--line);border-radius:16px;padding:30px;box-shadow:var(--shadow);
+  }
+  @media(max-width:720px){.physics{grid-template-columns:1fr}}
+  .physics h4{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;margin-bottom:10px}
+  .physics p{color:var(--ink-mid);font-size:.98rem;margin-bottom:12px}
+  .formula{
+    font-family:var(--mono);font-size:1.5rem;color:var(--cyan);text-align:center;
+    background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:22px;margin:6px 0 14px;
+  }
+  .formula small{display:block;font-size:.72rem;color:var(--ink-dim);margin-top:10px;letter-spacing:.03em}
+  .physics svg{width:100%;height:auto;display:block}
+
+  /* ---------- bug log ---------- */
+  .bug{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:0;
+    border:1px solid var(--line-soft);border-radius:12px;overflow:hidden;margin-bottom:12px;
+  }
+  @media(max-width:640px){.bug{grid-template-columns:1fr}}
+  .bug .symptom{background:var(--surface-2);padding:18px 20px;border-right:1px solid var(--line-soft)}
+  @media(max-width:640px){.bug .symptom{border-right:none;border-bottom:1px solid var(--line-soft)}}
+  .bug .cause{background:var(--surface);padding:18px 20px}
+  .bug .lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:7px}
+  .bug .symptom .lab{color:var(--coral)}
+  .bug .cause .lab{color:var(--green)}
+  .bug h4{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin-bottom:5px}
+  .bug p{font-size:.92rem;color:var(--ink-mid)}
+
+  /* ---------- callout ---------- */
+  .callout{
+    border-left:3px solid var(--cyan);background:var(--surface);
+    border-radius:0 12px 12px 0;padding:18px 22px;margin-top:30px;
+    color:var(--ink-mid);font-size:.96rem;
+  }
+  .callout b{color:var(--ink);font-weight:600}
+
+  footer{padding:48px 0 60px;color:var(--ink-dim);font-family:var(--mono);font-size:12px;letter-spacing:.03em}
+  footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+
+  @media (prefers-reduced-motion:no-preference){
+    section,header.hero{animation:rise .6s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  }
+</style>
+</head>
+<body>
+
+<div class="telemetry">
+  <div class="wrap">
+    <span><span class="dot"></span>sandbox · operacional</span>
+    <span>engine · <b>Godot 4.7</b></span>
+    <span>física · <b>Jolt / raycast vehicle</b></span>
+    <span>modelo · <b>Kenney · hatchback-sports.glb</b></span>
+    <span>frente · <b>PIBIC Tema 1</b></span>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Dossiê de dinâmica veicular</div>
+    <h1>Construindo um carro que <span class="accent">dirige, freia e capota</span> — e entendendo o porquê.</h1>
+    <p class="lede">Registro do que aprendi montando um protótipo de veículo com <strong>VehicleBody3D</strong> no Godot. Não é o modelo multicorpo em C++ que vou escrever pro Tema 1 — é o <strong>arcade car</strong>: um corpo rígido único com rodas por raycast. Serve pra construir intuição sobre torque, suspensão, aderência e transferência de carga antes de partir pro modelo rigoroso.</p>
+
+    <dl class="hero-meta">
+      <div><dt>Raiz da cena</dt><dd>VehicleBody3D</dd></div>
+      <div><dt>Rodas</dt><dd>4 × VehicleWheel3D</dd></div>
+      <div><dt>Tração</dt><dd>Traseira (2 rodas)</dd></div>
+      <div><dt>Direção</dt><dd>Dianteira (2 rodas)</dd></div>
+      <div><dt>Massa do corpo</dt><dd>40 (padrão)</dd></div>
+    </dl>
+  </div>
+</header>
+
+<!-- 1 · ARQUITETURA -->
+<section id="arquitetura">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">01</span><h2>A arquitetura da cena</h2></div>
+    <p class="sec-intro">Duas cenas separadas. O <code>car.tscn</code> é o veículo autossuficiente (corpo + rodas + câmera + script). O <code>world.tscn</code> é o palco: instancia o carro e adiciona o chão, a luz e o ambiente. A separação importa — se o chão fosse filho do carro, cairia junto com ele.</p>
+
+    <div class="tree">
+      <div class="row"><span class="n-world">◉ World</span><span class="tag">Node3D · raiz do mundo</span></div>
+      <div class="row"><span class="g">├─</span> <span class="n-root">🚗 Car</span> <span class="tag">VehicleBody3D · instância de car.tscn</span></div>
+      <div class="row"><span class="g">│&nbsp;&nbsp;├─</span> <span class="n-body">▢ hatchback-sports</span><span class="tag">modelo glTF · scale 0.7</span></div>
+      <div class="row"><span class="g">│&nbsp;&nbsp;│&nbsp;&nbsp;└─</span> <span class="n-mesh">body</span><span class="tag">só o visual da carroceria</span></div>
+      <div class="row"><span class="g">│&nbsp;&nbsp;├─</span> <span class="n-col">⬢ CollisionShape3D</span><span class="tag">BoxShape3D · a física do chassi</span></div>
+      <div class="row"><span class="g">│&nbsp;&nbsp;├─</span> <span class="n-wheel">◎ WheelFrontLeft</span><span class="tag">steering</span></div>
+      <div class="row"><span class="g">│&nbsp;&nbsp;├─</span> <span class="n-wheel">◎ WheelFrontRight</span><span class="tag">steering</span></div>
+      <div class="row"><span class="g">│&nbsp;&nbsp;├─</span> <span class="n-wheel">◎ WheelBackLeft</span><span class="tag">traction</span></div>
+      <div class="row"><span class="g">│&nbsp;&nbsp;├─</span> <span class="n-wheel">◎ WheelBackRight</span><span class="tag">traction</span></div>
+      <div class="row"><span class="g">│&nbsp;&nbsp;└─</span> <span class="n-cam">🎥 Camera3D</span><span class="tag">câmera de perseguição, filha do carro</span></div>
+      <div class="row"><span class="g">├─</span> <span class="n-static">▦ StaticBody3D</span><span class="tag">o chão · irmão do carro, não filho</span></div>
+      <div class="row"><span class="g">├─</span> <span class="n-cam">☀ DirectionalLight3D</span><span class="tag">o "sol" da cena</span></div>
+      <div class="row"><span class="g">└─</span> <span class="n-cam">◐ WorldEnvironment</span><span class="tag">céu e iluminação ambiente</span></div>
+    </div>
+
+    <div class="tree-legend">
+      <span><span class="swatch" style="background:var(--cyan)"></span><b>Corpo do veículo</b> — recebe as forças</span>
+      <span><span class="swatch" style="background:var(--green)"></span><b>Rodas</b> — raycast + tração/direção</span>
+      <span><span class="swatch" style="background:var(--amber)"></span><b>Colisão</b> — o que a física "sente"</span>
+      <span><span class="swatch" style="background:var(--violet)"></span><b>Malha</b> — só o visual</span>
+    </div>
+
+    <div class="callout">
+      <b>A pegadinha do multicorpo.</b> O VehicleBody3D não é um modelo multicorpo de verdade: é um corpo rígido único onde as rodas são raycasts com uma mola. A própria doc do Godot avisa que não foi feito pra física de veículo realista. Justamente por isso ele é um bom sandbox — no Tema 1, cada roda/corpo vira um nó rígido próprio ligado por articulações, com as forças resolvidas por restrições, não por raycast.
+    </div>
+  </div>
+</section>
+
+<!-- 2 · MONTAGEM -->
+<section id="montagem">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">02</span><h2>O processo de montagem</h2></div>
+    <p class="sec-intro">A ordem importou menos que os detalhes de transform que quase passaram batido. Cada etapa abaixo traz a lição que só apareceu quando algo saiu do lugar.</p>
+
+    <div class="steps">
+      <div class="step">
+        <h4>Importar o modelo em glTF (GLB)</h4>
+        <p>O Kenney Car Kit traz FBX, OBJ e GLB. Usei o <code>.glb</code> — é o glTF binário, com malha, materiais e texturas num arquivo só. É o mesmo formato aberto que o rover vai usar depois.</p>
+        <div class="learn">GLB carrega texturas embutidas; OBJ não, e FBX é proprietário. Arrastar o <code>.glb</code> pra dentro da cena já instancia tudo pronto.</div>
+      </div>
+      <div class="step">
+        <h4>Ajustar o CollisionShape3D do chassi</h4>
+        <p>Um <code>BoxShape3D</code> com <code>Size (1, 0.5, 2)</code> cobrindo a carroceria. É essa caixa que a física usa — o modelo visual não colide sozinho.</p>
+        <div class="learn">O CollisionShape é irmão do modelo, não filho. Mover o modelo não arrasta a colisão junto: os transforms são independentes.</div>
+      </div>
+      <div class="step">
+        <h4>Extrair as rodas do modelo</h4>
+        <p>O <code>hatchback-sports</code> já vinha com as 4 rodas modeladas dentro. Com <code>Editable Children</code>, copiei cada malha de roda pra dentro do VehicleWheel3D correspondente e escondi as originais.</p>
+        <div class="learn">Nós vindos de uma cena importada não podem ser apagados ("foreign scene") — a saída é escondê-los pelo ícone de olho.</div>
+      </div>
+      <div class="step">
+        <h4>Posicionar as rodas — e a conta da escala</h4>
+        <p>As posições locais das rodas <code>(±0.3, 0.3, ±0.81)</code> só valiam porque o modelo estava em <code>(0,0,0)</code>. Como o <code>hatchback-sports</code> tem <code>scale 0.7</code>, a posição real de cada VehicleWheel3D é a local <b>multiplicada por 0.7</b>.</p>
+        <div class="learn">Posição de um nó é sempre relativa ao pai. Quando o pai tem escala ≠ 1, ela multiplica tanto o tamanho quanto a posição dos filhos.</div>
+      </div>
+      <div class="step">
+        <h4>Fechar o mundo: chão, luz e câmera</h4>
+        <p>Um <code>StaticBody3D</code> largo e fino como chão, uma <code>DirectionalLight3D</code> como sol e uma <code>Camera3D</code> atrás do carro. Sem isso, a cena roda preta ou o carro cai no vazio.</p>
+        <div class="learn">A luz e a câmera do editor são só prévia — não existem no jogo rodando. Toda cena precisa das suas próprias.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · PARÂMETROS DA RODA (assinatura) -->
+<section id="rodas">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Os campos da VehicleWheel3D</h2></div>
+    <p class="sec-intro">O núcleo do aprendizado. Cada roda tem um conjunto de parâmetros que definem tamanho, suspensão, amortecimento e aderência. Abaixo, o que cada um faz — e, principalmente, o que muda <b>quando diminuo</b> e <b>quando aumento</b>. O valor à direita é o que usei neste sandbox.</p>
+
+    <!-- Radius -->
+    <div class="param">
+      <div class="param-top">
+        <h4>Raio da roda</h4><span class="param-code">wheel_radius</span>
+        <span class="param-used">usado · <b>0.21 m</b></span>
+      </div>
+      <p class="param-desc">O tamanho físico da roda, em metros. Precisa bater com o raio visual do modelo (0.3 × escala 0.7 = 0.21), senão o carro flutua ou afunda no chão.</p>
+      <div class="meter"><div class="mid"></div></div>
+      <div class="effects">
+        <div class="eff down"><div class="dir"><span class="arrow">←</span> Menor</div><p>A roda encosta mais embaixo da origem: o carro fica mais baixo e pode raspar o chassi no chão.</p></div>
+        <div class="eff up"><div class="dir">Maior <span class="arrow">→</span></div><p>Roda maior levanta o corpo; se destoar do visual, a roda parece "boiar" longe do pneu desenhado.</p></div>
+      </div>
+    </div>
+
+    <!-- Rest Length -->
+    <div class="param">
+      <div class="param-top">
+        <h4>Comprimento de repouso</h4><span class="param-code">wheel_rest_length</span>
+        <span class="param-used">usado · <b>0.05 m</b></span>
+      </div>
+      <p class="param-desc">Quanto a roda "desce" da sua origem quando o carro está parado, em repouso. É a folga que a suspensão usa pra acomodar o peso.</p>
+      <div class="meter"><div class="mid"></div></div>
+      <div class="effects">
+        <div class="eff down"><div class="dir"><span class="arrow">←</span> Menor</div><p>Suspensão trabalha num curso curto: resposta mais "seca", o carro fica colado à altura da origem.</p></div>
+        <div class="eff up"><div class="dir">Maior <span class="arrow">→</span></div><p>A roda parte de mais baixo, elevando o corpo em repouso — carro mais alto e com mais margem pra comprimir.</p></div>
+      </div>
+    </div>
+
+    <!-- Roll Influence -->
+    <div class="param">
+      <div class="param-top">
+        <h4>Influência de rolagem</h4><span class="param-code">wheel_roll_influence</span>
+        <span class="param-used">usado · <b>0.1</b> (padrão)</span>
+      </div>
+      <p class="param-desc">Parâmetro específico do Godot: quanto do torque de rolagem lateral aquela roda transmite ao corpo. É o "atalho" mais direto pra domar o tombamento sem mexer na geometria.</p>
+      <div class="meter"><div class="mid"></div></div>
+      <div class="effects">
+        <div class="eff down"><div class="dir"><span class="arrow">←</span> Menor (→0)</div><p>O carro fica mais "grudado": resiste muito mais a capotar nas curvas, de forma artificial mas eficaz.</p></div>
+        <div class="eff up"><div class="dir">Maior <span class="arrow">→</span></div><p>Mais torque lateral chega ao corpo: o carro inclina e tomba com mais facilidade.</p></div>
+      </div>
+    </div>
+
+    <!-- Friction Slip -->
+    <div class="param">
+      <div class="param-top">
+        <h4>Aderência (grip)</h4><span class="param-code">wheel_friction_slip</span>
+        <span class="param-used">usado · <b>1.0</b></span>
+      </div>
+      <p class="param-desc">Quanto de agarre a roda tem contra o chão. Combina com o atrito da superfície. 0 é gelo, 1 é aderência normal.</p>
+      <div class="meter"><div class="mid"></div></div>
+      <div class="effects">
+        <div class="eff down"><div class="dir"><span class="arrow">←</span> Menor</div><p>A roda escorrega: o carro derrapa, perde tração e desliza nas curvas. Bom pra simular desgaste ou drift.</p></div>
+        <div class="eff up"><div class="dir">Maior <span class="arrow">→</span></div><p>Mais agarre: aceleração e curva mais firmes — mas grip alto demais deixa o carro mais sujeito a capotar (a força vira torque em vez de escorregão).</p></div>
+      </div>
+    </div>
+
+    <!-- Suspension Travel -->
+    <div class="param">
+      <div class="param-top">
+        <h4>Curso da suspensão</h4><span class="param-code">suspension_travel</span>
+        <span class="param-used">usado · <b>0.15 m</b></span>
+      </div>
+      <p class="param-desc">A distância que a suspensão pode percorrer comprimindo e estendendo. Como as unidades do Godot são metros, mantém-se baixo (0.1 a 0.3).</p>
+      <div class="meter"><div class="mid"></div></div>
+      <div class="effects">
+        <div class="eff down"><div class="dir"><span class="arrow">←</span> Menor</div><p>Suspensão rígida e curta: o carro sente cada irregularidade, quica menos mas absorve pior os impactos.</p></div>
+        <div class="eff up"><div class="dir">Maior <span class="arrow">→</span></div><p>Curso longo: absorve buracos e rampas com mais suavidade, mas o corpo balança e mergulha mais.</p></div>
+      </div>
+    </div>
+
+    <!-- Suspension Stiffness -->
+    <div class="param">
+      <div class="param-top">
+        <h4>Rigidez da mola</h4><span class="param-code">suspension_stiffness</span>
+        <span class="param-used">usado · <b>60 N/mm</b></span>
+      </div>
+      <p class="param-desc">A dureza da mola da suspensão. A doc dá faixas de referência: abaixo de 50 pra off-road, 50–100 pra carro de corrida, ~200 pra Fórmula 1.</p>
+      <div class="meter"><div class="mid"></div></div>
+      <div class="effects">
+        <div class="eff down"><div class="dir"><span class="arrow">←</span> Menor</div><p>Mola macia (perfil off-road/rover): o carro "boia", inclina mais nas curvas e mergulha ao frear. Bom pra terreno irregular.</p></div>
+        <div class="eff up"><div class="dir">Maior <span class="arrow">→</span></div><p>Mola dura (perfil esportivo): o corpo balança pouco, fica firme e estável — parecido com o efeito de uma barra estabilizadora.</p></div>
+      </div>
+    </div>
+
+    <!-- Suspension Max Force -->
+    <div class="param">
+      <div class="param-top">
+        <h4>Força máxima da suspensão</h4><span class="param-code">suspension_max_force</span>
+        <span class="param-used">usado · <b>40</b></span>
+      </div>
+      <p class="param-desc">O limite de força que a mola consegue resistir. A regra: precisa ser maior que ¼ da massa do veículo, senão a mola não aguenta o peso e o carro afunda.</p>
+      <div class="meter"><div class="mid"></div></div>
+      <div class="effects">
+        <div class="eff down"><div class="dir"><span class="arrow">←</span> Menor</div><p>Se cair abaixo de ¼ da massa, a suspensão "cede": o carro afunda e senta no chão, como se não tivesse mola.</p></div>
+        <div class="eff up"><div class="dir">Maior <span class="arrow">→</span></div><p>Margem folgada pra segurar o peso mesmo em impactos fortes; bons resultados costumam vir com 3× a 4× o mínimo.</p></div>
+      </div>
+    </div>
+
+    <!-- Damping Compression -->
+    <div class="param">
+      <div class="param-top">
+        <h4>Amortecimento — compressão</h4><span class="param-code">damping_compression</span>
+        <span class="param-used">usado · <b>0.3</b></span>
+      </div>
+      <p class="param-desc">Quanto a suspensão amortece <b>ao comprimir</b> (roda subindo em relação ao corpo). Entre 0 (sem amortecimento) e ~1.</p>
+      <div class="meter"><div class="mid"></div></div>
+      <div class="effects">
+        <div class="eff down"><div class="dir"><span class="arrow">←</span> Menor</div><p>A mola comprime livremente e devolve rápido: o carro quica ("boing") a cada solavanco.</p></div>
+        <div class="eff up"><div class="dir">Maior <span class="arrow">→</span></div><p>O impacto é absorvido de forma controlada, sem quicar — mas exagerar deixa a suspensão "dura" e lenta.</p></div>
+      </div>
+    </div>
+
+    <!-- Damping Relaxation -->
+    <div class="param">
+      <div class="param-top">
+        <h4>Amortecimento — relaxamento</h4><span class="param-code">damping_relaxation</span>
+        <span class="param-used">usado · <b>0.5</b></span>
+      </div>
+      <p class="param-desc">Quanto a suspensão amortece <b>ao estender</b> (roda descendo, mola voltando). Regra prática: sempre um pouco maior que a compressão — pra 0.3 de compressão, 0.5 de relaxamento.</p>
+      <div class="meter"><div class="mid"></div></div>
+      <div class="effects">
+        <div class="eff down"><div class="dir"><span class="arrow">←</span> Menor</div><p>A mola volta muito rápido depois de comprimir: o carro é "cuspido" pra cima, ganhando instabilidade.</p></div>
+        <div class="eff up"><div class="dir">Maior <span class="arrow">→</span></div><p>O retorno é suave e controlado; o carro se reassenta calmamente depois de um buraco ou rampa.</p></div>
+      </div>
+    </div>
+
+    <!-- Traction / Steering -->
+    <div class="param">
+      <div class="param-top">
+        <h4>Papéis da roda</h4><span class="param-code">use_as_traction · use_as_steering</span>
+        <span class="param-used">traseiras · <b>tração</b> · dianteiras · <b>direção</b></span>
+      </div>
+      <p class="param-desc">Duas flags que definem o papel de cada roda. <code>use_as_traction</code> recebe o <code>engine_force</code> global e empurra o carro. <code>use_as_steering</code> gira com o <code>steering</code>. Definem a arquitetura de tração.</p>
+      <div class="effects">
+        <div class="eff up" style="border-color:var(--cyan-deep)"><div class="dir" style="color:var(--cyan)">Traseiras · tração</div><p>Só as rodas com tração marcada movem o carro. Se nenhuma estiver marcada, o motor gira mas o carro não sai do lugar.</p></div>
+        <div class="eff up" style="border-color:var(--cyan-deep)"><div class="dir" style="color:var(--cyan)">Dianteiras · direção</div><p>Só as rodas com direção marcada giram na curva. Marcá-las nas 4 dá comportamento de tração/direção integral.</p></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>Atalho perigoso que aprendi.</b> Usar <code>Copy Properties → Paste Properties</code> pra replicar a config nas 4 rodas copia <b>tudo</b>, inclusive as flags de tração/direção. Isso igualou as 4 rodas sem eu perceber — a direção funcionava, mas a tração não. Vale conferir cada roda uma a uma depois de copiar.
+    </div>
+  </div>
+</section>
+
+<!-- 4 · CONTROLE -->
+<section id="controle">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">04</span><h2>O controle: engine_force, brake, steering</h2></div>
+    <p class="sec-intro">Estas três propriedades ficam no VehicleBody3D (o corpo), não na roda. O script lê o teclado no <code>_physics_process</code> e escreve nelas a cada passo de física.</p>
+
+    <div class="ctrl-grid">
+      <div class="ctrl">
+        <h4>engine_force</h4>
+        <p>O torque que as rodas de tração aplicam contra o chão pra empurrar o carro. Não é um valor em Newtons reais — é um botão de sensação. Negativo = ré. Mais força = mais aceleração e maior velocidade final.</p>
+      </div>
+      <div class="ctrl">
+        <h4>brake</h4>
+        <p>A força de frenagem. Só age com as rodas em contato com o chão. Depende da massa: pra massa 1000, a doc sugere 25–30 pra freada forte.</p>
+      </div>
+      <div class="ctrl">
+        <h4>steering</h4>
+        <p>O ângulo de esterço, em radianos no código (graus no Inspector). Suavizado com <code>move_toward</code> pra virar como um carro de verdade, não instantâneo.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>A descoberta do "força bruta".</b> Com <code>engine_force = 40</code> o carro nem saía do lugar (a velocidade ficava travada em zero no log). Subir pra <code>2000</code> provou que a física funcionava — era só ordem de grandeza. Acabei em <b>~250</b>: forte o bastante pra andar bem, e é aí que o tombamento nas curvas começou a aparecer.
+    </div>
+  </div>
+</section>
+
+<!-- 5 · FÍSICA DO TOMBAMENTO -->
+<section id="tombamento">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Por que o carro capota na curva</h2></div>
+    <p class="sec-intro">O <code>engine_force</code> não capota o carro — ele só empurra pra frente. Quem capota é a <b>velocidade</b> que ela permite atingir: a força lateral numa curva cresce com o <b>quadrado</b> da velocidade. Dobrar a velocidade no mesmo raio = 4× a força lateral tentando derrubar o carro.</p>
+
+    <div class="physics">
+      <div>
+        <h4>Transferência de carga</h4>
+        <p>Numa curva, a inércia atua no centro de gravidade (CG) puxando o carro pra fora. Isso transfere peso da roda de dentro pra roda de fora. Se a de dentro fica sem carga, o carro pivota sobre a de fora e tomba.</p>
+        <div class="formula">
+          SSF = t / (2·h)
+          <small>Static Stability Factor · t = bitola (distância entre rodas) · h = altura do CG</small>
+        </div>
+        <p>Se a aceleração lateral (em g) passar do SSF, o carro tende a capotar. Baixo e largo (t grande, h pequeno) = estável. Alto e estreito = tomba fácil — por isso carros de corrida são baixos e largos, e SUVs capotam mais.</p>
+      </div>
+      <div>
+        <svg viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagrama de um carro visto de trás numa curva: força lateral no centro de gravidade transfere carga da roda interna para a externa.">
+          <line x1="20" y1="205" x2="280" y2="205" stroke="#26324a" stroke-width="2"/>
+          <!-- wheels -->
+          <circle cx="95" cy="188" r="20" fill="none" stroke="#57c98a" stroke-width="2.5"/>
+          <circle cx="205" cy="188" r="20" fill="none" stroke="#57c98a" stroke-width="2.5"/>
+          <!-- body -->
+          <rect x="72" y="92" width="156" height="78" rx="12" fill="rgba(63,208,192,.08)" stroke="#3fd0c0" stroke-width="2"/>
+          <!-- CG -->
+          <circle cx="150" cy="128" r="6" fill="#e8635b"/>
+          <text x="150" y="112" fill="#aab6c8" font-family="'JetBrains Mono',monospace" font-size="11" text-anchor="middle">CG</text>
+          <!-- height -->
+          <line x1="150" y1="205" x2="150" y2="128" stroke="#6f7d93" stroke-width="1.2" stroke-dasharray="4 4"/>
+          <text x="158" y="172" fill="#6f7d93" font-family="'JetBrains Mono',monospace" font-size="11">h</text>
+          <!-- track -->
+          <line x1="95" y1="212" x2="95" y2="232" stroke="#6f7d93" stroke-width="1" stroke-dasharray="3 3"/>
+          <line x1="205" y1="212" x2="205" y2="232" stroke="#6f7d93" stroke-width="1" stroke-dasharray="3 3"/>
+          <line x1="95" y1="228" x2="205" y2="228" stroke="#6f7d93" stroke-width="1.4"/>
+          <text x="150" y="248" fill="#6f7d93" font-family="'JetBrains Mono',monospace" font-size="11" text-anchor="middle">t (bitola)</text>
+          <!-- lateral force -->
+          <line x1="150" y1="128" x2="238" y2="128" stroke="#e8635b" stroke-width="3"/>
+          <polygon points="238,128 228,122 228,134" fill="#e8635b"/>
+          <text x="215" y="118" fill="#e8635b" font-family="'JetBrains Mono',monospace" font-size="10" text-anchor="middle">F lateral</text>
+          <!-- loads -->
+          <line x1="205" y1="148" x2="205" y2="172" stroke="#eaa93c" stroke-width="4"/>
+          <polygon points="205,172 200,163 210,163" fill="#eaa93c"/>
+          <text x="205" y="88" fill="#eaa93c" font-family="'JetBrains Mono',monospace" font-size="9.5" text-anchor="middle">+carga</text>
+          <line x1="95" y1="152" x2="95" y2="168" stroke="#6f7d93" stroke-width="2"/>
+          <polygon points="95,168 91,161 99,161" fill="#6f7d93"/>
+          <text x="95" y="88" fill="#6f7d93" font-family="'JetBrains Mono',monospace" font-size="9.5" text-anchor="middle">−carga</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>O que dá pra brincar pra sentir isso.</b> Baixar <code>wheel_roll_influence</code> (0.1 → 0.05 → 0.02) deixa o carro cada vez mais colado. Baixar a <code>Position.y</code> do CollisionShape reduz o CG (h menor). Afastar as rodas aumenta a bitola (t maior). Enrijecer a suspensão reduz a inclinação na curva. Todos empurram o SSF pra cima.
+    </div>
+  </div>
+</section>
+
+<!-- 6 · DIÁRIO DE BUGS -->
+<section id="bugs">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Diário de bugs</h2></div>
+    <p class="sec-intro">Metade do aprendizado veio das coisas que deram errado. Registro dos sintomas e das causas — porque quase todos vão reaparecer no modelo de verdade, só que mais difíceis de enxergar.</p>
+
+    <div class="bug">
+      <div class="symptom"><div class="lab">Sintoma</div><h4>Roda pula pra longe ao colar</h4><p>Usei <code>Paste as Child</code> e a roda apareceu longe do carro.</p></div>
+      <div class="cause"><div class="lab">Causa</div><h4>Posição local somada duas vezes</h4><p>A posição era relativa ao modelo; ao virar filha do wheel já deslocado, o offset entrou de novo. Zerar a Position da cópia resolveu.</p></div>
+    </div>
+
+    <div class="bug">
+      <div class="symptom"><div class="lab">Sintoma</div><h4>Roda fica gigante</h4><p>Ao mover a roda pra fora do modelo, ela dobrou de tamanho.</p></div>
+      <div class="cause"><div class="lab">Causa</div><h4>Perdeu a escala herdada</h4><p>O <code>hatchback-sports</code> tem scale 0.7. Dentro dele a roda herdava isso; fora, voltou a 1.0. Reaplicar 0.7 corrigiu.</p></div>
+    </div>
+
+    <div class="bug">
+      <div class="symptom"><div class="lab">Sintoma</div><h4>"Can't operate on nodes from a foreign scene"</h4><p>Não deixava apagar as rodas originais.</p></div>
+      <div class="cause"><div class="lab">Causa</div><h4>Nó de cena importada é protegido</h4><p>Editable Children deixa editar e copiar, mas não apagar. Esconder pelo ícone de olho basta.</p></div>
+    </div>
+
+    <div class="bug">
+      <div class="symptom"><div class="lab">Sintoma</div><h4>Tela cinza ao rodar</h4><p>O jogo abriu, mas tudo cinza.</p></div>
+      <div class="cause"><div class="lab">Causa</div><h4>Faltava Camera3D</h4><p>A câmera do editor é só prévia. Sem uma Camera3D na cena, não há o que renderizar.</p></div>
+    </div>
+
+    <div class="bug">
+      <div class="symptom"><div class="lab">Sintoma</div><h4>Cena escura demais</h4><p>O carro aparecia, mas quase preto.</p></div>
+      <div class="cause"><div class="lab">Causa</div><h4>Faltava DirectionalLight3D</h4><p>A luz de prévia do editor não existe no jogo. Um "sol" + WorldEnvironment resolveram.</p></div>
+    </div>
+
+    <div class="bug">
+      <div class="symptom"><div class="lab">Sintoma</div><h4>Carro não anda (velocity travada em 0)</h4><p>O log confirmava <code>engine_force: 40</code>, mas a velocidade não subia.</p></div>
+      <div class="cause"><div class="lab">Causa</div><h4>Força fraca demais pra vencer a inércia</h4><p>Freeze e Axis Lock estavam OK; o chassi não raspava. Era ordem de grandeza — subir o engine_force resolveu.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · APRESENTAR -->
+<section id="rodar" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Como rodar pra apresentar</h2></div>
+    <p class="sec-intro">Dois níveis, do mais rápido ao mais "produto pronto".</p>
+
+    <div class="ctrl-grid">
+      <div class="ctrl">
+        <h4>Main Scene</h4>
+        <p>Em <code>Project → Project Settings → Application → Run → Main Scene</code>, aponto pra <code>world.tscn</code>. Aí o botão ▶ grande sempre roda o mundo direto, sem escolher aba.</p>
+      </div>
+      <div class="ctrl">
+        <h4>Executável</h4>
+        <p>Em <code>Project → Export</code>, com o preset Linux/X11 e os export templates instalados, gero um binário que roda com duplo-clique — sem abrir o Godot.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Dossiê · Sandbox de dinâmica veicular · PIBIC Tema 1</span>
+    <span>Godot 4.7 · VehicleBody3D · Kenney Car Kit</span>
+  </div>
+</footer>
+
+</body>
+</html>

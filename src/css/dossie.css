@@ -1,0 +1,538 @@
+/**
+ * Componentes-assinatura da estética "dossiê de engenharia / painel de telemetria".
+ * Portados do HTML original e escopados sob `.dossie` para serem reutilizáveis
+ * em qualquer doc futura sem colidir com as classes do Docusaurus.
+ *
+ * Uso numa doc (MDX):  <div className="dossie"> ...componentes... </div>
+ */
+
+.dossie {
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03), 0 18px 40px -22px rgba(0, 0, 0, 0.9);
+}
+
+/* ---------- eyebrow / cabeçalho de seção ---------- */
+.dossie .eyebrow,
+.doc-eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.dossie .eyebrow::after,
+.doc-eyebrow::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, var(--cyan-deep), transparent);
+}
+
+/* ---------- faixa de telemetria ---------- */
+.dossie .telemetry,
+.telemetry-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 26px;
+  align-items: center;
+  padding: 12px 18px;
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--bg-2), transparent);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  margin-bottom: 30px;
+}
+.telemetry-strip b {
+  color: var(--cyan);
+  font-weight: 500;
+}
+.telemetry-strip .dot,
+.dossie .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  display: inline-block;
+  margin-right: 7px;
+  box-shadow: 0 0 8px var(--green);
+}
+
+/* ---------- grade de metadados (hero-meta) ---------- */
+.dossie .hero-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1px;
+  background: var(--line-soft);
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 12px 0 40px;
+}
+.dossie .hero-meta div {
+  background: var(--bg);
+  padding: 16px 18px;
+}
+.dossie .hero-meta dt {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 5px;
+}
+.dossie .hero-meta dd {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.02rem;
+  margin: 0;
+}
+
+/* ---------- cabeçalho numerado de seção ---------- */
+.dossie .sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin: 8px 0;
+}
+.dossie .sec-num {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--cyan);
+  font-weight: 500;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 3px 9px;
+  flex: none;
+}
+.dossie .sec-intro {
+  color: var(--ink-mid);
+  max-width: 66ch;
+  margin: 14px 0 34px;
+  font-size: 1.02rem;
+}
+.dossie code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  background: var(--surface-2);
+  border: 1px solid var(--line-soft);
+  padding: 1px 6px;
+  border-radius: 5px;
+  color: var(--cyan);
+}
+
+/* ---------- árvore de nós ---------- */
+.dossie .tree {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 26px 28px;
+  font-family: var(--mono);
+  font-size: 14px;
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+.dossie .tree .row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 0;
+  white-space: nowrap;
+}
+.dossie .tree .row span.g {
+  color: var(--ink-dim);
+}
+.dossie .tree .tag {
+  font-size: 11px;
+  color: var(--ink-dim);
+  font-family: var(--font-body);
+  margin-left: 6px;
+}
+.dossie .tree .n-root {
+  color: var(--cyan);
+  font-weight: 700;
+}
+.dossie .tree .n-body {
+  color: var(--violet);
+}
+.dossie .tree .n-col {
+  color: var(--amber);
+}
+.dossie .tree .n-wheel {
+  color: var(--green);
+}
+.dossie .tree .n-mesh {
+  color: var(--ink-mid);
+}
+.dossie .tree .n-world {
+  color: var(--cyan);
+}
+.dossie .tree .n-static {
+  color: var(--amber);
+}
+.dossie .tree .n-cam {
+  color: var(--ink-mid);
+}
+.dossie .tree-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 20px;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  color: var(--ink-dim);
+}
+.dossie .tree-legend b {
+  font-weight: 600;
+  color: var(--ink-mid);
+}
+.dossie .swatch {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* ---------- lista de passos ---------- */
+.dossie .steps {
+  display: grid;
+  gap: 14px;
+  counter-reset: s;
+}
+.dossie .step {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  padding: 20px 22px 20px 62px;
+  position: relative;
+}
+.dossie .step::before {
+  counter-increment: s;
+  content: counter(s, decimal-leading-zero);
+  position: absolute;
+  left: 20px;
+  top: 19px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--cyan);
+  font-weight: 500;
+}
+.dossie .step h4 {
+  font-family: var(--font-display);
+  font-size: 1.06rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.dossie .step p {
+  color: var(--ink-mid);
+  font-size: 0.96rem;
+  margin: 0;
+}
+.dossie .step .learn {
+  margin-top: 11px;
+  padding-top: 11px;
+  border-top: 1px dashed var(--line);
+  font-size: 0.9rem;
+  color: var(--amber);
+  display: flex;
+  gap: 9px;
+}
+.dossie .step .learn::before {
+  content: '↳';
+  color: var(--amber);
+  flex: none;
+}
+
+/* ---------- medidores de parâmetro (assinatura) ---------- */
+.dossie .param {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 24px 26px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.dossie .param-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px 14px;
+  margin-bottom: 6px;
+}
+.dossie .param-top h4 {
+  font-family: var(--font-display);
+  font-size: 1.16rem;
+  font-weight: 600;
+  margin: 0;
+}
+.dossie .param-code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--cyan);
+  background: var(--bg-2);
+  border: 1px solid var(--line-soft);
+  padding: 2px 9px;
+  border-radius: 6px;
+}
+.dossie .param-used {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+.dossie .param-used b {
+  color: var(--green);
+  font-weight: 700;
+}
+.dossie .param-desc {
+  color: var(--ink-mid);
+  font-size: 0.96rem;
+  margin-bottom: 20px;
+  max-width: 74ch;
+}
+.dossie .meter {
+  position: relative;
+  height: 3px;
+  background: linear-gradient(90deg, var(--coral), var(--surface-2) 50%, var(--cyan));
+  border-radius: 2px;
+  margin: 0 4px 12px;
+}
+.dossie .meter .mid {
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  width: 1px;
+  height: 11px;
+  background: var(--ink-dim);
+  transform: translateX(-50%);
+}
+.dossie .effects {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 560px) {
+  .dossie .effects {
+    grid-template-columns: 1fr;
+  }
+}
+.dossie .eff {
+  background: var(--bg-2);
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.dossie .eff .dir {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.dossie .eff.down .dir {
+  color: var(--coral);
+}
+.dossie .eff.up .dir {
+  color: var(--cyan);
+}
+.dossie .eff p {
+  font-size: 0.92rem;
+  color: var(--ink-mid);
+  margin: 0;
+}
+.dossie .arrow {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* ---------- bloco de controles ---------- */
+.dossie .ctrl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+}
+.dossie .ctrl {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px 22px;
+}
+.dossie .ctrl h4 {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--cyan);
+  margin-bottom: 8px;
+}
+.dossie .ctrl p {
+  font-size: 0.94rem;
+  color: var(--ink-mid);
+  margin: 0;
+}
+
+/* ---------- bloco de física ---------- */
+.dossie .physics {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 26px;
+  align-items: center;
+  background: linear-gradient(135deg, var(--surface), var(--bg-2));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: var(--shadow);
+}
+@media (max-width: 720px) {
+  .dossie .physics {
+    grid-template-columns: 1fr;
+  }
+}
+.dossie .physics h4 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+.dossie .physics p {
+  color: var(--ink-mid);
+  font-size: 0.98rem;
+  margin-bottom: 12px;
+}
+.dossie .formula {
+  font-family: var(--mono);
+  font-size: 1.5rem;
+  color: var(--cyan);
+  text-align: center;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 22px;
+  margin: 6px 0 14px;
+}
+.dossie .formula small {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--ink-dim);
+  margin-top: 10px;
+  letter-spacing: 0.03em;
+}
+.dossie .physics svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ---------- log de bugs ---------- */
+.dossie .bug {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: 0;
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+@media (max-width: 640px) {
+  .dossie .bug {
+    grid-template-columns: 1fr;
+  }
+}
+.dossie .bug .symptom {
+  background: var(--surface-2);
+  padding: 18px 20px;
+  border-right: 1px solid var(--line-soft);
+}
+@media (max-width: 640px) {
+  .dossie .bug .symptom {
+    border-right: none;
+    border-bottom: 1px solid var(--line-soft);
+  }
+}
+.dossie .bug .cause {
+  background: var(--surface);
+  padding: 18px 20px;
+}
+.dossie .bug .lab {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+.dossie .bug .symptom .lab {
+  color: var(--coral);
+}
+.dossie .bug .cause .lab {
+  color: var(--green);
+}
+.dossie .bug h4 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.dossie .bug p {
+  font-size: 0.92rem;
+  color: var(--ink-mid);
+  margin: 0;
+}
+
+/* ---------- callout ---------- */
+.dossie .callout {
+  border-left: 3px solid var(--cyan);
+  background: var(--surface);
+  border-radius: 0 12px 12px 0;
+  padding: 18px 22px;
+  margin-top: 30px;
+  color: var(--ink-mid);
+  font-size: 0.96rem;
+}
+.dossie .callout b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- hero do dossiê ---------- */
+.dossie .hero-block {
+  padding: 8px 0 44px;
+  border-bottom: 1px solid var(--line-soft);
+  margin-bottom: 8px;
+}
+.dossie .hero-block h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.1rem, 5vw, 3.4rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  margin: 0 0 22px;
+}
+.dossie .hero-block h1 .accent {
+  color: var(--cyan);
+}
+.dossie .lede {
+  font-size: 1.12rem;
+  color: var(--ink-mid);
+  max-width: 62ch;
+}
+.dossie .lede strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- separação entre "seções" internas de uma doc-dossiê ---------- */
+.dossie .block {
+  padding: 40px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.dossie .block:last-child {
+  border-bottom: none;
+}

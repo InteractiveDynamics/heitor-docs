@@ -1,30 +1,223 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Tokens de design do site — extraídos do dossiê de dinâmica veicular.
+ * Paleta slate escuro, acento ciano/teal, âmbar e coral.
+ * Tipografia: Space Grotesk (display), Inter (corpo), JetBrains Mono (dados).
+ * Este arquivo é global e mapeia o design system pro tema Infima do Docusaurus.
  */
 
-/* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  /* ---- paleta base (mesma do dossiê) ---- */
+  --bg: #0d1119;
+  --bg-2: #0a0e15;
+  --surface: #151d2b;
+  --surface-2: #1b2536;
+  --line: #26324a;
+  --line-soft: #1e2839;
+  --ink: #e7edf5;
+  --ink-mid: #aab6c8;
+  --ink-dim: #6f7d93;
+  --cyan: #3fd0c0;
+  --cyan-deep: #1c8f84;
+  --amber: #eaa93c;
+  --coral: #e8635b;
+  --violet: #8f8cf0;
+  --green: #57c98a;
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03), 0 18px 40px -22px rgba(0, 0, 0, 0.9);
+
+  /* ---- tipografia ---- */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* ---- Infima: cor primária = acento ciano ---- */
+  --ifm-color-primary: #3fd0c0;
+  --ifm-color-primary-dark: #2bc4b3;
+  --ifm-color-primary-darker: #29b9a9;
+  --ifm-color-primary-darkest: #22998b;
+  --ifm-color-primary-light: #57d6c8;
+  --ifm-color-primary-lighter: #63d8cb;
+  --ifm-color-primary-lightest: #86e1d7;
+
+  --ifm-font-family-base: var(--font-body);
+  --ifm-font-family-monospace: var(--mono);
+  --ifm-heading-font-family: var(--font-display);
+  --ifm-heading-font-weight: 600;
+  --ifm-font-size-base: 16px;
+  --ifm-line-height-base: 1.62;
+  --ifm-code-font-size: 88%;
+  --ifm-code-border-radius: 5px;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
+/* O site é dark-only; os overrides valem pro tema escuro (fixo). */
 [data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-color-primary: #3fd0c0;
+  --ifm-color-primary-dark: #2bc4b3;
+  --ifm-color-primary-darker: #29b9a9;
+  --ifm-color-primary-darkest: #22998b;
+  --ifm-color-primary-light: #57d6c8;
+  --ifm-color-primary-lighter: #63d8cb;
+  --ifm-color-primary-lightest: #86e1d7;
+
+  --ifm-background-color: var(--bg);
+  --ifm-background-surface-color: var(--surface);
+  --ifm-color-content: var(--ink);
+  --ifm-color-content-secondary: var(--ink-mid);
+  --ifm-heading-color: var(--ink);
+
+  --ifm-navbar-background-color: rgba(10, 14, 21, 0.82);
+  --ifm-navbar-shadow: 0 1px 0 var(--line-soft);
+  --ifm-footer-background-color: var(--bg-2);
+  --ifm-footer-color: var(--ink-dim);
+  --ifm-footer-link-color: var(--ink-mid);
+  --ifm-footer-title-color: var(--ink);
+
+  --ifm-menu-color: var(--ink-mid);
+  --ifm-menu-color-background-active: var(--surface);
+  --ifm-menu-color-background-hover: var(--surface);
+  --ifm-toc-border-color: var(--line-soft);
+
+  --ifm-card-background-color: var(--surface);
+  --ifm-hr-border-color: var(--line-soft);
+  --ifm-blockquote-color: var(--ink-mid);
+
+  --ifm-code-background: var(--surface-2);
+  --ifm-color-emphasis-300: var(--line);
+
+  --docusaurus-highlighted-code-line-bg: rgba(63, 208, 192, 0.1);
+}
+
+/* ---------- fundo com os gradientes radiais do dossiê ---------- */
+html,
+body {
+  background: var(--bg);
+}
+
+body {
+  background:
+    radial-gradient(1100px 600px at 78% -8%, rgba(63, 208, 192, 0.07), transparent 60%),
+    radial-gradient(900px 500px at 12% 4%, rgba(143, 140, 240, 0.06), transparent 55%),
+    var(--bg);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- navbar: barra de telemetria translúcida ---------- */
+.navbar {
+  backdrop-filter: saturate(140%) blur(8px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.navbar__title {
+  font-family: var(--mono);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+.navbar__link {
+  font-size: 0.92rem;
+}
+
+/* ---------- títulos ---------- */
+h1,
+h2,
+h3,
+h4 {
+  letter-spacing: -0.015em;
+}
+.markdown h1:first-child {
+  font-size: clamp(2rem, 4.4vw, 3rem);
+  letter-spacing: -0.02em;
+}
+
+/* ---------- código inline com o mesmo tratamento do dossiê ---------- */
+code {
+  font-family: var(--mono);
+  border: 1px solid var(--line-soft);
+  color: var(--cyan);
+}
+a code {
+  color: var(--cyan);
+}
+
+/* ---------- links ---------- */
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: none;
+}
+
+/* ---------- sidebar / menu ---------- */
+.menu {
+  font-size: 0.9rem;
+}
+.menu__link--active:not(.menu__link--sublist) {
+  border-left: 2px solid var(--cyan);
+  background: var(--surface);
+}
+.menu__list-item-collapsible .menu__link {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+/* ---------- tabelas em estilo de painel ---------- */
+.markdown table {
+  display: table;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+}
+.markdown table thead {
+  background: var(--surface-2);
+}
+.markdown table th {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  border: none;
+}
+.markdown table td {
+  border: none;
+  border-top: 1px solid var(--line-soft);
+}
+.markdown table tr {
+  background: var(--surface);
+}
+.markdown table tr:nth-child(2n) {
+  background: var(--surface);
+}
+
+/* ---------- admonitions (callouts nativos) na paleta do dossiê ---------- */
+.theme-admonition {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 12px;
+}
+.theme-admonition code {
+  background: var(--bg-2);
+}
+
+/* ---------- barra de rolagem discreta ---------- */
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-2);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 6px;
+  border: 3px solid var(--bg-2);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--line);
 }

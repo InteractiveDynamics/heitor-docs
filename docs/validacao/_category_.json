@@ -1,0 +1,8 @@
+{
+  "label": "Validação comparativa",
+  "position": 8,
+  "link": {
+    "type": "generated-index",
+    "description": "Validação contra Chrono e SCM, com métricas quantitativas."
+  }
+}

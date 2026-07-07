@@ -1,0 +1,9 @@
+{
+  "label": "Estudos & notas",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "title": "Estudos & notas de aprendizado",
+    "description": "Explorações avulsas e notas de aprendizado — os experimentos iniciais pra ganhar intuição antes do modelo rigoroso."
+  }
+}

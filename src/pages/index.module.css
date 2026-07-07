@@ -1,23 +1,253 @@
 /**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
+ * Home — estética "painel de telemetria / dossiê de engenharia".
+ * Usa os tokens globais (--cyan, --surface, --mono...) definidos em custom.css.
  */
 
-.heroBanner {
-  padding: 4rem 0;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+.wrap {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
-@media screen and (max-width: 996px) {
-  .heroBanner {
-    padding: 2rem;
-  }
+/* ---------- faixa de telemetria ---------- */
+.telemetry {
+  border-bottom: 1px solid var(--line-soft);
+  background: linear-gradient(180deg, var(--bg-2), transparent);
+}
+.telemetry .inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 26px;
+  align-items: center;
+  padding: 11px 24px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+}
+.telemetry b {
+  color: var(--cyan);
+  font-weight: 500;
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  display: inline-block;
+  margin-right: 7px;
+  box-shadow: 0 0 8px var(--green);
 }
 
-.buttons {
+/* ---------- hero ---------- */
+.hero {
+  padding: 76px 0 60px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 22px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 12px;
+}
+.eyebrow::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, var(--cyan-deep), transparent);
+}
+.title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.3rem, 5.4vw, 4rem);
+  line-height: 1.03;
+  letter-spacing: -0.02em;
+  margin: 0 0 24px;
+  color: var(--ink);
+}
+.title .accent {
+  color: var(--cyan);
+}
+.lede {
+  font-size: 1.12rem;
+  color: var(--ink-mid);
+  max-width: 64ch;
+  line-height: 1.62;
+}
+.lede strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 34px;
+}
+.btnPrimary,
+.btnGhost {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  padding: 13px 22px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  transition: all 0.15s ease;
+}
+.btnPrimary {
+  background: var(--cyan);
+  color: var(--bg-2);
+  font-weight: 500;
+  border-color: var(--cyan);
+}
+.btnPrimary:hover {
+  background: var(--cyan-deep);
+  border-color: var(--cyan-deep);
+  color: var(--ink);
+  text-decoration: none;
+}
+.btnGhost {
+  background: var(--surface);
+  color: var(--ink-mid);
+}
+.btnGhost:hover {
+  color: var(--cyan);
+  border-color: var(--cyan-deep);
+  text-decoration: none;
+}
+
+/* ---------- seção do índice de frentes ---------- */
+.section {
+  padding: 62px 0 72px;
+}
+.secHead {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.secNum {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--cyan);
+  font-weight: 500;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 3px 9px;
+  flex: none;
+}
+.secTitle {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.015em;
+  margin: 0;
+  color: var(--ink);
+}
+.secIntro {
+  color: var(--ink-mid);
+  max-width: 66ch;
+  margin: 14px 0 34px;
+  font-size: 1.02rem;
+}
+
+/* ---------- grid de frentes ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: var(--shadow);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.cardActive {
+  cursor: pointer;
+}
+.cardActive:hover {
+  border-color: var(--cyan-deep);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+.cardPlanned {
+  opacity: 0.72;
+}
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.cardNum {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+.badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.badgeActive {
+  color: var(--green);
+  border-color: rgba(87, 201, 138, 0.4);
+}
+.badgePlanned {
+  color: var(--amber);
+  border-color: rgba(234, 169, 60, 0.35);
+}
+.badge .pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+.cardTitle {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.14rem;
+  color: var(--ink);
+  margin: 2px 0 0;
+}
+.cardDesc {
+  color: var(--ink-mid);
+  font-size: 0.94rem;
+  margin: 0;
+  flex: 1;
+}
+.cardLink {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--cyan);
+  margin-top: 4px;
+}
+
+@media screen and (max-width: 720px) {
+  .hero {
+    padding: 48px 0 40px;
+  }
 }
