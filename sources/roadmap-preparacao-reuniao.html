@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano de voo — preparação até a próxima reunião</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#13161b; --panel:#1c222a; --panel2:#232a33; --line:#2e3742;
+    --sand:#c7bfaf; --sand-bright:#ece7dc; --muted:#8a8578;
+    --amber:#f0a73c; --amber-soft:rgba(240,167,60,.13); --amber-line:rgba(240,167,60,.35);
+    --cyan:#58c4d2; --cyan-soft:rgba(88,196,210,.11); --cyan-line:rgba(88,196,210,.32);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--void);color:var(--sand);
+    font-family:"IBM Plex Sans",sans-serif;line-height:1.6;
+    -webkit-font-smoothing:antialiased;padding:0 0 64px;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 20px}
+  .mono{font-family:"IBM Plex Mono",monospace}
+  .eyebrow{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--amber);font-weight:500;
+  }
+  h1,h2,h3{font-family:"Chakra Petch",sans-serif;color:var(--sand-bright);line-height:1.15}
+
+  /* HERO */
+  .hero{position:relative;padding:56px 0 40px;border-bottom:1px solid var(--line);overflow:hidden}
+  .hero::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(120% 80% at 88% -10%, var(--amber-soft), transparent 60%),
+      repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.012) 3px 4px);
+    pointer-events:none;
+  }
+  .hero .wrap{position:relative}
+  .countdown{display:flex;align-items:baseline;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+  .countdown .big{
+    font-family:"Chakra Petch",sans-serif;font-weight:700;font-size:15px;
+    color:var(--amber);letter-spacing:.08em;
+  }
+  .countdown .sep{color:var(--line)}
+  .countdown .goal{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);letter-spacing:.15em}
+  h1{font-size:clamp(28px,7vw,44px);font-weight:700;margin-bottom:18px}
+  h1 .accent{color:var(--amber)}
+  .lede{font-size:16px;color:var(--sand);max-width:60ch}
+  .lede b{color:var(--sand-bright);font-weight:600}
+
+  /* SECTION */
+  section{padding:44px 0;border-bottom:1px solid var(--line)}
+  .sec-head{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+  .sec-head .num{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--amber);border:1px solid var(--amber-line);border-radius:4px;padding:3px 8px;flex:none}
+  .sec-head h2{font-size:clamp(20px,4.5vw,26px);font-weight:600}
+  .sec-sub{color:var(--muted);font-size:14px;margin:-16px 0 24px}
+
+  /* BRIEFING CHIPS */
+  .chips{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .chip{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 15px}
+  .chip .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;color:var(--amber);text-transform:uppercase}
+  .chip p{font-size:13.5px;color:var(--sand);margin-top:6px}
+
+  /* CONCEPT CARDS */
+  .cards{display:flex;flex-direction:column;gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;position:relative}
+  .card.amber{border-top:3px solid var(--amber)}
+  .card.cyan{border-top:3px solid var(--cyan)}
+  .card h3{font-size:19px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+  .card .kind{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:12px}
+  .card p{font-size:14.5px;color:var(--sand);margin-bottom:10px}
+  .card p:last-child{margin-bottom:0}
+  .card b{color:var(--sand-bright);font-weight:600}
+  .formula{
+    font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--amber);
+    background:var(--amber-soft);border:1px solid var(--amber-line);border-radius:6px;
+    padding:8px 12px;display:inline-block;margin:2px 0 10px
+  }
+  .tie{
+    font-size:13px;color:var(--sand);background:var(--panel2);
+    border-left:3px solid var(--amber);border-radius:0 8px 8px 0;padding:11px 14px;margin-top:6px
+  }
+  .card.cyan .formula{color:var(--cyan);background:var(--cyan-soft);border-color:var(--cyan-line)}
+  .card.cyan .tie{border-left-color:var(--cyan)}
+  code{font-family:"IBM Plex Mono",monospace;font-size:.9em;color:var(--cyan);background:rgba(88,196,210,.1);padding:1px 5px;border-radius:4px}
+
+  .callout{
+    margin-top:16px;background:rgba(240,167,60,.07);border:1px dashed var(--amber-line);
+    border-radius:10px;padding:14px 16px;font-size:13.5px;color:var(--sand)
+  }
+  .callout .lbl{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;color:var(--amber);text-transform:uppercase;display:block;margin-bottom:6px}
+  .callout b{color:var(--sand-bright)}
+
+  /* FLIGHT PLAN SPINE */
+  .spine{position:relative;padding-left:34px}
+  .spine::before{content:"";position:absolute;left:9px;top:6px;bottom:26px;width:2px;background:linear-gradient(var(--amber-line),var(--line))}
+  .stop{position:relative;margin-bottom:20px}
+  .stop::before{
+    content:"";position:absolute;left:-30px;top:4px;width:12px;height:12px;border-radius:50%;
+    background:var(--void);border:2px solid var(--amber);box-shadow:0 0 0 4px var(--void)
+  }
+  .stop .code{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;color:var(--amber)}
+  .stop h3{font-size:16px;font-weight:600;margin:2px 0 4px}
+  .stop p{font-size:13.5px;color:var(--sand)}
+  .stop.final::before{background:var(--amber);border-color:var(--amber)}
+  .stop.final h3{color:var(--amber)}
+
+  /* RESOURCES */
+  .res{display:flex;flex-direction:column;gap:10px}
+  .res a{
+    display:flex;align-items:baseline;gap:12px;text-decoration:none;
+    background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:13px 15px;transition:border-color .15s,background .15s
+  }
+  .res a:hover,.res a:focus-visible{border-color:var(--amber-line);background:var(--panel2);outline:none}
+  .res .rt{font-size:14px;color:var(--sand-bright);font-weight:500;flex:1}
+  .res .rk{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);flex:none}
+  .res .rd{font-size:12.5px;color:var(--muted);display:block;margin-top:3px;font-weight:400}
+  .res-group-label{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);margin:20px 0 10px}
+
+  /* BAGAGEM */
+  .checklist{list-style:none;display:flex;flex-direction:column;gap:11px}
+  .checklist li{position:relative;padding-left:30px;font-size:14.5px;color:var(--sand)}
+  .checklist li::before{
+    content:"";position:absolute;left:0;top:4px;width:15px;height:15px;border-radius:4px;
+    border:2px solid var(--amber-line)
+  }
+  .checklist li b{color:var(--sand-bright);font-weight:600}
+  .qbox{margin-top:22px;background:var(--panel);border:1px solid var(--cyan-line);border-radius:12px;padding:20px}
+  .qbox h3{font-size:15px;color:var(--cyan);margin-bottom:12px;display:flex;align-items:center;gap:9px}
+  .qbox ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+  .qbox li{font-size:13.5px;color:var(--sand);padding-left:20px;position:relative}
+  .qbox li::before{content:"?";position:absolute;left:0;font-family:"IBM Plex Mono",monospace;color:var(--cyan);font-weight:600}
+  .qbox li b{color:var(--sand-bright);font-weight:600}
+
+  footer{padding-top:34px;text-align:center}
+  footer p{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.1em}
+
+  @media (max-width:560px){
+    .chips{grid-template-columns:1fr}
+    .card{padding:18px}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .card,.stop,.chip{animation:rise .5s ease both}
+    @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  }
+</style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="wrap">
+      <div class="countdown">
+        <span class="big">T–7 DIAS</span>
+        <span class="sep mono">·······</span>
+        <span class="goal">DESTINO: REUNIÃO</span>
+      </div>
+      <h1>Plano de voo até a <span class="accent">próxima reunião</span></h1>
+      <p class="lede">O professor pediu quatro coisas na fala do kick-off: <b>artigos/exemplos de carros</b>, <b>como isso vira modelagem de sistemas complexos</b>, <b>estudar Godot</b> e <b>fazer um carrinho simples</b> pra pegar noção de torque, suspensão e powertrain. Abaixo, isso traduzido num roteiro pra você chegar com bagagem.</p>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><span class="num">01</span><h2>O briefing, decodificado</h2></div>
+      <p class="sec-sub">A fala solta do professor separada em quatro frentes.</p>
+      <div class="chips">
+        <div class="chip"><span class="tag">Frente A</span><p>Levantar artigos e exemplos de <b>dinâmica veicular</b> — como um carro é modelado.</p></div>
+        <div class="chip"><span class="tag">Frente B</span><p>Entender como isso vira <b>modelagem de sistema complexo</b> (multicorpos).</p></div>
+        <div class="chip"><span class="tag">Frente C</span><p>Aprender o <b>Godot</b> o suficiente pra prototipar.</p></div>
+        <div class="chip"><span class="tag">Frente D</span><p>Fazer um <b>carrinho</b> e sentir na mão torque, suspensão e powertrain.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><span class="num">02</span><h2>Os três conceitos pra dominar</h2></div>
+      <p class="sec-sub">Nível intuição — o suficiente pra conversar com o professor e reconhecer no código.</p>
+      <div class="cards">
+
+        <div class="card amber">
+          <h3>Powertrain &amp; Torque</h3>
+          <div class="kind">Frente A · como a energia vira movimento</div>
+          <p>Powertrain é a cadeia que transforma energia em rotação da roda: <b>motor → transmissão/redução → diferencial → roda</b>. O torque (τ) é a "força de giro" que o motor produz; a relação de engrenagens multiplica esse torque, e a roda o converte em força de tração que empurra o veículo — limitada pelo atrito com o solo.</p>
+          <span class="formula">F_tração = τ_roda / raio_da_roda</span>
+          <p>Num <b>rover</b> normalmente são motores elétricos (às vezes um por roda), sem a complexidade de câmbio de um carro a combustão — o que simplifica bastante seu caso.</p>
+          <div class="tie">No Godot, a propriedade <code>engine_force</code> do VehicleBody3D é exatamente isso: uma força aplicada nas rodas de tração. Mexer nela = sentir o torque.</div>
+        </div>
+
+        <div class="card amber">
+          <h3>Suspensão</h3>
+          <div class="kind">Frente A · manter a roda no chão</div>
+          <p>É um sistema <b>mola–amortecedor</b>. A mola (rigidez <span class="mono">k</span>) resiste à compressão; o amortecedor (<span class="mono">c</span>) dissipa a oscilação. Objetivo: manter as rodas em contato com o terreno e absorver irregularidades. Parâmetros que importam: comprimento de repouso, rigidez, amortecimento (compressão/retorno) e curso.</p>
+          <p>Vale conhecer a suspensão icônica de rover: a <b>rocker-bogie</b> (rovers de Marte) — passiva, mantém todas as rodas no chão sobre obstáculos usando articulações que pivotam, sem molas.</p>
+          <div class="tie">No Godot, o VehicleWheel3D expõe <code>suspension_stiffness</code>, <code>suspension_travel</code>, <code>damping_compression</code> e <code>damping_relaxation</code>. Variar e observar já constrói a intuição.</div>
+        </div>
+
+        <div class="card amber">
+          <h3>Modelagem multicorpos</h3>
+          <div class="kind">Frente B · o coração do seu Tema 1</div>
+          <p>Aqui mora o seu tema. Um veículo é um conjunto de <b>corpos rígidos</b> (chassi, rodas, braços de suspensão) ligados por <b>juntas</b> — revoluta pra roda girar, articulada/prismática pra suspensão. O estado do sistema é posição, orientação e velocidade de cada corpo; as juntas impõem restrições; motores, molas, gravidade e contato aplicam forças; e um <b>integrador temporal</b> avança tudo passo a passo.</p>
+          <div class="tie">O "transformar em sistema complexo" que o professor citou é justamente sair do <b>carrinho arcade</b> (um corpo só + rodas por raycast) pra um <b>modelo multicorpos de verdade</b>. Você <b>implementa</b> dinâmica multicorpos já conhecida — a física avançada do solo é da equipe, não sua.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><span class="num">03</span><h2>Trilha Godot</h2></div>
+      <p class="sec-sub">O objetivo é intuição, não virar especialista. Umas horas resolvem.</p>
+      <div class="cards">
+        <div class="card cyan">
+          <h3>Do zero ao carrinho</h3>
+          <div class="kind">Frente C + D</div>
+          <p><b>1.</b> Instale o <b>Godot 4.7</b> (estável mais recente, de jul/2026). Desde o 4.6 o motor de física 3D padrão é o <b>Jolt</b>, mais estável — só bom saber.</p>
+          <p><b>2.</b> Faça 1–2h de tutorial básico: interface, nós (nodes) e <code>GDScript</code>.</p>
+          <p><b>3.</b> Monte um carro com <code>VehicleBody3D</code> + um <code>VehicleWheel3D</code> por roda, controlado por <code>engine_force</code>, <code>brake</code> e <code>steering</code>.</p>
+          <p><b>4.</b> Use modelos glTF prontos do <b>Kenney Car Kit</b> — glTF é o mesmo formato que você já vai usar pro rover.</p>
+          <div class="tie">Aviso honesto: a própria doc do Godot diz que o VehicleBody3D <b>não é fisicamente realista</b> e tem limitações conhecidas — pra física séria você escreveria a sua sobre RigidBody3D. Mas pro objetivo desta semana (sentir torque, suspensão e powertrain), ele é perfeito.</div>
+          <div class="callout">
+            <span class="lbl">⚠ Nota de escopo</span>
+            No seu plano, o Godot é domínio da <b>Luana</b> e você só integra via API. Estudar Godot e fazer o carrinho <b>não contradiz isso</b> — é um sandbox de aprendizado pra ganhar intuição de dinâmica veicular, não você assumindo a parte gráfica da ExoTerra. Ainda assim, vale <b>confirmar essa fronteira</b> com o professor na reunião.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><span class="num">04</span><h2>Sequência sugerida da semana</h2></div>
+      <p class="sec-sub">Ordem, não datas rígidas — encaixe nos seus horários.</p>
+      <div class="spine">
+        <div class="stop"><div class="code">BLOCO 1 · ~meio dia</div><h3>Instalar Godot + tutorial básico</h3><p>Interface, nós e GDScript. Só pra não travar depois.</p></div>
+        <div class="stop"><div class="code">BLOCO 2</div><h3>Fundamentos: Powertrain &amp; Torque</h3><p>Notas próprias + uma leitura. Entender a cadeia motor→roda.</p></div>
+        <div class="stop"><div class="code">BLOCO 3</div><h3>Fundamentos: Suspensão</h3><p>Mola–amortecedor e a rocker-bogie dos rovers.</p></div>
+        <div class="stop"><div class="code">BLOCO 4 · mão na massa</div><h3>Montar o carrinho no Godot</h3><p>Mexer em <span class="mono">engine_force</span> e nos parâmetros de suspensão e sentir o efeito de cada um.</p></div>
+        <div class="stop"><div class="code">BLOCO 5 · amarrar</div><h3>Da teoria pro Tema 1</h3><p>Escrever como o carro vira um modelo multicorpos (corpos + juntas). Dar uma olhada no módulo de veículos do Chrono.</p></div>
+        <div class="stop"><div class="code">BLOCO 6 · fechar</div><h3>Preparar a entrega da reunião</h3><p>Demo do carrinho + resumo de 1 página + lista de perguntas.</p></div>
+        <div class="stop final"><div class="code">▲ CHEGADA</div><h3>Reunião</h3><p>Você chega com carrinho rodando e vocabulário na ponta da língua.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><span class="num">05</span><h2>Materiais</h2></div>
+
+      <div class="res-group-label">Godot &amp; carrinho</div>
+      <div class="res">
+        <a href="https://docs.godotengine.org/en/stable/classes/class_vehiclebody3d.html" target="_blank" rel="noopener">
+          <span class="rt">Doc oficial — VehicleBody3D<span class="rd">Referência dos parâmetros: engine_force, brake, steering, suspensão.</span></span><span class="rk">DOCS</span></a>
+        <a href="https://kidscancode.org/godot_recipes/4.x/3d/3d_sphere_car/index.html" target="_blank" rel="noopener">
+          <span class="rt">KidsCanCode — carro arcade em Godot 4<span class="rd">Receita passo a passo, ótima pra sentir aceleração e curva rápido.</span></span><span class="rk">TUTORIAL</span></a>
+        <a href="https://github.com/DAShoe1/Godot-Easy-Vehicle-Physics" target="_blank" rel="noopener">
+          <span class="rt">Godot-Easy-Vehicle-Physics (DAShoe1)<span class="rd">Repo com suspensão calculada e tooltips — bom pra estudar parâmetros reais.</span></span><span class="rk">REPO</span></a>
+        <a href="https://kenney.nl/assets/car-kit" target="_blank" rel="noopener">
+          <span class="rt">Kenney — Car Kit (modelos glTF)<span class="rd">Modelos prontos e gratuitos no formato que você já vai usar.</span></span><span class="rk">ASSETS</span></a>
+      </div>
+
+      <div class="res-group-label">Dinâmica veicular (lado teórico)</div>
+      <div class="res">
+        <a href="https://godotengine.org/download/" target="_blank" rel="noopener" style="border-color:transparent;background:transparent;padding:0;pointer-events:none;cursor:default">
+          <span class="rt" style="color:var(--sand)">Gillespie — <i>Fundamentals of Vehicle Dynamics</i> (SAE): clássico introdutório de powertrain, tração e suspensão.<span class="rd">Serban, Taves &amp; Zhou (ref. 11 do projeto) — dinâmica veicular em terreno deformável em tempo real. Schepelmann (ref. 10) — panorama de contato pneu–solo. Ambos já estão na sua bibliografia.</span></span></a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><span class="num">06</span><h2>Pra chegar com bagagem</h2></div>
+      <ul class="checklist">
+        <li>Um <b>carrinho rodando no Godot</b> (mesmo arcade) pra demonstrar na tela.</li>
+        <li>Um <b>resumo de 1 página</b> conectando: conceitos de carro → modelo multicorpos do rover → seu ponto de integração via API (Mês 7 do seu plano).</li>
+        <li>Vocabulário de torque, suspensão e powertrain <b>que você consiga usar</b> numa conversa.</li>
+      </ul>
+
+      <div class="qbox">
+        <h3>Perguntas pra levar pro professor</h3>
+        <ul>
+          <li>A dinâmica veicular vai ser escrita <b>do zero</b> ou apoiada em lib (ex.: Chrono)? Isso muda o peso "programação vs. matemática".</li>
+          <li>Estudar Godot e fazer o carrinho é só pra <b>intuição</b>, ou eu assumo parte da ExoTerra? Vale alinhar a <b>fronteira com a Luana</b>.</li>
+          <li>Qual o <b>nível de fidelidade</b> esperado nessa fase inicial — arcade só pra provar conceito, ou já mirando algo mais realista?</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap"><p>PIBIC · Tema 1 — Dinâmica veicular &amp; integração com solo · LASE/UnB</p></div>
+  </footer>
+
+</body>
+</html>

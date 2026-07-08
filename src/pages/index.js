@@ -144,6 +144,9 @@ export default function Home() {
               to="/docs/notas/dossie-godot">
               Ler o primeiro dossiê →
             </Link>
+            <Link className={styles.btnGhost} to="/docs/roadmaps">
+              Sprints semanais
+            </Link>
             <Link className={styles.btnGhost} to="/docs/intro">
               Ver índice de frentes
             </Link>

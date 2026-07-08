@@ -19,6 +19,12 @@ pesado. As demais frentes abaixo já estão com a estrutura preparada e vão sen
 preenchidas.
 :::
 
+:::tip Planejamento semanal
+Além das frentes, há a seção **[Sprints semanais](/docs/roadmaps)** — roadmaps
+de cada semana com o que produzir e estudar. É o lugar pra acompanhar o plano de
+curto prazo.
+:::
+
 ## As frentes
 
 | Frente | Do que trata | Estado |

@@ -1,0 +1,10 @@
+{
+  "label": "Sprints semanais",
+  "position": 1.5,
+  "link": {
+    "type": "generated-index",
+    "slug": "/roadmaps",
+    "title": "Sprints semanais",
+    "description": "Roadmaps de cada semana — o que produzir e estudar, em ordem sugerida. Cada entrada é o plano de uma semana. Do mais recente ao mais antigo."
+  }
+}

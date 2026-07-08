@@ -1,0 +1,443 @@
+/**
+ * Componentes dos roadmaps semanais ("Sprints semanais").
+ * Portado do HTML "plano de voo" para a estética do site: mesma paleta
+ * (slate/ciano/âmbar) e tipografia (Space Grotesk / Inter / JetBrains Mono).
+ * Escopado sob `.roadmap` para ser reutilizável semana a semana sem colidir
+ * com as classes do Docusaurus.
+ *
+ * Convenção de acento: ciano = identidade do site; âmbar = urgência/prazo
+ * (countdown, linha do tempo). Reaproveita os tokens globais de custom.css.
+ */
+
+.roadmap {
+  --amber-soft: rgba(234, 169, 60, 0.12);
+  --amber-line: rgba(234, 169, 60, 0.34);
+  --cyan-soft: rgba(63, 208, 192, 0.1);
+  --cyan-line: rgba(63, 208, 192, 0.32);
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03), 0 18px 40px -22px rgba(0, 0, 0, 0.9);
+}
+.roadmap .mono {
+  font-family: var(--mono);
+}
+.roadmap code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  color: var(--cyan);
+  background: var(--cyan-soft);
+  border: 1px solid var(--line-soft);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+/* ---------- hero / countdown ---------- */
+.roadmap .rm-hero {
+  position: relative;
+  padding: 8px 0 40px;
+  border-bottom: 1px solid var(--line-soft);
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.roadmap .rm-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 80% at 88% -10%, var(--amber-soft), transparent 60%),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, 0.012) 3px 4px);
+  pointer-events: none;
+}
+.roadmap .rm-hero > * {
+  position: relative;
+}
+.roadmap .countdown {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+.roadmap .countdown .big {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--amber);
+  letter-spacing: 0.08em;
+}
+.roadmap .countdown .sep {
+  color: var(--line);
+}
+.roadmap .countdown .goal {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-dim);
+  letter-spacing: 0.15em;
+}
+.roadmap .rm-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 7vw, 44px);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  margin-bottom: 18px;
+}
+.roadmap .rm-hero h1 .accent {
+  color: var(--cyan);
+}
+.roadmap .lede {
+  font-size: 16px;
+  color: var(--ink-mid);
+  max-width: 62ch;
+}
+.roadmap .lede b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- seções internas ---------- */
+.roadmap .rm-sec {
+  padding: 40px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.roadmap .rm-sec:last-of-type {
+  border-bottom: none;
+}
+.roadmap .sec-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+.roadmap .sec-head .num {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--cyan);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 3px 9px;
+  flex: none;
+}
+.roadmap .sec-head h2 {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 4.5vw, 26px);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.roadmap .sec-sub {
+  color: var(--ink-dim);
+  font-size: 14px;
+  margin: 6px 0 24px;
+}
+
+/* ---------- chips do briefing ---------- */
+.roadmap .chips {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 560px) {
+  .roadmap .chips {
+    grid-template-columns: 1fr;
+  }
+}
+.roadmap .chip {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 15px;
+}
+.roadmap .chip .tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--cyan);
+  text-transform: uppercase;
+}
+.roadmap .chip p {
+  font-size: 13.5px;
+  color: var(--ink-mid);
+  margin: 6px 0 0;
+}
+
+/* ---------- cards de conceito ---------- */
+.roadmap .cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.roadmap .card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px;
+  position: relative;
+  box-shadow: var(--shadow);
+}
+.roadmap .card.amber {
+  border-top: 3px solid var(--amber);
+}
+.roadmap .card.cyan {
+  border-top: 3px solid var(--cyan);
+}
+.roadmap .card h3 {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.roadmap .card .kind {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.roadmap .card p {
+  font-size: 14.5px;
+  color: var(--ink-mid);
+  margin-bottom: 10px;
+}
+.roadmap .card p:last-child {
+  margin-bottom: 0;
+}
+.roadmap .card b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.roadmap .formula {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--amber);
+  background: var(--amber-soft);
+  border: 1px solid var(--amber-line);
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: inline-block;
+  margin: 2px 0 10px;
+}
+.roadmap .tie {
+  font-size: 13px;
+  color: var(--ink-mid);
+  background: var(--surface-2);
+  border-left: 3px solid var(--amber);
+  border-radius: 0 8px 8px 0;
+  padding: 11px 14px;
+  margin-top: 6px;
+}
+.roadmap .card.cyan .formula {
+  color: var(--cyan);
+  background: var(--cyan-soft);
+  border-color: var(--cyan-line);
+}
+.roadmap .card.cyan .tie {
+  border-left-color: var(--cyan);
+}
+
+/* ---------- callout ---------- */
+.roadmap .callout {
+  margin-top: 16px;
+  background: var(--amber-soft);
+  border: 1px dashed var(--amber-line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 13.5px;
+  color: var(--ink-mid);
+}
+.roadmap .callout .lbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--amber);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+}
+.roadmap .callout b {
+  color: var(--ink);
+}
+
+/* ---------- espinha do plano de voo (linha do tempo) ---------- */
+.roadmap .spine {
+  position: relative;
+  padding-left: 34px;
+}
+.roadmap .spine::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 6px;
+  bottom: 26px;
+  width: 2px;
+  background: linear-gradient(var(--amber-line), var(--line));
+}
+.roadmap .stop {
+  position: relative;
+  margin-bottom: 20px;
+}
+.roadmap .stop::before {
+  content: '';
+  position: absolute;
+  left: -30px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--amber);
+  box-shadow: 0 0 0 4px var(--bg);
+}
+.roadmap .stop .code {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--amber);
+}
+.roadmap .stop h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 2px 0 4px;
+}
+.roadmap .stop p {
+  font-size: 13.5px;
+  color: var(--ink-mid);
+  margin: 0;
+}
+.roadmap .stop.final::before {
+  background: var(--amber);
+  border-color: var(--amber);
+}
+.roadmap .stop.final h3 {
+  color: var(--amber);
+}
+
+/* ---------- materiais / recursos ---------- */
+.roadmap .res {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.roadmap .res a {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  text-decoration: none;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 13px 15px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.roadmap .res a:hover,
+.roadmap .res a:focus-visible {
+  border-color: var(--cyan-line);
+  background: var(--surface-2);
+  outline: none;
+}
+.roadmap .res .rt {
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+  flex: 1;
+}
+.roadmap .res .rk {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  flex: none;
+}
+.roadmap .res .rd {
+  font-size: 12.5px;
+  color: var(--ink-dim);
+  display: block;
+  margin-top: 3px;
+  font-weight: 400;
+}
+.roadmap .res-group-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin: 20px 0 10px;
+}
+
+/* ---------- checklist de bagagem ---------- */
+.roadmap .checklist {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 0;
+  margin: 0;
+}
+.roadmap .checklist li {
+  position: relative;
+  padding-left: 30px;
+  font-size: 14.5px;
+  color: var(--ink-mid);
+}
+.roadmap .checklist li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+  border: 2px solid var(--amber-line);
+}
+.roadmap .checklist li b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- caixa de perguntas ---------- */
+.roadmap .qbox {
+  margin-top: 22px;
+  background: var(--surface);
+  border: 1px solid var(--cyan-line);
+  border-radius: 12px;
+  padding: 20px;
+}
+.roadmap .qbox h3 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--cyan);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.roadmap .qbox ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 0;
+  margin: 0;
+}
+.roadmap .qbox li {
+  font-size: 13.5px;
+  color: var(--ink-mid);
+  padding-left: 20px;
+  position: relative;
+}
+.roadmap .qbox li::before {
+  content: '?';
+  position: absolute;
+  left: 0;
+  font-family: var(--mono);
+  color: var(--cyan);
+  font-weight: 600;
+}
+.roadmap .qbox li b {
+  color: var(--ink);
+  font-weight: 600;
+}

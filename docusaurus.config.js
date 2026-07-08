@@ -70,6 +70,7 @@ const config = {
           customCss: [
             './src/css/custom.css',
             './src/css/dossie.css',
+            './src/css/roadmap.css',
           ],
         },
       }),
@@ -120,6 +121,7 @@ const config = {
             position: 'left',
             label: 'Documentação',
           },
+          {to: '/docs/roadmaps', label: 'Sprints semanais', position: 'left'},
           {to: '/blog', label: 'Diário de bordo', position: 'left'},
           {
             href: 'https://github.com/HeitorM50/pibic-docs',
@@ -137,6 +139,10 @@ const config = {
               {
                 label: 'Índice de frentes',
                 to: '/docs/intro',
+              },
+              {
+                label: 'Sprints semanais',
+                to: '/docs/roadmaps',
               },
               {
                 label: 'Estudos & notas',
