@@ -536,3 +536,41 @@
 .dossie .block:last-child {
   border-bottom: none;
 }
+
+/* ---------- screenshots de evidência (figure.shot) ---------- */
+.dossie .shot {
+  margin: 22px 0;
+}
+.dossie .shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.dossie .shot figcaption {
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  text-align: center;
+}
+
+/* par de screenshots lado a lado (ex.: os docks SceneTree) */
+.dossie .shots-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin: 22px 0;
+}
+.dossie .shots-2 .shot {
+  margin: 0;
+}
+@media (max-width: 800px) {
+  .dossie .shots-2 {
+    grid-template-columns: 1fr;
+  }
+}

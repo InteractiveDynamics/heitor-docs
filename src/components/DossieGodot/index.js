@@ -1,5 +1,13 @@
 import React from 'react';
 
+// Screenshots de evidência do sandbox no Godot, co-locadas com o componente.
+// Importadas (não referenciadas por URL) pro webpack resolver baseUrl e hash.
+import carOnWorld from './img/car_on_world.png';
+import arvoreWorld from './img/arvore_world.png';
+import arvoreCar from './img/arvore_car.png';
+import car from './img/car.png';
+import configsRoda from './img/configs_da_roda.png';
+
 /**
  * Dossiê · Sandbox de dinâmica veicular no Godot.
  * Conteúdo portado do HTML original para JSX, usando os componentes-assinatura
@@ -67,6 +75,17 @@ export default function DossieGodot() {
             <dd>40 (padrão)</dd>
           </div>
         </dl>
+
+        <figure className="shot">
+          <img
+            src={carOnWorld}
+            alt="O carro hatchback renderizado sobre o chão do world.tscn no Godot, com iluminação e ambiente."
+          />
+          <figcaption>
+            O resultado rodando: o carro instanciado sobre o mundo, com chão, sol
+            e ambiente — o ponto de chegada deste dossiê.
+          </figcaption>
+        </figure>
       </header>
 
       {/* 1 · ARQUITETURA */}
@@ -147,6 +166,23 @@ export default function DossieGodot() {
             <span className="n-cam">◐ WorldEnvironment</span>
             <span className="tag">céu e iluminação ambiente</span>
           </div>
+        </div>
+
+        <div className="shots-2">
+          <figure className="shot">
+            <img
+              src={arvoreWorld}
+              alt="Dock SceneTree do Godot mostrando a cena world.tscn com o World na raiz, o Car instanciado, o chão, a luz e o WorldEnvironment."
+            />
+            <figcaption>world.tscn — o palco: carro, chão, sol e ambiente.</figcaption>
+          </figure>
+          <figure className="shot">
+            <img
+              src={arvoreCar}
+              alt="Dock SceneTree do Godot mostrando a cena car.tscn com o VehicleBody3D na raiz, o modelo, a colisão, as quatro rodas e a câmera."
+            />
+            <figcaption>car.tscn — o veículo: corpo, colisão, 4 rodas e câmera.</figcaption>
+          </figure>
         </div>
 
         <div className="tree-legend">
@@ -257,6 +293,17 @@ export default function DossieGodot() {
             </div>
           </div>
         </div>
+
+        <figure className="shot">
+          <img
+            src={car}
+            alt="O veículo montado no editor do Godot: carroceria hatchback com as quatro rodas extraídas posicionadas nos cantos do chassi."
+          />
+          <figcaption>
+            O carro montado: carroceria, colisão e as 4 rodas já extraídas e
+            reposicionadas com a escala 0.7 aplicada.
+          </figcaption>
+        </figure>
       </section>
 
       {/* 3 · PARÂMETROS DA RODA */}
@@ -271,6 +318,17 @@ export default function DossieGodot() {
           cada um faz — e, principalmente, o que muda <b>quando diminuo</b> e{' '}
           <b>quando aumento</b>. O valor à direita é o que usei neste sandbox.
         </p>
+
+        <figure className="shot">
+          <img
+            src={configsRoda}
+            alt="Painel Inspector do Godot com os campos de uma VehicleWheel3D: raio, comprimento de repouso, rigidez e amortecimento da suspensão, e aderência."
+          />
+          <figcaption>
+            Os campos da VehicleWheel3D no Inspector — é isso que cada medidor
+            abaixo destrincha.
+          </figcaption>
+        </figure>
 
         <Param
           nome="Raio da roda"
