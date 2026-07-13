@@ -398,6 +398,234 @@
   font-weight: 600;
 }
 
+/* ---------- eyebrow (hero sem countdown) ---------- */
+.roadmap .eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  font-weight: 500;
+  display: block;
+  margin-bottom: 16px;
+}
+
+/* ---------- reframe / virada de chave ---------- */
+.roadmap .flip {
+  background: var(--surface);
+  border: 1px solid var(--amber-line);
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: var(--shadow);
+}
+.roadmap .flip .lbl {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--amber);
+  display: block;
+  margin-bottom: 10px;
+}
+.roadmap .flip p {
+  font-size: 15px;
+  color: var(--ink-mid);
+  margin-bottom: 10px;
+}
+.roadmap .flip p:last-child {
+  margin-bottom: 0;
+}
+.roadmap .flip b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- primeiro movimento (passos numerados) ---------- */
+.roadmap .firstmove {
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--cyan-line);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+.roadmap .firstmove .kick {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 12px;
+}
+.roadmap .firstmove h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.roadmap .steps {
+  list-style: none;
+  counter-reset: s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+}
+.roadmap .steps li {
+  counter-increment: s;
+  position: relative;
+  padding-left: 38px;
+  font-size: 14.5px;
+  color: var(--ink-mid);
+}
+.roadmap .steps li::before {
+  content: counter(s);
+  position: absolute;
+  left: 0;
+  top: -1px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--cyan-soft);
+  border: 1px solid var(--cyan-line);
+  color: var(--cyan);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.roadmap .steps li b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- chip "faça agora" dentro de um stop ---------- */
+.roadmap .stop .doit {
+  display: inline-block;
+  margin-top: 7px;
+  font-size: 12.5px;
+  color: var(--cyan);
+  background: var(--cyan-soft);
+  border: 1px solid var(--cyan-line);
+  border-radius: 6px;
+  padding: 5px 10px;
+}
+
+/* ---------- tabelas de exemplo trabalhado ---------- */
+.roadmap .ex-intro {
+  font-size: 14.5px;
+  color: var(--ink-mid);
+  margin-bottom: 20px;
+}
+.roadmap .ex-intro b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.roadmap .tbl {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.roadmap .tbl .cap {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+.roadmap .tbl.cyan .cap {
+  color: var(--cyan);
+}
+.roadmap .trow {
+  display: flex;
+  gap: 12px;
+  padding: 11px 16px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 13.5px;
+}
+.roadmap .trow:first-of-type {
+  border-top: none;
+}
+.roadmap .trow .a {
+  color: var(--ink);
+  font-weight: 600;
+  flex: none;
+  min-width: 130px;
+}
+.roadmap .trow .b {
+  color: var(--ink-mid);
+}
+.roadmap .trow.seam {
+  background: var(--cyan-soft);
+}
+.roadmap .trow.seam .a {
+  color: var(--cyan);
+}
+@media (max-width: 560px) {
+  .roadmap .trow {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .roadmap .trow .a {
+    min-width: 0;
+  }
+}
+
+/* ---------- entregável da semana ---------- */
+.roadmap .deliver {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--amber);
+  border-radius: 0 12px 12px 0;
+  padding: 20px 22px;
+}
+.roadmap .deliver h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.roadmap .deliver ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+}
+.roadmap .deliver li {
+  font-size: 14px;
+  color: var(--ink-mid);
+  padding-left: 22px;
+  position: relative;
+}
+.roadmap .deliver li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--amber);
+}
+.roadmap .deliver li b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.roadmap .payoff {
+  margin-top: 16px;
+  font-size: 13.5px;
+  color: var(--ink-dim);
+}
+.roadmap .payoff b {
+  color: var(--ink-mid);
+}
+
 /* ---------- caixa de perguntas ---------- */
 .roadmap .qbox {
   margin-top: 22px;

@@ -71,6 +71,7 @@ const config = {
             './src/css/custom.css',
             './src/css/dossie.css',
             './src/css/roadmap.css',
+            './src/css/tecnica.css',
           ],
         },
       }),

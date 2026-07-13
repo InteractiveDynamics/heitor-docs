@@ -12,11 +12,12 @@ cresce com o tempo — desde as explorações iniciais pra ganhar intuição at�
 documentação técnica densa do modelo de verdade.
 
 :::info Estado do projeto
-A primeira entrada publicada é uma **nota de aprendizado**: o
-[dossiê do sandbox no Godot](/docs/notas/dossie-godot). É deliberadamente
-introdutório — um _arcade car_ pra pegar intuição, ainda **não** o trabalho
-pesado. As demais frentes abaixo já estão com a estrutura preparada e vão sendo
-preenchidas.
+Começou com uma **nota de aprendizado** — o
+[dossiê do sandbox no Godot](/docs/notas/dossie-godot), um _arcade car_ pra
+pegar intuição — e já avançou pros **fundamentos**:
+[powertrain e torque](/docs/powertrain/visao-geral) e
+[suspensão](/docs/suspensao/visao-geral). As demais frentes abaixo já estão com
+a estrutura preparada e vão sendo preenchidas.
 :::
 
 :::tip Planejamento semanal
@@ -31,8 +32,8 @@ curto prazo.
 | --- | --- | --- |
 | **[Estudos & notas](/docs/notas/dossie-godot)** | Explorações e notas de aprendizado avulsas (como o dossiê do Godot). | 🟢 Ativa |
 | **Dinâmica multicorpo (C++)** | Corpos rígidos, articulações, o salto do arcade car pro modelo rigoroso. | 🟡 Planejada |
-| **Powertrain e tração** | Motor → transmissão → roda → força de tração via torque. | 🟡 Planejada |
-| **Suspensão** | Modelo mola-amortecedor; rocker-bogie pra rovers. | 🟡 Planejada |
+| **[Powertrain e tração](/docs/powertrain/visao-geral)** | Motor → transmissão → roda → força de tração via torque. | 🟢 Ativa |
+| **[Suspensão](/docs/suspensao/visao-geral)** | Modelo mola-amortecedor; rocker-bogie pra rovers. | 🟢 Ativa |
 | **Contrato de API** | Interface entre o modelo veicular e a camada ExoPhysics/plataforma. | 🟡 Planejada |
 | **Integração roda–solo** | Simulação acoplada veículo–solo deformável. | 🟡 Planejada |
 | **Validação comparativa** | Comparação com Chrono, SCM e métricas. | 🟡 Planejada |

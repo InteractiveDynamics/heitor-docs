@@ -25,13 +25,13 @@ const FRENTES = [
   {
     titulo: 'Powertrain e tração',
     desc: 'Motor → transmissão → roda → força de tração via torque.',
-    status: 'planejada',
+    status: 'ativa',
     to: '/docs/powertrain/visao-geral',
   },
   {
     titulo: 'Suspensão',
     desc: 'Modelo mola-amortecedor e configuração rocker-bogie pra rovers.',
-    status: 'planejada',
+    status: 'ativa',
     to: '/docs/suspensao/visao-geral',
   },
   {
@@ -66,7 +66,7 @@ function Telemetry() {
           frentes · <b>7 mapeadas</b>
         </span>
         <span>
-          publicadas · <b>1</b>
+          publicadas · <b>3</b>
         </span>
         <span>
           foco · <b>dinâmica veicular</b>
@@ -131,12 +131,11 @@ export default function Home() {
             <span className={styles.accent}>frentes de trabalho</span>.
           </h1>
           <p className={styles.lede}>
-            Este é o ponto de partida. A <strong>primeira</strong> documentação
-            publicada é uma exploração introdutória — um sandbox de carro no
-            Godot pra ganhar intuição. É a <strong>primeira de muitas</strong>:
-            à medida que cada frente avança, do modelo multicorpo em C++ à
-            validação contra o Chrono, a documentação correspondente aparece
-            aqui.
+            Este é o ponto de partida. Começou com um sandbox de carro no Godot
+            pra ganhar intuição e já cresceu pros <strong>fundamentos</strong> —
+            powertrain, torque e suspensão. À medida que cada frente avança, do
+            modelo multicorpo em C++ à validação contra o Chrono, a documentação
+            correspondente aparece aqui.
           </p>
           <div className={styles.actions}>
             <Link

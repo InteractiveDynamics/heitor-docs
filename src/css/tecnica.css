@@ -1,0 +1,276 @@
+/**
+ * Primitivas visuais das docs técnicas de dinâmica veicular (powertrain,
+ * suspensão). Complementam a "assinatura" do dossiê (dossie.css): as docs
+ * renderizam em `<div className="dossie tecnica">`, então reaproveitam
+ * telemetry-strip / hero-block / param / meter / effects / formula do dossiê e
+ * ganham aqui as peças específicas destas docs. Escopado sob `.tecnica`.
+ *
+ * Convenção de acento herdada do site: ciano = fluxo/identidade;
+ * âmbar = força/energia; coral = limite/perda.
+ */
+
+.tecnica {
+  --amber-soft: rgba(234, 169, 60, 0.12);
+  --amber-line: rgba(234, 169, 60, 0.34);
+  --cyan-soft: rgba(63, 208, 192, 0.1);
+  --cyan-line: rgba(63, 208, 192, 0.32);
+  --coral-soft: rgba(232, 99, 91, 0.12);
+}
+
+/* ---------- figura genérica (SVG + legenda) ---------- */
+.tecnica .fig {
+  margin: 24px 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px 26px;
+  box-shadow: var(--shadow);
+}
+.tecnica .fig svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.tecnica .fig figcaption,
+.tecnica .fig .cap {
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--ink-dim);
+  text-align: center;
+}
+.tecnica .fig .cap b {
+  color: var(--ink-mid);
+  font-weight: 600;
+}
+
+/* ---------- cadeia de fluxo (powertrain: motor → roda) ---------- */
+.tecnica .chain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: var(--shadow);
+}
+.tecnica .cnode {
+  flex: 1 1 120px;
+  min-width: 120px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--cyan);
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+}
+.tecnica .cnode .ic {
+  font-size: 22px;
+  line-height: 1;
+  display: block;
+  margin-bottom: 8px;
+}
+.tecnica .cnode .nm {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink);
+  display: block;
+  margin-bottom: 4px;
+}
+.tecnica .cnode .role {
+  font-size: 0.76rem;
+  color: var(--ink-dim);
+  line-height: 1.4;
+  display: block;
+}
+.tecnica .cnode.src {
+  border-top-color: var(--amber);
+}
+.tecnica .cnode.out {
+  border-top-color: var(--green);
+}
+.tecnica .carrow {
+  align-self: center;
+  color: var(--cyan);
+  font-size: 18px;
+  font-weight: 700;
+  flex: none;
+}
+@media (max-width: 640px) {
+  .tecnica .chain {
+    flex-direction: column;
+  }
+  .tecnica .carrow {
+    transform: rotate(90deg);
+    align-self: center;
+  }
+}
+
+/* ---------- régua de frequências ---------- */
+.tecnica .ruler {
+  margin: 26px 0 40px;
+}
+.tecnica .ruler .track {
+  position: relative;
+  height: 8px;
+  border-radius: 5px;
+  background: linear-gradient(
+    90deg,
+    var(--cyan) 0%,
+    var(--green) 22%,
+    var(--amber) 48%,
+    var(--coral) 100%
+  );
+}
+.tecnica .ruler .tick {
+  position: absolute;
+  top: -6px;
+  width: 2px;
+  height: 20px;
+  background: var(--ink);
+  transform: translateX(-50%);
+}
+.tecnica .ruler .lab {
+  position: absolute;
+  top: 20px;
+  transform: translateX(-50%);
+  text-align: center;
+  width: 130px;
+}
+.tecnica .ruler .lab .hz {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  font-weight: 600;
+  display: block;
+}
+.tecnica .ruler .lab .who {
+  font-size: 11px;
+  color: var(--ink-dim);
+  display: block;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+.tecnica .ruler-scale {
+  position: relative;
+  height: 96px;
+  margin-top: 4px;
+}
+
+/* ---------- barras comparativas ---------- */
+.tecnica .bars {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: var(--shadow);
+}
+.tecnica .bar {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  align-items: center;
+  gap: 14px;
+}
+.tecnica .bar .k {
+  font-size: 0.86rem;
+  color: var(--ink-mid);
+}
+.tecnica .bar .k b {
+  color: var(--ink);
+  font-weight: 600;
+  display: block;
+  font-size: 0.9rem;
+}
+.tecnica .bar .track {
+  height: 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--line-soft);
+  border-radius: 7px;
+  overflow: hidden;
+}
+.tecnica .bar .fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan-deep), var(--cyan));
+  border-radius: 7px;
+}
+.tecnica .bar.warn .fill {
+  background: linear-gradient(90deg, #a8792a, var(--amber));
+}
+.tecnica .bar .v {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--ink-mid);
+  white-space: nowrap;
+}
+@media (max-width: 560px) {
+  .tecnica .bar {
+    grid-template-columns: 1fr auto;
+  }
+  .tecnica .bar .track {
+    grid-column: 1 / -1;
+    order: 3;
+  }
+}
+
+/* ---------- par de cartões (dois trabalhos, gasolina×diesel...) ---------- */
+.tecnica .duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 640px) {
+  .tecnica .duo {
+    grid-template-columns: 1fr;
+  }
+}
+.tecnica .facet {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: var(--shadow);
+}
+.tecnica .facet .tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  display: block;
+  margin-bottom: 8px;
+}
+.tecnica .facet.amber .tag {
+  color: var(--amber);
+}
+.tecnica .facet h4 {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.tecnica .facet p {
+  font-size: 0.94rem;
+  color: var(--ink-mid);
+  margin: 0;
+}
+.tecnica .facet p + p {
+  margin-top: 10px;
+}
+.tecnica .facet b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- destaque de número/limite ---------- */
+.tecnica .stat {
+  font-family: var(--mono);
+  color: var(--amber);
+  font-weight: 600;
+}
