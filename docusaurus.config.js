@@ -19,13 +19,13 @@ const config = {
   },
 
   // URL de produção do site (GitHub Pages)
-  url: 'https://heitorm50.github.io',
+  url: 'https://interactivedynamics.github.io',
   // baseUrl = '/<nome-do-repo>/' para GitHub Pages de projeto
-  baseUrl: '/pibic-docs/',
+  baseUrl: '/heitor-docs/',
 
   // Configuração de deploy no GitHub Pages.
-  organizationName: 'HeitorM50', // usuário/org do GitHub
-  projectName: 'pibic-docs', // nome do repositório
+  organizationName: 'InteractiveDynamics', // usuário/org do GitHub
+  projectName: 'heitor-docs', // nome do repositório
   deploymentBranch: 'gh-pages',
 
   onBrokenLinks: 'throw',
