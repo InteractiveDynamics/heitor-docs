@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano da semana — base de Godot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#13161b; --panel:#1c222a; --panel2:#232a33; --line:#2e3742;
+    --sand:#c7bfaf; --sand-bright:#ece7dc; --muted:#8a8578;
+    --amber:#f0a73c; --amber-soft:rgba(240,167,60,.13); --amber-line:rgba(240,167,60,.35);
+    --cyan:#58c4d2; --cyan-soft:rgba(88,196,210,.11); --cyan-line:rgba(88,196,210,.32);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--void);color:var(--sand);font-family:"IBM Plex Sans",sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;padding:0 0 56px}
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px}
+  h1,h2,h3{font-family:"Chakra Petch",sans-serif;color:var(--sand-bright);line-height:1.15}
+  code{font-family:"IBM Plex Mono",monospace;font-size:.88em;color:var(--cyan);background:rgba(88,196,210,.1);padding:1px 5px;border-radius:4px}
+
+  .hero{position:relative;padding:52px 0 34px;border-bottom:1px solid var(--line);overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 88% -10%, var(--amber-soft), transparent 60%);pointer-events:none}
+  .hero .wrap{position:relative}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);font-weight:500;display:block;margin-bottom:16px}
+  h1{font-size:clamp(26px,6.5vw,40px);font-weight:700;margin-bottom:16px}
+  .lede{font-size:16px;color:var(--sand);max-width:60ch}
+  .lede b{color:var(--sand-bright);font-weight:600}
+
+  .tasks{padding:34px 0 0;display:flex;flex-direction:column;gap:18px}
+  .task{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;border-left:3px solid var(--amber)}
+  .task .top{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+  .task .n{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--amber);font-weight:600;flex:none}
+  .task h3{font-size:19px;font-weight:600}
+  .task .what{font-size:14.5px;color:var(--sand);margin-bottom:14px}
+  .task .what b{color:var(--sand-bright);font-weight:600}
+  .how{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+  .how li{font-size:14px;color:var(--sand);padding-left:20px;position:relative}
+  .how li::before{content:"›";position:absolute;left:0;color:var(--muted);font-family:"IBM Plex Mono",monospace}
+  .how li b{color:var(--sand-bright);font-weight:600}
+
+  .links{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:14px}
+  .links a{display:flex;align-items:baseline;gap:10px;text-decoration:none;font-size:13.5px;color:var(--sand-bright);transition:color .15s}
+  .links a:hover{color:var(--amber)}
+  .links a .rk{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:2px 6px;flex:none}
+
+  .tie{margin-top:28px;background:var(--panel);border:1px solid var(--cyan-line);border-radius:14px;padding:20px 22px}
+  .tie .lbl{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);display:block;margin-bottom:10px}
+  .tie p{font-size:14.5px;color:var(--sand)}
+  .tie p b{color:var(--sand-bright);font-weight:600}
+
+  .note{margin-top:22px;font-size:13.5px;color:var(--muted);text-align:center}
+
+  footer{padding-top:30px;text-align:center}
+  footer p{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.1em}
+
+  @media (max-width:560px){.task{padding:18px}}
+  @media (prefers-reduced-motion:no-preference){
+    .task,.tie{animation:rise .5s ease both}
+    @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  }
+</style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="eyebrow">Semana 2 · versão enxuta</span>
+      <h1>O plano da semana</h1>
+      <p class="lede">Esquece o rover e o multicorpos por enquanto — aquilo vem lá na frente. Esta semana é <b>base de Godot</b>, do jeito que o professor pediu: <b>assistir o material</b>, <b>criar o repositório</b> e <b>conhecer a linguagem do Godot</b> e como ela usa outras linguagens. Três coisas, sem pressa.</p>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="tasks">
+
+      <div class="task">
+        <div class="top"><span class="n">01</span><h3>Assistir o material</h3></div>
+        <p class="what">Ver os vídeos que o professor mandou <b>e</b> pegar a base do Godot. Dica que muda tudo: <b>faça junto no editor</b> enquanto assiste — não só assista de braços cruzados.</p>
+        <ul class="how">
+          <li>Assista na ordem, pausando pra reproduzir cada passo no Godot aberto do lado.</li>
+          <li>Se travar num ponto, anota a dúvida em vez de parar tudo — segue e volta depois.</li>
+        </ul>
+        <div class="links">
+          <a href="https://youtu.be/CdPYlj5uZeI" target="_blank" rel="noopener"><span class="rk">vídeo</span>Vídeo indicado pelo professor</a>
+          <a href="https://youtu.be/MrIAw980iYg" target="_blank" rel="noopener"><span class="rk">vídeo</span>Vídeo indicado pelo professor</a>
+          <a href="https://www.youtube.com/playlist?list=PLiRELyH-yJivTRnpjr0nHeGWncLiMmD2D" target="_blank" rel="noopener"><span class="rk">playlist</span>Playlist indicada pelo professor</a>
+          <a href="https://vehiclephysics.com" target="_blank" rel="noopener"><span class="rk">docs</span>Vehicle Physics Pro — referência de dinâmica veicular (motor, câmbio, suspensão, tração)</a>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="top"><span class="n">02</span><h3>Criar o repositório</h3></div>
+        <p class="what">Colocar o projeto no <b>GitHub</b>. Além de organizar, é a base do futuro <b>site de documentação</b> (GitHub Pages) que você planeja.</p>
+        <ul class="how">
+          <li>Cria o repo no GitHub (pode ser privado no começo) e escreve um <b>README</b> curto: o que é o projeto e qual é a sua frente.</li>
+          <li>Na criação, escolhe o template de <code>.gitignore</code> chamado <b>"Godot"</b> — ele já ignora a pasta <code>.godot/</code> e afins.</li>
+          <li>Faz o <b>primeiro commit</b> com o projeto do carrinho que você já montou.</li>
+        </ul>
+      </div>
+
+      <div class="task">
+        <div class="top"><span class="n">03</span><h3>A linguagem do Godot (e as outras)</h3></div>
+        <p class="what">Entender o <b>GDScript</b> — a linguagem nativa — e como o Godot deixa você usar <b>outras linguagens</b>. Esse item conecta direto com o seu tema (veja o box abaixo).</p>
+        <ul class="how">
+          <li><b>GDScript:</b> parecida com Python, feita pra viver dentro do editor. É por onde começar.</li>
+          <li>As duas que te interessam: <b>GDScript</b> e <b>C++ (via GDExtension)</b>.</li>
+          <li>Faça o "Learn GDScript From Zero" (interativo e gratuito) e dá uma lida na página "Other languages" da doc oficial.</li>
+        </ul>
+        <div class="links">
+          <a href="https://www.gdquest.com/" target="_blank" rel="noopener"><span class="rk">curso</span>GDQuest — "Learn GDScript From Zero" (interativo, grátis)</a>
+          <a href="https://docs.godotengine.org/en/stable/tutorials/scripting/other_languages.html" target="_blank" rel="noopener"><span class="rk">doc</span>Godot — "Other languages" (GDScript, C#, C++)</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="tie">
+      <span class="lbl">◈ Por que o item 03 não é aleatório</span>
+      <p>O <b>GDExtension</b> — o mecanismo que carrega código C++ nativo dentro do Godot — é <b>exatamente</b> como a <b>ExoPhysics</b> (que é C++) vai se plugar na ExoTerra. Ou seja: entender "como o Godot usa outras linguagens" é entender a <b>fundação técnica da integração do seu Tema 1</b>. Não precisa dominar agora — só reconhecer o conceito já te deixa à frente.</p>
+    </div>
+
+    <p class="note">Sem rover, sem juntas, sem tabelas. Só três tarefas tranquilas pra fechar a semana.</p>
+  </div>
+
+  <footer>
+    <div class="wrap"><p>PIBIC · Tema 1 · Semana 2 — base de Godot</p></div>
+  </footer>
+
+</body>
+</html>

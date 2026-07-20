@@ -24,7 +24,7 @@ export default function RoadmapReuniao() {
           <b>como isso vira modelagem de sistemas complexos</b>,{' '}
           <b>estudar Godot</b> e <b>fazer um carrinho simples</b> pra pegar noção
           de torque, suspensão e powertrain. Abaixo, isso traduzido num roteiro
-          pra você chegar com bagagem.
+          pra eu chegar com bagagem.
         </p>
       </header>
 
@@ -91,7 +91,7 @@ export default function RoadmapReuniao() {
             <p>
               Num <b>rover</b> normalmente são motores elétricos (às vezes um por
               roda), sem a complexidade de câmbio de um carro a combustão — o que
-              simplifica bastante seu caso.
+              simplifica bastante o meu caso.
             </p>
             <div className="tie">
               No Godot, a propriedade <code>engine_force</code> do VehicleBody3D é
@@ -127,9 +127,9 @@ export default function RoadmapReuniao() {
 
           <div className="card amber">
             <h3>Modelagem multicorpos</h3>
-            <div className="kind">Frente B · o coração do seu Tema 1</div>
+            <div className="kind">Frente B · o coração do meu Tema 1</div>
             <p>
-              Aqui mora o seu tema. Um veículo é um conjunto de{' '}
+              Aqui mora o meu tema. Um veículo é um conjunto de{' '}
               <b>corpos rígidos</b> (chassi, rodas, braços de suspensão) ligados
               por <b>juntas</b> — revoluta pra roda girar, articulada/prismática
               pra suspensão. O estado do sistema é posição, orientação e
@@ -140,9 +140,9 @@ export default function RoadmapReuniao() {
             <div className="tie">
               O "transformar em sistema complexo" que o professor citou é
               justamente sair do <b>carrinho arcade</b> (um corpo só + rodas por
-              raycast) pra um <b>modelo multicorpos de verdade</b>. Você{' '}
-              <b>implementa</b> dinâmica multicorpos já conhecida — a física
-              avançada do solo é da equipe, não sua.
+              raycast) pra um <b>modelo multicorpos de verdade</b>. Eu{' '}
+              <b>implemento</b> dinâmica multicorpos já conhecida — a física
+              avançada do solo é da equipe, não minha.
             </div>
           </div>
         </div>
@@ -162,37 +162,37 @@ export default function RoadmapReuniao() {
             <h3>Do zero ao carrinho</h3>
             <div className="kind">Frente C + D</div>
             <p>
-              <b>1.</b> Instale o <b>Godot 4.7</b> (estável mais recente, de
+              <b>1.</b> Instalar o <b>Godot 4.7</b> (estável mais recente, de
               jul/2026). Desde o 4.6 o motor de física 3D padrão é o{' '}
               <b>Jolt</b>, mais estável — só bom saber.
             </p>
             <p>
-              <b>2.</b> Faça 1–2h de tutorial básico: interface, nós (nodes) e{' '}
+              <b>2.</b> Fazer 1–2h de tutorial básico: interface, nós (nodes) e{' '}
               <code>GDScript</code>.
             </p>
             <p>
-              <b>3.</b> Monte um carro com <code>VehicleBody3D</code> + um{' '}
+              <b>3.</b> Montar um carro com <code>VehicleBody3D</code> + um{' '}
               <code>VehicleWheel3D</code> por roda, controlado por{' '}
               <code>engine_force</code>, <code>brake</code> e{' '}
               <code>steering</code>.
             </p>
             <p>
-              <b>4.</b> Use modelos glTF prontos do <b>Kenney Car Kit</b> — glTF
-              é o mesmo formato que você já vai usar pro rover.
+              <b>4.</b> Usar modelos glTF prontos do <b>Kenney Car Kit</b> — glTF
+              é o mesmo formato que eu já vou usar pro rover.
             </p>
             <div className="tie">
               Aviso honesto: a própria doc do Godot diz que o VehicleBody3D{' '}
               <b>não é fisicamente realista</b> e tem limitações conhecidas — pra
-              física séria você escreveria a sua sobre RigidBody3D. Mas pro
+              física séria eu escreveria a minha sobre RigidBody3D. Mas pro
               objetivo desta semana (sentir torque, suspensão e powertrain), ele é
               perfeito.
             </div>
             <div className="callout">
               <span className="lbl">⚠ Nota de escopo</span>
-              No seu plano, o Godot é domínio da <b>Luana</b> e você só integra
+              No meu plano, o Godot é domínio da <b>Luana</b> e eu só integro
               via API. Estudar Godot e fazer o carrinho{' '}
               <b>não contradiz isso</b> — é um sandbox de aprendizado pra ganhar
-              intuição de dinâmica veicular, não você assumindo a parte gráfica da
+              intuição de dinâmica veicular, não eu assumindo a parte gráfica da
               ExoTerra. Ainda assim, vale <b>confirmar essa fronteira</b> com o
               professor na reunião.
             </div>
@@ -206,7 +206,7 @@ export default function RoadmapReuniao() {
           <span className="num">04</span>
           <h2>Sequência sugerida da semana</h2>
         </div>
-        <p className="sec-sub">Ordem, não datas rígidas — encaixe nos seus horários.</p>
+        <p className="sec-sub">Ordem, não datas rígidas — encaixo nos meus horários.</p>
         <div className="spine">
           <div className="stop">
             <div className="code">BLOCO 1 · ~meio dia</div>
@@ -248,7 +248,7 @@ export default function RoadmapReuniao() {
             <div className="code">▲ CHEGADA</div>
             <h3>Reunião</h3>
             <p>
-              Você chega com carrinho rodando e vocabulário na ponta da língua.
+              Chego com carrinho rodando e vocabulário na ponta da língua.
             </p>
           </div>
         </div>
@@ -309,7 +309,7 @@ export default function RoadmapReuniao() {
             <span className="rt">
               Kenney — Car Kit (modelos glTF)
               <span className="rd">
-                Modelos prontos e gratuitos no formato que você já vai usar.
+                Modelos prontos e gratuitos no formato que eu já vou usar.
               </span>
             </span>
             <span className="rk">ASSETS</span>
@@ -326,7 +326,7 @@ export default function RoadmapReuniao() {
             <span className="rd">
               Serban, Taves &amp; Zhou (ref. 11 do projeto) — dinâmica veicular
               em terreno deformável em tempo real. Schepelmann (ref. 10) —
-              panorama de contato pneu–solo. Ambos já estão na sua bibliografia.
+              panorama de contato pneu–solo. Ambos já estão na minha bibliografia.
             </span>
           </div>
         </div>
@@ -345,12 +345,12 @@ export default function RoadmapReuniao() {
           </li>
           <li>
             Um <b>resumo de 1 página</b> conectando: conceitos de carro → modelo
-            multicorpos do rover → seu ponto de integração via API (Mês 7 do seu
+            multicorpos do rover → meu ponto de integração via API (Mês 7 do meu
             plano).
           </li>
           <li>
             Vocabulário de torque, suspensão e powertrain{' '}
-            <b>que você consiga usar</b> numa conversa.
+            <b>que eu consiga usar</b> numa conversa.
           </li>
         </ul>
 
