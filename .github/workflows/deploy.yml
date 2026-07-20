@@ -33,17 +33,20 @@ jobs:
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: gh-pages/package-lock.json
 
       - name: Instalar dependências
         run: npm ci
+        working-directory: gh-pages
 
       - name: Build
         run: npm run build
+        working-directory: gh-pages
 
       - name: Upload do artefato
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build
+          path: gh-pages/build
 
   deploy:
     name: Deploy
