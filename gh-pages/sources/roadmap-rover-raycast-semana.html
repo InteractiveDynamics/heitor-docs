@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semana 20–27 jul · Rover v0 em raycast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#13161b; --panel:#1c222a; --panel2:#232a33; --line:#2e3742;
+    --sand:#c7bfaf; --sand-bright:#ece7dc; --muted:#8a8578;
+    --amber:#f0a73c; --amber-soft:rgba(240,167,60,.13); --amber-line:rgba(240,167,60,.35);
+    --cyan:#58c4d2; --cyan-soft:rgba(88,196,210,.11); --cyan-line:rgba(88,196,210,.32);
+    --green:#8fca7a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--void);color:var(--sand);font-family:"IBM Plex Sans",sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;padding:0 0 56px}
+  .wrap{max-width:800px;margin:0 auto;padding:0 20px}
+  .mono{font-family:"IBM Plex Mono",monospace}
+  h1,h2,h3{font-family:"Chakra Petch",sans-serif;color:var(--sand-bright);line-height:1.15}
+  code{font-family:"IBM Plex Mono",monospace;font-size:.86em;color:var(--cyan);background:rgba(88,196,210,.1);padding:1px 5px;border-radius:4px}
+
+  .hero{position:relative;padding:52px 0 34px;border-bottom:1px solid var(--line);overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 88% -10%, var(--amber-soft), transparent 60%);pointer-events:none}
+  .hero .wrap{position:relative}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);font-weight:500;display:block;margin-bottom:16px}
+  h1{font-size:clamp(26px,6.5vw,40px);font-weight:700;margin-bottom:16px}
+  h1 .accent{color:var(--amber)}
+  .lede{font-size:16px;color:var(--sand);max-width:62ch}
+  .lede b{color:var(--sand-bright);font-weight:600}
+  .lede .teal{color:var(--cyan);font-weight:600}
+
+  section{padding:40px 0;border-bottom:1px solid var(--line)}
+  .sec-head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .sec-head .num{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--amber);border:1px solid var(--amber-line);border-radius:4px;padding:3px 8px;flex:none}
+  .sec-head h2{font-size:clamp(19px,4.4vw,25px);font-weight:600}
+  .sec-sub{color:var(--muted);font-size:14px;margin:0 0 22px;padding-left:2px}
+
+  /* deliverables strip */
+  .deliv{display:flex;flex-direction:column;gap:10px}
+  .drow{display:flex;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .drow .dn{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--amber);font-weight:600;flex:none}
+  .drow .dt{font-size:14px;color:var(--sand)}
+  .drow .dt b{color:var(--sand-bright);font-weight:600}
+
+  /* spine */
+  .spine{position:relative;padding-left:36px}
+  .spine::before{content:"";position:absolute;left:9px;top:6px;bottom:14px;width:2px;background:linear-gradient(var(--amber-line),var(--line))}
+  .stop{position:relative;margin-bottom:22px}
+  .stop::before{content:"";position:absolute;left:-32px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--void);border:2px solid var(--amber);box-shadow:0 0 0 4px var(--void)}
+  .stop.seam::before{border-color:var(--cyan)}
+  .stop .code{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--amber)}
+  .stop.seam .code{color:var(--cyan)}
+  .stop h3{font-size:16.5px;font-weight:600;margin:3px 0 5px}
+  .stop p{font-size:13.8px;color:var(--sand)}
+  .stop p b{color:var(--sand-bright);font-weight:600}
+  .stop .doit{display:inline-block;margin-top:8px;font-size:12.5px;color:var(--cyan);background:var(--cyan-soft);border:1px solid var(--cyan-line);border-radius:6px;padding:5px 10px;text-decoration:none}
+  .stop .doit:hover{border-color:var(--cyan)}
+  .stop.final::before{background:var(--amber);border-color:var(--amber)}
+  .stop.final h3{color:var(--amber)}
+
+  /* contract section */
+  .rule{background:var(--panel);border:1px solid var(--cyan-line);border-radius:14px;padding:22px 24px}
+  .rule .lbl{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);display:block;margin-bottom:12px}
+  .rule p{font-size:14.5px;color:var(--sand);margin-bottom:12px}
+  .rule p:last-child{margin-bottom:0}
+  .rule b{color:var(--sand-bright);font-weight:600}
+  .code-block{background:var(--void);border:1px solid var(--line);border-radius:10px;margin:16px 0;overflow:hidden}
+  .fname{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--cyan);background:var(--panel2);padding:9px 14px;border-bottom:1px solid var(--line);letter-spacing:.04em}
+  pre{margin:0;padding:16px;overflow-x:auto}
+  pre code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.7;color:var(--sand-bright);background:none;padding:0;white-space:pre}
+  .cm{color:var(--muted)}
+  .cm-hot{color:var(--cyan)}
+  .kw{color:var(--amber)}
+
+  /* mapping */
+  .map{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .map .mrow{display:flex;gap:0;border-top:1px solid var(--line);font-size:13.5px}
+  .map .mrow:first-child{border-top:none;background:var(--panel2)}
+  .map .mrow > div{padding:11px 15px}
+  .map .mc1{flex:1;color:var(--sand-bright);font-weight:600;border-right:1px solid var(--line)}
+  .map .mc2{flex:1.3;color:var(--sand)}
+  .map .mrow:first-child .mc1,.map .mrow:first-child .mc2{color:var(--amber);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:500}
+  .map-note{font-size:13.5px;color:var(--muted);margin-top:14px}
+  .map-note b{color:var(--sand)}
+
+  /* closing */
+  .done{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:0 12px 12px 0;padding:20px 22px}
+  .done h3{font-size:16px;font-weight:600;margin-bottom:14px}
+  .done ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+  .done li{font-size:14px;color:var(--sand);padding-left:26px;position:relative}
+  .done li::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:700}
+  .done li b{color:var(--sand-bright);font-weight:600}
+  .done li.q::before{content:"?";color:var(--cyan)}
+  .done li.q{color:var(--sand);margin-top:4px}
+
+  footer{padding-top:30px;text-align:center}
+  footer p{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.1em}
+
+  @media (max-width:560px){
+    .rule{padding:18px}
+    .map .mrow{flex-direction:column}
+    .map .mc1{border-right:none;border-bottom:1px solid var(--line)}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .stop,.drow,.rule{animation:rise .5s ease both}
+    @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  }
+</style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="eyebrow">Semana · 20 – 27 jul</span>
+      <h1>Rover v0 em <span class="accent">raycast</span>, do zero</h1>
+      <p class="lede">Refazer o protótipo por raycast, tratando a <span class="teal">caixa teal do diagrama</span> — o contato com o solo — como <b>requisito de projeto, não consequência</b>. Ou seja: você constrói o <b>contrato</b> primeiro e o carro em volta dele. Três entregáveis, na ordem.</p>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><span class="num">▤</span><h2>Os três entregáveis</h2></div>
+      <div class="deliv">
+        <div class="drow"><span class="dn">01</span><span class="dt"><b>Repo + rover v0 em raycast.</b> Um <code>RigidBody3D</code> com quatro <code>RayCast3D</code> nos cantos — sem <code>VehicleBody3D</code>, sem <code>VehicleWheel3D</code>. Cada roda calcula três forças e aplica com <code>apply_force</code> no ponto de contato. A meta não é um carro bonito andando: é <b>cada força nomeada e isolada</b>.</span></div>
+        <div class="drow"><span class="dn">02</span><span class="dt"><b>Uma regra de arquitetura, desde o commit 1.</b> Nenhum raycast fora de <code>ground_contact.gd</code>. O resto do veículo só enxerga <b>uma função</b> — então trocar pela ExoPhysics depois não toca em mais nada.</span></div>
+        <div class="drow"><span class="dn">03</span><span class="dt"><b>Uma página de doc ligando ao Bloco 5.</b> O modelo raycast não tem junta nenhuma — resolve por <b>força de penalidade</b>. Escrever esse mapeamento explicitamente é o que gera a pergunta pro professor.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><span class="num">◷</span><h2>A semana, dia a dia</h2></div>
+      <p class="sec-sub">Ritmo calmo: fazer o carro <b>parar em pé</b>, depois <b>andar</b>, depois <b>virar</b> — uma força por vez.</p>
+      <div class="spine">
+
+        <div class="stop seam">
+          <div class="code">SEG 20 · fundação</div>
+          <h3>Repo, regra e esqueleto</h3>
+          <p>Prepara o repo. Cria o <code>ground_contact.gd</code> e cola o contrato em C++ como comentário já no <b>commit 1</b> (seção abaixo). Monta o <code>RigidBody3D</code> + 4 <code>RayCast3D</code> nos cantos. A regra "raycast só aqui" nasce hoje e vale a semana inteira.</p>
+        </div>
+
+        <div class="stop">
+          <div class="code">TER 21 · força 1</div>
+          <h3>Mola–amortecedor (ao longo da normal)</h3>
+          <p>A suspensão. Com ela o carro <b>senta e para em pé</b> sobre os quatro raios. É a força mais densa — vale caprichar aqui.</p>
+          <a class="doit" href="https://www.youtube.com/watch?v=9MqmFSn1Rlw" target="_blank" rel="noopener">→ Octodemy · Parte 1 (Suspensions)</a>
+        </div>
+
+        <div class="stop">
+          <div class="code">QUA 22 · força 2</div>
+          <h3>Longitudinal (tração / frenagem)</h3>
+          <p>Agora o carro <b>anda</b> pra frente e pra trás. Força aplicada no ponto de contato, na direção de rolagem da roda.</p>
+        </div>
+
+        <div class="stop">
+          <div class="code">QUI 23 · força 3</div>
+          <h3>Atrito lateral (o grip)</h3>
+          <p>O que impede a derrapagem. Com ela o carro <b>vira</b> sem escorregar de lado. Fecha as três forças.</p>
+        </div>
+
+        <div class="stop seam">
+          <div class="code">SEX 24 · integração</div>
+          <h3>Juntar e isolar</h3>
+          <p>As três forças rodando juntas. Confere o principal: cada uma <b>nomeada e isolada</b>, e <b>nenhum raycast vazou</b> de <code>ground_contact.gd</code> — o veículo só chama <code>query_wheel_contact()</code>.</p>
+        </div>
+
+        <div class="stop">
+          <div class="code">SÁB 25 · entregável 3</div>
+          <h3>Doc: raycast ↔ Bloco 5</h3>
+          <p>Escreve a página mapeando o modelo de <b>força de penalidade</b> na tabela de corpos/juntas (prismática/revoluta). Tabela pronta na seção abaixo.</p>
+        </div>
+
+        <div class="stop">
+          <div class="code">DOM 26 · polimento</div>
+          <h3>Limpar e fechar</h3>
+          <p>README, histórico de commits arrumado, contrato revisado no repo, doc relida. Dia de folga técnica / buffer.</p>
+        </div>
+
+        <div class="stop final">
+          <div class="code">SEG 27 · ▲ entrega</div>
+          <h3>Três entregáveis na mão</h3>
+          <p>Repo rodando, contrato plantado e o mapeamento escrito — pronto pra próxima conversa.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><span class="num">◈</span><h2>A regra que segura tudo</h2></div>
+      <div class="rule">
+        <span class="lbl">◈ Entregável 02 · o contrato, desde o commit 1</span>
+        <p>Todo o contato com o solo mora num único arquivo, <code>ground_contact.gd</code>. O resto do veículo só conhece uma função. Quando a <b>ExoPhysics</b> existir, você troca a implementação por trás dessa função e <b>não toca em mais nada</b>. O contrato final é em C++ (a ExoPhysics), mas o <code>ground_contact.gd</code> em GDScript já devolve exatamente esse formato desde a v0.</p>
+        <div class="code-block">
+          <div class="fname">// rascunho do contrato — comentário no repo</div>
+          <pre><code><span class="kw">struct</span> WheelState {
+    Vec3  position, linear_velocity;
+    Quat  orientation;
+    <span class="kw">float</span> angular_velocity;   <span class="cm">// rotação da roda</span>
+    <span class="kw">float</span> radius, width;
+    <span class="kw">float</span> normal_load_prev;   <span class="cm">// carga do passo anterior</span>
+};
+
+<span class="kw">struct</span> ContactResult {
+    <span class="kw">bool</span>  in_contact;
+    Vec3  point, normal;
+    <span class="kw">float</span> sinkage;            <span class="cm-hot">// afundamento — só com solo deformável</span>
+    Vec3  force, torque;
+};
+
+ContactResult query_wheel_contact(<span class="kw">const</span> WheelState&amp; w, <span class="kw">double</span> dt);</code></pre>
+        </div>
+        <p>Repare no <code>sinkage</code>: na v0 ele vem <b>sempre zero</b>. É a prova de que o contrato já nasceu pensando no solo deformável — e é exatamente a peça que a <b>Luana precisa ver</b> pra alinhar o lado dela.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><span class="num">↹</span><h2>Amarrando no Bloco 5</h2></div>
+      <p class="sec-sub">O mesmo canto do rover, resolvido de dois jeitos diferentes.</p>
+      <div class="map">
+        <div class="mrow"><div class="mc1">No Bloco 5 (multicorpos)</div><div class="mc2">No modelo raycast (v0)</div></div>
+        <div class="mrow"><div class="mc1">Suspensão = junta prismática</div><div class="mc2">força mola–amortecedor ao longo da normal</div></div>
+        <div class="mrow"><div class="mc1">Giro da roda = junta revoluta</div><div class="mc2">força longitudinal no ponto de contato</div></div>
+        <div class="mrow"><div class="mc1">Restrição resolvida pelo solver</div><div class="mc2">força de penalidade (o raio "empurra" de volta)</div></div>
+      </div>
+      <p class="map-note"><b>O ponto da doc:</b> o raycast não tem junta nenhuma — ele chega no mesmo resultado por penalidade em vez de restrição. Escrever isso lado a lado é o que transforma o Bloco 5 numa <b>pergunta concreta</b> pro professor.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head"><span class="num">◎</span><h2>No dia 27 você tem</h2></div>
+      <div class="done">
+        <h3>Checklist de entrega</h3>
+        <ul>
+          <li>Repo com o <b>rover v0 em raycast</b> rodando, com as três forças isoladas e nomeadas.</li>
+          <li><code>ground_contact.gd</code> como <b>única porta</b> pro solo, com o contrato em C++ comentado (e <code>sinkage = 0</code>).</li>
+          <li>Página de doc <b>mapeando raycast ↔ juntas</b> do Bloco 5.</li>
+          <li class="q">E a <b>pergunta</b> que esse mapeamento levanta, pronta pra levar — pro professor e pra alinhar com a Luana.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap"><p>PIBIC · Tema 1 · 20–27 jul — Rover v0 raycast &amp; contrato de contato</p></div>
+  </footer>
+
+</body>
+</html>

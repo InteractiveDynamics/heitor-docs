@@ -314,6 +314,133 @@
 .roadmap .stop.final h3 {
   color: var(--amber);
 }
+/* costura (seam) — nó ciano: marca as paradas de fundação/integração */
+.roadmap .stop.seam::before {
+  border-color: var(--cyan);
+}
+.roadmap .stop.seam .code {
+  color: var(--cyan);
+}
+
+/* ---------- faixa de entregáveis (deliverables) ---------- */
+.roadmap .deliv {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.roadmap .drow {
+  display: flex;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.roadmap .drow .dn {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--amber);
+  font-weight: 600;
+  flex: none;
+}
+.roadmap .drow .dt {
+  font-size: 14px;
+  color: var(--ink-mid);
+}
+.roadmap .drow .dt b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- bloco de código do contrato ---------- */
+.roadmap .code-block {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin: 16px 0;
+  overflow: hidden;
+}
+.roadmap .code-block .fname {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--cyan);
+  background: var(--surface-2);
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--line);
+  letter-spacing: 0.04em;
+}
+.roadmap .code-block pre {
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+}
+.roadmap .code-block pre code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--ink);
+  background: none;
+  border: none;
+  padding: 0;
+  white-space: pre;
+}
+.roadmap .code-block .cm {
+  color: var(--ink-dim);
+}
+.roadmap .code-block .cm-hot {
+  color: var(--cyan);
+}
+.roadmap .code-block .kw {
+  color: var(--amber);
+}
+
+/* ---------- checklist de entrega (✓ / ?) ---------- */
+.roadmap .done {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--amber);
+  border-radius: 0 12px 12px 0;
+  padding: 20px 22px;
+}
+.roadmap .done h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.roadmap .done ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 0;
+  margin: 0;
+}
+.roadmap .done li {
+  font-size: 14px;
+  color: var(--ink-mid);
+  padding-left: 26px;
+  position: relative;
+}
+.roadmap .done li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--green);
+  font-weight: 700;
+}
+.roadmap .done li.q {
+  margin-top: 4px;
+}
+.roadmap .done li.q::before {
+  content: '?';
+  color: var(--cyan);
+  font-family: var(--mono);
+}
+.roadmap .done li b {
+  color: var(--ink);
+  font-weight: 600;
+}
 
 /* ---------- materiais / recursos ---------- */
 .roadmap .res {
