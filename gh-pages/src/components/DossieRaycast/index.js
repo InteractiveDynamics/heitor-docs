@@ -795,27 +795,6 @@ export default function DossieRaycast() {
           </div>
         </div>
       </section>
-
-      {/* 09 · pendência em aberto */}
-      <section className="block">
-        <div className="sec-head">
-          <span className="sec-num">09</span>
-          <h2>Pendência em aberto</h2>
-        </div>
-        <p className="sec-intro">
-          Uma decisão que ainda não é minha e precisa passar pelo orientador.
-        </p>
-
-        <div className="callout" style={{borderLeftColor: 'var(--amber)'}}>
-          <b>A confirmar com o orientador.</b> O modelo veicular definitivo será{' '}
-          <b>força-baseado por raycast</b> (a rota seguida neste protótipo) ou{' '}
-          <b>multicorpo com restrições</b> (a rota do Chrono)? O material indicado
-          pelo professor esta semana sugere a primeira — mas isso ainda não foi
-          confirmado por ele. Até lá, o protótipo raycast segue como a aposta de
-          trabalho, e a fronteira <code>query_wheel_contact()</code> mantém as
-          duas portas abertas.
-        </div>
-      </section>
     </div>
   );
 }

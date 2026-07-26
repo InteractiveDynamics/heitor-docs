@@ -244,34 +244,6 @@ export default function RoadmapRoverRaycast() {
           professor.
         </p>
       </section>
-
-      {/* 05 · checklist de entrega */}
-      <section className="rm-sec">
-        <div className="sec-head">
-          <span className="num">◎</span>
-          <h2>No dia 27 eu tenho</h2>
-        </div>
-        <div className="done">
-          <h3>Checklist de entrega</h3>
-          <ul>
-            <li>
-              Repo com o <b>rover v0 em raycast</b> rodando, com as três forças
-              isoladas e nomeadas.
-            </li>
-            <li>
-              <code>ground_contact.gd</code> como <b>única porta</b> pro solo,
-              com o contrato em C++ comentado (e <code>sinkage = 0</code>).
-            </li>
-            <li>
-              Página de doc <b>mapeando raycast ↔ juntas</b> do Bloco 5.
-            </li>
-            <li className="q">
-              E a <b>pergunta</b> que esse mapeamento levanta, pronta pra levar —
-              pro professor e pra alinhar com a Luana.
-            </li>
-          </ul>
-        </div>
-      </section>
     </div>
   );
 }
