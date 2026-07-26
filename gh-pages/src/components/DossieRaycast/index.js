@@ -10,6 +10,27 @@ import React from 'react';
  * de tecnica.css. Fonte de verdade: prototipo-veiculo/scripts/.
  */
 export default function DossieRaycast() {
+  // Curvas da figura de oscilação (conceito c): amostragem de duas senoides —
+  // uma sem amortecimento (amplitude constante) e uma amortecida (decai). É só
+  // JS puro no render, sem lib de gráfico; o SVG final é estático.
+  const oscXs = Array.from({length: 49}, (_, i) => 60 + i * 10);
+  const oscY0 = 130;
+  const oscAmp = 66;
+  const oscW = 0.046;
+  const oscTau = 185;
+  const oscUndamped = oscXs
+    .map((x) => `${x},${(oscY0 - oscAmp * Math.sin(oscW * (x - 60))).toFixed(1)}`)
+    .join(' ');
+  const oscDamped = oscXs
+    .map(
+      (x) =>
+        `${x},${(
+          oscY0 -
+          oscAmp * Math.exp(-(x - 60) / oscTau) * Math.sin(oscW * (x - 60))
+        ).toFixed(1)}`,
+    )
+    .join(' ');
+
   return (
     <div className="dossie tecnica">
       {/* faixa de telemetria */}
@@ -50,6 +71,14 @@ export default function DossieRaycast() {
           como isso se encaixa (ou não) no modelo multicorpo do Bloco&nbsp;5.
         </p>
 
+        <div className="callout" style={{marginTop: 22}}>
+          <b>Em resumo:</b> troquei o motor de veículo pronto do Godot por um
+          feito à mão, roda por roda. É mais trabalho — mas assim a física do
+          contato com o chão fica <b>isolada num único lugar</b>. E é justamente
+          esse lugar que vai ser substituído, mais pra frente, pela física de
+          solo real (a ExoPhysics).
+        </div>
+
         <dl className="hero-meta">
           <div>
             <dt>Corpo</dt>
@@ -70,10 +99,157 @@ export default function DossieRaycast() {
         </dl>
       </header>
 
-      {/* 01 · o que foi construído */}
+      {/* 00 · conceitos-base */}
       <section className="block">
         <div className="sec-head">
-          <span className="sec-num">01</span>
+          <span className="sec-num">00</span>
+          <h2>Conceitos-base</h2>
+        </div>
+        <p className="sec-intro">
+          Antes do "como resolvemos", três peças que o resto do dossiê assume
+          conhecidas. Nada aprofundado — só o suficiente pra acompanhar quem não
+          vive de Godot nem de física de simulação.
+        </p>
+
+        {/* a · RigidBody3D e o loop de física */}
+        <div className="duo">
+          <div className="facet">
+            <span className="tag">Base · o que a Godot faz</span>
+            <h4>RigidBody3D: resolvido sozinho</h4>
+            <p>
+              Um <code>RigidBody3D</code> é um corpo que a Godot move segundo a
+              física: ela cuida sozinha da <b>gravidade</b>, da integração do
+              movimento e da <b>detecção de colisão</b>. O rover inteiro é um
+              único corpo desses.
+            </p>
+          </div>
+          <div className="facet amber">
+            <span className="tag">Base · o que fica pra nós</span>
+            <h4>As forças de contato</h4>
+            <p>
+              O que a Godot <b>não</b> sabe é como a roda toca o chão. Toda força
+              de suspensão, grip e tração é <b>nossa</b> pra calcular e aplicar —
+              é justamente o assunto deste dossiê.
+            </p>
+          </div>
+        </div>
+
+        <div className="callout">
+          <b>Dois detalhes que o resto do texto usa.</b> Primeiro: a massa do
+          rover foi ajustada pra <span className="stat">12 kg</span> (o padrão do
+          <code>RigidBody3D</code> é 1 kg) — leve demais, ele reagiria a qualquer
+          força como uma bola de pingue-pongue, sem a inércia que assenta o corpo.
+          Segundo, e mais importante: a física não roda contínua, e sim em{' '}
+          <b>fatias discretas de tempo</b> — o método{' '}
+          <code>_physics_process</code> é chamado ~60×/s, cada chamada avançando um{' '}
+          <code>delta</code> ≈ 1/60 s. Esse passo discreto é o que abre a porta pro
+          bug da seção 06.
+        </div>
+        <div className="code-block">
+          <div className="fname">prototipo-veiculo/scripts/rover.gd</div>
+          <pre>
+            <code>
+              <span className="cm">{'# chamado a cada fatia de física (~1/60 s); delta = duração da fatia'}</span>{'\n'}
+              <span className="kw">func</span>{' _physics_process(delta):'}
+            </code>
+          </pre>
+        </div>
+
+        {/* b · RayCast3D como sensor */}
+        <div className="facet" style={{marginTop: 8}}>
+          <span className="tag">Base · RayCast3D</span>
+          <h4>Um sensor, não um atuador</h4>
+          <p>
+            Cada roda é representada por um <code>RayCast3D</code>: uma "régua
+            invisível" presa ao chassi, apontando pra baixo. Ele{' '}
+            <b>não aplica força nenhuma</b> — só <b>informa</b>. Tem uma{' '}
+            <b>origem</b> (fixa no chassi), um <b>alcance</b> (
+            <code>target_position</code>, que faz o papel do curso da suspensão) e,
+            quando encosta em algo, devolve o <b>ponto de contato</b> e a{' '}
+            <b>normal</b> — a inclinação do chão ali. Transformar isso em força é
+            trabalho nosso, na seção 03.
+          </p>
+        </div>
+        <div className="fig">
+          <svg viewBox="0 0 420 300" role="img" aria-label="Vista lateral: um RayCast3D preso ao chassi mede a distância até o solo e devolve o ponto de contato e a normal">
+            <defs>
+              <marker id="mkGrn00" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 Z" fill="var(--green)" />
+              </marker>
+            </defs>
+            {/* solo levemente inclinado */}
+            <path d="M40,232 L380,270 L380,300 L40,300 Z" fill="var(--bg-2)" stroke="var(--line-soft)" />
+            <line x1="40" y1="232" x2="380" y2="270" stroke="var(--line)" strokeWidth="2" />
+            <text x="52" y="292" fill="var(--ink-dim)" fontFamily="var(--mono)" fontSize="11">solo</text>
+            {/* chassi */}
+            <rect x="110" y="40" width="200" height="22" rx="4" fill="var(--surface-2)" stroke="var(--line)" />
+            <text x="210" y="34" textAnchor="middle" fill="var(--ink-mid)" fontFamily="var(--mono)" fontSize="11">chassi · origem do raio</text>
+            {/* raio */}
+            <line x1="210" y1="62" x2="210" y2="251" stroke="var(--cyan)" strokeWidth="2" strokeDasharray="6 5" />
+            <text x="150" y="150" textAnchor="end" fill="var(--cyan)" fontFamily="var(--mono)" fontSize="11">raio</text>
+            <text x="150" y="164" textAnchor="end" fill="var(--cyan)" fontFamily="var(--mono)" fontSize="11">(RayCast3D)</text>
+            {/* medida do alcance */}
+            <line x1="250" y1="62" x2="250" y2="251" stroke="var(--ink-dim)" strokeWidth="1" />
+            <line x1="245" y1="62" x2="255" y2="62" stroke="var(--ink-dim)" strokeWidth="1" />
+            <line x1="245" y1="251" x2="255" y2="251" stroke="var(--ink-dim)" strokeWidth="1" />
+            <text x="262" y="148" fill="var(--ink-dim)" fontFamily="var(--mono)" fontSize="10">target_position</text>
+            <text x="262" y="161" fill="var(--ink-dim)" fontFamily="var(--mono)" fontSize="10">(alcance = curso)</text>
+            {/* ponto de contato */}
+            <circle cx="210" cy="251" r="5" fill="var(--amber)" />
+            <text x="198" y="243" textAnchor="end" fill="var(--amber)" fontFamily="var(--mono)" fontSize="11">ponto de contato</text>
+            {/* normal */}
+            <line x1="210" y1="251" x2="216" y2="193" stroke="var(--green)" strokeWidth="3" markerEnd="url(#mkGrn00)" />
+            <text x="226" y="192" fill="var(--green)" fontFamily="var(--mono)" fontSize="11" fontWeight="700">normal</text>
+          </svg>
+          <div className="cap">
+            O <b>RayCast3D</b> é só um sensor — uma régua invisível presa ao
+            chassi. Ele não empurra nada: informa <b>se</b> colidiu, <b>onde</b>{' '}
+            (ponto de contato) e a <b>inclinação</b> do chão ali (a normal). O
+            alcance (<b>target_position</b>) faz o papel do curso da suspensão.
+          </div>
+        </div>
+
+        {/* c · mola E amortecedor */}
+        <div className="facet" style={{marginTop: 8}}>
+          <span className="tag">Base · suspensão</span>
+          <h4>Por que precisa de mola E amortecedor</h4>
+          <p>
+            A <b>mola</b> sozinha devolve toda a energia que recebe: comprime,
+            empurra de volta, e o chassi <b>balança pra sempre</b> — nada tira
+            energia do sistema. O <b>amortecedor</b> é a peça que <b>dissipa</b>{' '}
+            essa energia a cada ciclo, fazendo a oscilação decair até o corpo{' '}
+            <b>assentar</b>. Um sem o outro não estabiliza — e é por isso que a
+            força de suspensão (seção 03) soma as duas.
+          </p>
+        </div>
+        <div className="fig">
+          <svg viewBox="0 0 560 260" role="img" aria-label="Duas curvas de oscilação ao longo do tempo: só mola oscila com amplitude constante; mola mais amortecedor decai até assentar">
+            {/* linha zero */}
+            <line x1="60" y1="130" x2="540" y2="130" stroke="var(--line)" strokeWidth="1" strokeDasharray="4 4" />
+            <text x="540" y="150" textAnchor="end" fill="var(--ink-dim)" fontFamily="var(--mono)" fontSize="10">tempo →</text>
+            <text transform="rotate(-90 22 130)" x="22" y="130" textAnchor="middle" fill="var(--ink-dim)" fontFamily="var(--mono)" fontSize="10">altura do chassi</text>
+            {/* curvas */}
+            <polyline points={oscUndamped} fill="none" stroke="var(--coral)" strokeWidth="2" strokeLinejoin="round" />
+            <polyline points={oscDamped} fill="none" stroke="var(--cyan)" strokeWidth="2.5" strokeLinejoin="round" />
+            {/* legenda */}
+            <line x1="70" y1="30" x2="96" y2="30" stroke="var(--coral)" strokeWidth="2" />
+            <text x="102" y="34" fill="var(--coral)" fontFamily="var(--mono)" fontSize="11">só mola — balança pra sempre</text>
+            <line x1="70" y1="48" x2="96" y2="48" stroke="var(--cyan)" strokeWidth="2.5" />
+            <text x="102" y="52" fill="var(--cyan)" fontFamily="var(--mono)" fontSize="11">mola + amortecedor — assenta</text>
+          </svg>
+          <div className="cap">
+            Resposta do chassi a um baque, ao longo do tempo. Só a mola conserva a
+            energia e oscila com amplitude constante — o carro viraria um
+            pula-pula. O amortecedor <b>dissipa</b> energia a cada ciclo, então a
+            oscilação decai e o corpo assenta.
+          </div>
+        </div>
+      </section>
+
+      {/* 02 · o que foi construído */}
+      <section className="block">
+        <div className="sec-head">
+          <span className="sec-num">02</span>
           <h2>O que foi construído</h2>
         </div>
         <p className="sec-intro">
@@ -117,10 +293,10 @@ export default function DossieRaycast() {
         </div>
       </section>
 
-      {/* 02 · as três forças por roda */}
+      {/* 03 · as três forças por roda */}
       <section className="block">
         <div className="sec-head">
-          <span className="sec-num">02</span>
+          <span className="sec-num">03</span>
           <h2>Três forças por roda</h2>
         </div>
         <p className="sec-intro">
@@ -162,14 +338,14 @@ export default function DossieRaycast() {
           A carga normal <code>N</code> sai da própria suspensão daquele frame, e
           tanto o grip quanto a tração entram num <code>clamp</code> dentro de{' '}
           <code>±μN</code>. Esse teto não é cosmético — é o que impede a
-          divergência descrita na seção 04.
+          divergência descrita na seção 06.
         </p>
       </section>
 
-      {/* 03 · a fronteira de API */}
+      {/* 04 · a fronteira de API */}
       <section className="block">
         <div className="sec-head">
-          <span className="sec-num">03</span>
+          <span className="sec-num">04</span>
           <h2>A fronteira: WheelState → ContactResult</h2>
         </div>
         <p className="sec-intro">
@@ -221,14 +397,21 @@ export default function DossieRaycast() {
           v0 porque o terreno é rígido, mas já está no contrato: é o lugar
           reservado pra quando a ExoPhysics substituir o raycast como fonte da
           força e o solo passar a ser deformável — a ponte pra terramecânica
-          desta frente.
+          desta frente. A <b>ExoPhysics</b> é a biblioteca em <b>C++/GPU</b> que
+          implementa a modelagem <b>híbrida</b> de solo descrita na proposta do
+          PIBIC: partículas <b>SPH</b> perto do contato — onde o solo escoa e
+          afunda de verdade — e uma malha contínua/semi-empírica longe dele, onde
+          uma aproximação barata basta. Ou seja, ela não é só "um substituto
+          futuro": é a peça que resolve o <b>trade-off entre fidelidade física e
+          tempo real</b> que motiva o projeto inteiro — e o <code>sinkage</code> é
+          o primeiro fio desse contrato já aparecendo aqui.
         </div>
       </section>
 
-      {/* 04 · o bug — sintoma e pista */}
+      {/* 05 · o bug — sintoma e pista */}
       <section className="block">
         <div className="sec-head">
-          <span className="sec-num">04</span>
+          <span className="sec-num">05</span>
           <h2>O bug: o sintoma e a pista</h2>
         </div>
         <p className="sec-intro">
@@ -321,10 +504,10 @@ export default function DossieRaycast() {
         </p>
       </section>
 
-      {/* 05 · causa raiz */}
+      {/* 06 · causa raiz */}
       <section className="block">
         <div className="sec-head">
-          <span className="sec-num">05</span>
+          <span className="sec-num">06</span>
           <h2>A causa raiz: realimentação com atraso de um passo</h2>
         </div>
         <p className="sec-intro">
@@ -472,10 +655,10 @@ export default function DossieRaycast() {
         </div>
       </section>
 
-      {/* 06 · a correção */}
+      {/* 07 · a correção */}
       <section className="block">
         <div className="sec-head">
-          <span className="sec-num">06</span>
+          <span className="sec-num">07</span>
           <h2>A correção: o círculo de atrito</h2>
         </div>
         <p className="sec-intro">
@@ -578,10 +761,10 @@ export default function DossieRaycast() {
         </div>
       </section>
 
-      {/* 07 · mapeamento com o Bloco 5 */}
+      {/* 08 · mapeamento com o Bloco 5 */}
       <section className="block">
         <div className="sec-head">
-          <span className="sec-num">07</span>
+          <span className="sec-num">08</span>
           <h2>Como isso se encaixa no Bloco 5</h2>
         </div>
         <p className="sec-intro">
@@ -613,10 +796,10 @@ export default function DossieRaycast() {
         </div>
       </section>
 
-      {/* 08 · pendência em aberto */}
+      {/* 09 · pendência em aberto */}
       <section className="block">
         <div className="sec-head">
-          <span className="sec-num">08</span>
+          <span className="sec-num">09</span>
           <h2>Pendência em aberto</h2>
         </div>
         <p className="sec-intro">
