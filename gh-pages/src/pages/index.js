@@ -42,8 +42,8 @@ const FRENTES = [
   },
   {
     titulo: 'Integração roda–solo',
-    desc: 'Contato roda–solo e simulação acoplada veículo–solo deformável.',
-    status: 'planejada',
+    desc: 'Contato roda–solo por raycast (força-baseado), isolado numa fronteira de API pronta pra ExoPhysics.',
+    status: 'ativa',
     to: '/docs/roda-solo/visao-geral',
   },
   {
@@ -66,7 +66,7 @@ function Telemetry() {
           frentes · <b>7 mapeadas</b>
         </span>
         <span>
-          publicadas · <b>3</b>
+          publicadas · <b>4</b>
         </span>
         <span>
           foco · <b>dinâmica veicular</b>

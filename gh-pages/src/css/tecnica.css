@@ -93,6 +93,9 @@
 .tecnica .cnode.out {
   border-top-color: var(--green);
 }
+.tecnica .cnode.bad {
+  border-top-color: var(--coral);
+}
 .tecnica .carrow {
   align-self: center;
   color: var(--cyan);
@@ -203,6 +206,9 @@
 .tecnica .bar.warn .fill {
   background: linear-gradient(90deg, #a8792a, var(--amber));
 }
+.tecnica .bar.bad .fill {
+  background: linear-gradient(90deg, #8f2f2c, var(--coral));
+}
 .tecnica .bar .v {
   font-family: var(--mono);
   font-size: 0.8rem;
@@ -273,4 +279,48 @@
   font-family: var(--mono);
   color: var(--amber);
   font-weight: 600;
+}
+
+/* ---------- bloco de código (GDScript / contrato) ---------- */
+.tecnica .code-block {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin: 6px 0 20px;
+  overflow: hidden;
+}
+.tecnica .code-block .fname {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--cyan);
+  background: var(--surface-2);
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  letter-spacing: 0.04em;
+}
+.tecnica .code-block pre {
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+}
+/* reset do estilo inline de `.dossie code` dentro do bloco */
+.tecnica .code-block pre code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--ink);
+  background: none;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  white-space: pre;
+}
+.tecnica .code-block .kw {
+  color: var(--amber);
+}
+.tecnica .code-block .ty {
+  color: var(--cyan);
+}
+.tecnica .code-block .cm {
+  color: var(--ink-dim);
 }
