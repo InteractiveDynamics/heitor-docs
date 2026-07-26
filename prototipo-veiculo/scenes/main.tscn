@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://bwq5n47p5i817"]
+
+[ext_resource type="PackedScene" uid="uid://qbap05pjpupg" path="res://scenes/rover.tscn" id="1_0wfyh"]
+[ext_resource type="PackedScene" uid="uid://bo02g013i25qk" path="res://scenes/terreno_teste.tscn" id="2_sugp2"]
+
+[node name="main" type="Node3D" unique_id=1853895775]
+
+[node name="Rover" parent="." unique_id=602676490 instance=ExtResource("1_0wfyh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Rover" unique_id=1568003363]
+transform = Transform3D(1, 0, 0, 0, 0.9063078, 0.4226183, 0, -0.4226183, 0.9063078, 0, 1, 2)
+
+[node name="terreno_teste" parent="." unique_id=1884486415 instance=ExtResource("2_sugp2")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1401702937]
+transform = Transform3D(0.6016994, 0.7889811, 0.124365374, -0.5214536, 0.2700904, 0.80940574, 0.60501575, -0.5518697, 0.5739301, 0, 5, 0)

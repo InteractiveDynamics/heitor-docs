@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://qbap05pjpupg"]
+
+[ext_resource type="Script" uid="uid://c7u3m6tles6uu" path="res://scripts/rover.gd" id="1_phlv3"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_6sc8f"]
+size = Vector3(1.6, 0.6, 2.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vehv5"]
+albedo_color = Color(0, 1, 0, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6sc8f"]
+size = Vector3(1.6, 0.6, 2.4)
+
+[node name="Rover" type="RigidBody3D" unique_id=602676490]
+mass = 12.0
+script = ExtResource("1_phlv3")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1459845326]
+mesh = SubResource("BoxMesh_6sc8f")
+surface_material_override/0 = SubResource("StandardMaterial3D_vehv5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1435576312]
+shape = SubResource("BoxShape3D_6sc8f")
+
+[node name="RayFL" type="RayCast3D" parent="." unique_id=2140319611]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, 0, -1)
+target_position = Vector3(0, -0.5, 0)
+
+[node name="RayFR" type="RayCast3D" parent="." unique_id=1647789877]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0, -1)
+target_position = Vector3(0, -0.5, 0)
+
+[node name="RayBL" type="RayCast3D" parent="." unique_id=1768995559]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, 0, 1)
+target_position = Vector3(0, -0.5, 0)
+
+[node name="RayBR" type="RayCast3D" parent="." unique_id=469185323]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0, 1)
+target_position = Vector3(0, -0.5, 0)
