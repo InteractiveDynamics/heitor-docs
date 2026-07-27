@@ -394,54 +394,6 @@
   color: var(--amber);
 }
 
-/* ---------- checklist de entrega (✓ / ?) ---------- */
-.roadmap .done {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--amber);
-  border-radius: 0 12px 12px 0;
-  padding: 20px 22px;
-}
-.roadmap .done h3 {
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 14px;
-}
-.roadmap .done ul {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 11px;
-  padding: 0;
-  margin: 0;
-}
-.roadmap .done li {
-  font-size: 14px;
-  color: var(--ink-mid);
-  padding-left: 26px;
-  position: relative;
-}
-.roadmap .done li::before {
-  content: '✓';
-  position: absolute;
-  left: 0;
-  color: var(--green);
-  font-weight: 700;
-}
-.roadmap .done li.q {
-  margin-top: 4px;
-}
-.roadmap .done li.q::before {
-  content: '?';
-  color: var(--cyan);
-  font-family: var(--mono);
-}
-.roadmap .done li b {
-  color: var(--ink);
-  font-weight: 600;
-}
-
 /* ---------- materiais / recursos ---------- */
 .roadmap .res {
   display: flex;
