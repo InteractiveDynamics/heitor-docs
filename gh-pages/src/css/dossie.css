@@ -550,6 +550,16 @@
   background: var(--surface);
   box-shadow: var(--shadow);
 }
+/* vídeos embutidos (YouTube) reaproveitam a moldura do screenshot */
+.dossie .shot iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--bg-2);
+}
 .dossie .shot figcaption {
   margin-top: 10px;
   font-family: var(--mono);

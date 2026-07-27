@@ -1,4 +1,5 @@
 import React from 'react';
+import roverRaycasts from './img/rover_com_raycasts.png';
 
 /**
  * Doc técnica · Integração roda–solo · Protótipo raycast (Tema 1).
@@ -291,6 +292,35 @@ export default function DossieRaycast() {
           <code>prototipo-veiculo/scripts/rover.gd</code>; a cena, em{' '}
           <code>scenes/rover.tscn</code>.
         </div>
+
+        <p className="sec-intro" style={{marginTop: 26, marginBottom: 0}}>
+          E aqui está ele rodando — as três forças já somadas em cada roda, em
+          primeira e em terceira pessoa:
+        </p>
+        <div className="shots-2">
+          <figure className="shot">
+            <iframe
+              src="https://www.youtube.com/embed/RMjnVzXiMjw"
+              title="Rover em 1ª pessoa — câmera presa ao rover"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+            <figcaption>1ª pessoa — câmera presa ao rover.</figcaption>
+          </figure>
+          <figure className="shot">
+            <iframe
+              src="https://www.youtube.com/embed/xa3bT_wPpHg"
+              title="Rover em 3ª pessoa — câmera externa"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+            <figcaption>
+              3ª pessoa — câmera externa, vendo o rover de longe.
+            </figcaption>
+          </figure>
+        </div>
       </section>
 
       {/* 03 · as três forças por roda */}
@@ -333,6 +363,19 @@ export default function DossieRaycast() {
             atrito μ vezes a carga normal N (mola + amortecedor)
           </small>
         </div>
+
+        <figure className="shot">
+          <img
+            src={roverRaycasts}
+            alt="O rover (caixa verde) no editor do Godot; numa das quinas, o raycast de uma roda desenha os três vetores de força e o círculo de atrito no ponto de contato."
+          />
+          <figcaption>
+            Debug no editor do Godot: o rover é a caixa verde. Numa das quinas, a
+            visualização de uma roda — os <b>três vetores de força</b> (suspensão
+            ao longo da normal, grip lateral e tração) somados no ponto de
+            contato, contidos pelo <b>círculo de atrito</b>.
+          </figcaption>
+        </figure>
 
         <p className="sec-intro" style={{marginBottom: 0}}>
           A carga normal <code>N</code> sai da própria suspensão daquele frame, e
