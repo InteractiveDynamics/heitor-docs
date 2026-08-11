@@ -705,6 +705,63 @@
   color: var(--ink-mid);
 }
 
+/* ---------- trava de escopo ("esta quinzena NÃO vou") ---------- */
+.roadmap .rm-guard {
+  background: rgba(224, 108, 108, 0.07);
+  border: 1px solid rgba(224, 108, 108, 0.32);
+  border-radius: 12px;
+  padding: 20px 22px;
+}
+.roadmap .rm-guard .lbl {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--coral, #e06c6c);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.roadmap .rm-guard .sub {
+  font-size: 13px;
+  color: var(--ink-dim);
+  margin: 0 0 16px;
+}
+.roadmap .rm-guard ul {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 20px;
+  padding: 0;
+  margin: 0;
+}
+@media (max-width: 560px) {
+  .roadmap .rm-guard ul {
+    grid-template-columns: 1fr;
+  }
+}
+.roadmap .rm-guard li {
+  position: relative;
+  padding-left: 24px;
+  font-size: 13.5px;
+  color: var(--ink-mid);
+}
+.roadmap .rm-guard li::before {
+  content: '✕';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--coral, #e06c6c);
+  font-weight: 700;
+  font-size: 12px;
+}
+.roadmap .rm-guard li b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
 /* ---------- caixa de perguntas ---------- */
 .roadmap .qbox {
   margin-top: 22px;

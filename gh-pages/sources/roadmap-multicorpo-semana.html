@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roadmap · Mecânica Multicorpo · Semana 27/07</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0e14;
+    --surface:#12171f;
+    --surface-2:#1a212c;
+    --border:#28303c;
+    --border-soft:#20272f;
+    --text:#e6edf3;
+    --muted:#8b98a5;
+    --dim:#5f6b78;
+    --amber:#f5b942;
+    --amber-soft:#4a3a1a;
+    --cyan:#38d6e0;
+    --cyan-soft:#123840;
+    --green:#5fd68a;
+    --red:#ff6b6b;
+    --red-soft:#3a1c1e;
+    --violet:#a98bff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans',sans-serif;
+    line-height:1.6;
+    padding:0 20px 80px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto}
+
+  /* ---------- HEADER ---------- */
+  header{padding:56px 0 8px;border-bottom:1px solid var(--border);margin-bottom:40px}
+  .eyebrow{
+    font-family:'Chakra Petch',sans-serif;
+    font-size:12px;letter-spacing:3px;text-transform:uppercase;
+    color:var(--cyan);font-weight:600;margin-bottom:18px;
+    display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+  }
+  .eyebrow .dot{color:var(--dim)}
+  h1{
+    font-family:'Chakra Petch',sans-serif;
+    font-size:clamp(28px,5vw,44px);font-weight:700;line-height:1.1;
+    letter-spacing:-.5px;margin-bottom:16px;
+  }
+  h1 .accent{color:var(--amber)}
+  .lede{color:var(--muted);font-size:16px;max-width:640px}
+
+  /* ---------- SECTION TITLES ---------- */
+  .sec-title{
+    font-family:'Chakra Petch',sans-serif;
+    font-size:13px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--dim);font-weight:600;margin:52px 0 20px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .sec-title::after{content:"";flex:1;height:1px;background:var(--border-soft)}
+
+  /* ---------- BRIEF / NORTH STAR ---------- */
+  .brief{
+    background:linear-gradient(135deg,var(--surface) 0%,#0e131b 100%);
+    border:1px solid var(--border);border-left:3px solid var(--amber);
+    border-radius:12px;padding:24px 26px;
+  }
+  .brief p{color:var(--muted);font-size:15px}
+  .brief p + p{margin-top:12px}
+  .brief strong{color:var(--text);font-weight:600}
+  .brief .hl-amber{color:var(--amber);font-weight:600}
+  .brief .hl-cyan{color:var(--cyan);font-weight:600}
+
+  /* ---------- KEY FINDING ---------- */
+  .finding{
+    background:var(--cyan-soft);
+    border:1px solid #1d4f57;border-radius:12px;padding:22px 24px;margin-top:16px;
+    position:relative;overflow:hidden;
+  }
+  .finding .tag{
+    font-family:'Chakra Petch',sans-serif;font-size:11px;letter-spacing:2px;
+    text-transform:uppercase;color:var(--cyan);font-weight:700;margin-bottom:10px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .finding .tag svg{width:16px;height:16px}
+  .finding p{font-size:15px;color:#d6eef1}
+  .finding strong{color:#fff}
+  .finding code{
+    font-family:'IBM Plex Mono',monospace;font-size:13px;
+    background:#0c2429;padding:2px 6px;border-radius:4px;color:var(--cyan);
+  }
+
+  /* ---------- DAY RAIL ---------- */
+  .days{position:relative;margin-top:8px}
+  .day{
+    display:grid;grid-template-columns:64px 1fr;gap:22px;
+    position:relative;padding-bottom:14px;
+  }
+  .day-rail{position:relative;display:flex;flex-direction:column;align-items:center}
+  .day-num{
+    font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:22px;
+    color:var(--amber);width:52px;height:52px;flex:0 0 52px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;
+    z-index:2;
+  }
+  .day-line{width:2px;flex:1;background:var(--border-soft);margin:6px 0 0}
+  .day:last-child .day-line{display:none}
+
+  .day-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;
+    padding:22px 24px;margin-bottom:22px;transition:border-color .2s;
+  }
+  .day-card:hover{border-color:#38424f}
+  .day-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-bottom:6px}
+  .day-label{
+    font-family:'Chakra Petch',sans-serif;font-size:11px;letter-spacing:2px;
+    text-transform:uppercase;color:var(--dim);font-weight:600;
+  }
+  .day-theme{font-family:'Chakra Petch',sans-serif;font-size:19px;font-weight:600;color:var(--text)}
+  .day-covers{
+    font-size:12px;color:var(--muted);margin:10px 0 16px;
+    padding:8px 12px;background:var(--surface-2);border-radius:8px;
+    border-left:2px solid var(--cyan);
+  }
+  .day-covers b{color:var(--cyan);font-weight:600;font-family:'IBM Plex Mono',monospace;font-size:11px}
+
+  .block{margin-top:14px}
+  .block-label{
+    font-family:'Chakra Petch',sans-serif;font-size:11px;letter-spacing:1.5px;
+    text-transform:uppercase;font-weight:600;margin-bottom:7px;display:flex;align-items:center;gap:7px;
+  }
+  .block-label.what{color:var(--amber)}
+  .block-label.why{color:var(--cyan)}
+  .block-label.out{color:var(--green)}
+  .block-label .ic{width:14px;height:14px;display:inline-block}
+  ul.tasks{list-style:none}
+  ul.tasks li{
+    position:relative;padding-left:20px;font-size:14.5px;color:var(--text);margin-bottom:7px;
+  }
+  ul.tasks li::before{
+    content:"";position:absolute;left:2px;top:9px;width:6px;height:6px;
+    border-radius:2px;background:var(--amber);
+  }
+  .why-text{font-size:14px;color:var(--muted)}
+  .why-text b{color:#c9d3dc;font-weight:600}
+  .out-text{
+    font-size:14px;color:#bfe6cd;background:#14251b;border:1px solid #234a30;
+    border-radius:8px;padding:10px 13px;
+  }
+  code.k{
+    font-family:'IBM Plex Mono',monospace;font-size:13px;
+    background:var(--surface-2);padding:1px 6px;border-radius:4px;color:var(--amber);
+    border:1px solid var(--border);
+  }
+
+  /* ---------- SCOPE GUARD ---------- */
+  .guard{
+    background:var(--red-soft);border:1px solid #5a2a2d;border-radius:12px;
+    padding:22px 24px;
+  }
+  .guard .tag{
+    font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:2px;
+    text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:6px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .guard .sub{color:#e4a9ab;font-size:13.5px;margin-bottom:16px}
+  .guard ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:10px 20px}
+  .guard li{position:relative;padding-left:24px;font-size:14px;color:#f0d5d6}
+  .guard li::before{
+    content:"✕";position:absolute;left:0;top:0;color:var(--red);font-weight:700;font-size:13px;
+  }
+  @media(max-width:560px){.guard ul{grid-template-columns:1fr}}
+
+  /* ---------- CONCEPT: RAYCAST VS MULTIBODY ---------- */
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.duo{grid-template-columns:1fr}}
+  .concept{
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;
+  }
+  .concept.left{border-top:3px solid var(--amber)}
+  .concept.right{border-top:3px solid var(--violet)}
+  .concept h3{
+    font-family:'Chakra Petch',sans-serif;font-size:16px;font-weight:600;margin-bottom:4px;
+  }
+  .concept .kicker{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;
+    text-transform:uppercase;margin-bottom:14px;
+  }
+  .concept.left .kicker{color:var(--amber)}
+  .concept.right .kicker{color:var(--violet)}
+  .concept p{font-size:14px;color:var(--muted);margin-bottom:12px}
+  .concept p b{color:var(--text);font-weight:600}
+  .concept .verb{
+    font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:15px;
+  }
+  .concept.left .verb{color:var(--amber)}
+  .concept.right .verb{color:var(--violet)}
+  .pill{
+    display:inline-block;font-size:11px;font-family:'IBM Plex Mono',monospace;
+    padding:3px 9px;border-radius:20px;margin:2px 4px 2px 0;
+  }
+  .pill.plus{background:#14251b;color:var(--green);border:1px solid #234a30}
+  .pill.minus{background:var(--red-soft);color:#f0a0a2;border:1px solid #5a2a2d}
+  .concept .row-label{
+    font-family:'Chakra Petch',sans-serif;font-size:10px;letter-spacing:1.5px;
+    text-transform:uppercase;color:var(--dim);margin:14px 0 6px;
+  }
+  .bridge-note{
+    background:var(--surface-2);border:1px dashed var(--border);border-radius:10px;
+    padding:14px 18px;margin-top:16px;font-size:13.5px;color:var(--muted);
+  }
+  .bridge-note b{color:var(--cyan);font-weight:600}
+
+  /* ---------- DOF TABLE ---------- */
+  .table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:560px}
+  thead th{
+    font-family:'Chakra Petch',sans-serif;font-size:11px;letter-spacing:1px;
+    text-transform:uppercase;color:var(--cyan);font-weight:600;text-align:left;
+    padding:14px 16px;background:var(--surface-2);border-bottom:1px solid var(--border);
+  }
+  tbody td{padding:13px 16px;border-bottom:1px solid var(--border-soft);color:var(--text);vertical-align:top}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:#141a22}
+  td .jn{font-family:'IBM Plex Mono',monospace;color:var(--amber);font-size:13px}
+  td .dof{font-family:'Chakra Petch',sans-serif;color:var(--green);font-weight:600}
+  td .use{color:var(--muted);font-size:13px}
+
+  /* ---------- REPO GUIDE ---------- */
+  .repo{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 4px}
+  .repo-item{
+    display:grid;grid-template-columns:auto 1fr;gap:16px;padding:16px 20px;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .repo-item:last-child{border-bottom:none}
+  .repo-path{
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--amber);
+    background:var(--surface-2);padding:6px 10px;border-radius:6px;height:fit-content;
+    white-space:nowrap;border:1px solid var(--border);
+  }
+  .repo-desc{font-size:14px;color:var(--muted)}
+  .repo-desc b{color:var(--text);font-weight:600}
+  .repo-desc .look{color:var(--cyan);font-weight:600;font-family:'Chakra Petch',sans-serif;font-size:12px;letter-spacing:.5px}
+  .repo-link{
+    display:inline-flex;align-items:center;gap:8px;margin-top:14px;
+    font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--cyan);
+    text-decoration:none;padding:10px 16px;background:var(--cyan-soft);
+    border:1px solid #1d4f57;border-radius:8px;
+  }
+  .repo-link:hover{background:#123f47}
+
+  /* ---------- HANDOFF ---------- */
+  .handoff{
+    background:linear-gradient(135deg,var(--surface) 0%,#0e131b 100%);
+    border:1px solid var(--border);border-radius:12px;padding:24px 26px;
+  }
+  .handoff h3{font-family:'Chakra Petch',sans-serif;font-size:17px;margin-bottom:14px;color:var(--text)}
+  .handoff .item{display:flex;gap:12px;margin-bottom:12px;font-size:14px;color:var(--muted)}
+  .handoff .item b{color:var(--text)}
+  .handoff .num{
+    font-family:'Chakra Petch',sans-serif;font-weight:700;color:var(--amber);
+    flex:0 0 24px;
+  }
+  .handoff .item code{
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--cyan);
+    background:var(--surface-2);padding:1px 6px;border-radius:4px;
+  }
+
+  footer{
+    margin-top:52px;padding-top:24px;border-top:1px solid var(--border);
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--dim);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">
+      <span>PIBIC · LASE</span><span class="dot">—</span>
+      <span>Tema 1 · Dinâmica Veicular</span><span class="dot">—</span>
+      <span>Semana de 27 jul 2026</span>
+    </div>
+    <h1>Rumo ao <span class="accent">multicorpo</span>:<br>constraints, Jolt &amp; os limites do Godot</h1>
+    <p class="lede">Roadmap montado a partir das anotações da reunião de hoje. O norte da semana é <b>entender</b>, não construir — o professor foi explícito: devagar.</p>
+  </header>
+
+  <!-- BRIEF -->
+  <div class="sec-title">Traduzindo a reunião</div>
+  <div class="brief">
+    <p>Na última reunião ficou em aberto a pergunta arquitetural: <strong>raycast (força de penalidade)</strong> vs. <strong>multicorpo (juntas e constraints)</strong>. A direção do professor agora é clara — <span class="hl-amber">explorar o caminho multicorpo</span>, entendendo como o motor de física do Godot liga corpos rígidos e restringe o movimento entre eles.</p>
+    <p>O ponto central: o Godot usa o <span class="hl-cyan">Jolt Physics</span> por baixo. Então a semana é sobre três camadas — <strong>o conceito</strong> (o que é multicorpo e constraint), <strong>a ferramenta</strong> (como o Jolt resolve constraints) e <strong>a ponte</strong> (o que o Godot te deixa usar do Jolt, e o que fica de fora).</p>
+  </div>
+
+  <!-- FINDING -->
+  <div class="finding">
+    <div class="tag">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      Achado que já responde uma das perguntas dele
+    </div>
+    <p>O <strong>Godot 4.6 tornou o Jolt o motor de física 3D padrão</strong>. Mas a documentação oficial marca o módulo Jolt embutido como <strong>experimental e sem paridade total</strong> com a antiga extensão <code>godot-jolt</code>. Na prática, isso <strong>é</strong> a "limitação do Godot em relação às constraints do Jolt" que ele te apontou: pela API <code>Joint3D</code> você acessa os tipos padrão de junta, mas <strong>não</strong> os recursos ricos do Jolt (limites suaves, juntas quebráveis, iterações de solver por junta, nós tipo <code>JoltHingeJoint3D</code>) — e a <code>VehicleConstraint</code> própria do Jolt não é exposta.</p>
+  </div>
+
+  <!-- DAYS -->
+  <div class="sec-title">A semana, dia a dia</div>
+  <div class="days">
+
+    <!-- DAY 1 -->
+    <div class="day">
+      <div class="day-rail"><div class="day-num">1</div><div class="day-line"></div></div>
+      <div class="day-card">
+        <div class="day-head">
+          <span class="day-label">Segunda · Conceito</span>
+        </div>
+        <div class="day-theme">O que é "multicorpo" (multibody)?</div>
+        <div class="day-covers">Cobre da lista: <b>estratégia de multicorpo</b></div>
+
+        <div class="block">
+          <div class="block-label what"><span class="ic">▸</span>O quê</div>
+          <ul class="tasks">
+            <li>Definir multicorpo em uma frase: <b>vários corpos rígidos + juntas que restringem o movimento relativo entre eles</b>.</li>
+            <li>Anotar a diferença essencial pro seu raycast: lá <em>você</em> calcula e aplica forças; aqui <em>você declara relações</em> e o solver calcula as forças.</li>
+            <li>Escrever, com suas palavras, por que o VehicleBody3D e o raycast já eram "meio multicorpo escondido".</li>
+          </ul>
+        </div>
+        <div class="block">
+          <div class="block-label why"><span class="ic">▸</span>Por quê</div>
+          <p class="why-text">Você já viveu o lado raycast na pele — inclusive a <b>ejeção do rover</b> resolvida com o clamp do círculo de atrito. Entender multicorpo é enxergar o mesmo problema por outra lente: em vez de empurrar o corpo pro comportamento certo, você <b>amarra</b> os corpos e deixa o motor resolver. Esse é o dia que fecha a pergunta arquitetural aberta.</p>
+        </div>
+        <div class="block">
+          <div class="block-label out"><span class="ic">▸</span>Entrega</div>
+          <p class="out-text">½ página de notas conceituais + o quadro comparativo raycast × multicorpo (tem um pronto no fim deste roadmap pra você adaptar).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 2 -->
+    <div class="day">
+      <div class="day-rail"><div class="day-num">2</div><div class="day-line"></div></div>
+      <div class="day-card">
+        <div class="day-head">
+          <span class="day-label">Terça · Conceito</span>
+        </div>
+        <div class="day-theme">Constraints = tirar graus de liberdade</div>
+        <div class="day-covers">Cobre da lista: <b>constraints</b> · <b>linkar dois corpos e limitar o movimento</b></div>
+
+        <div class="block">
+          <div class="block-label what"><span class="ic">▸</span>O quê</div>
+          <ul class="tasks">
+            <li>Fixar o conceito de <b>grau de liberdade (GDL)</b>: um corpo rígido livre no 3D tem <b>6 GDL</b> (3 de translação + 3 de rotação).</li>
+            <li>Entender que <b>toda junta é "quantos GDL eu removo"</b>: uma dobradiça deixa só 1 rotação; uma prismática deixa só 1 translação.</li>
+            <li>Mapear os tipos de junta do Godot (tabela no fim) para: <code class="k">PinJoint3D</code>, <code class="k">HingeJoint3D</code>, <code class="k">SliderJoint3D</code>, <code class="k">ConeTwistJoint3D</code>, <code class="k">Generic6DOFJoint3D</code>.</li>
+          </ul>
+        </div>
+        <div class="block">
+          <div class="block-label why"><span class="ic">▸</span>Por quê</div>
+          <p class="why-text">O professor pediu literalmente "como limitar o movimento de um corpo em relação ao outro". A resposta formal é <b>GDL</b>. Quando você entende junta como "removedor de GDL", a suspensão vira um <code class="k">Slider</code> (só sobe/desce) e o eixo da roda vira um <code class="k">Hinge</code> (só gira) — sem decorar nada.</p>
+        </div>
+        <div class="block">
+          <div class="block-label out"><span class="ic">▸</span>Entrega</div>
+          <p class="out-text">Tabela "junta → GDL que sobra → uso no rover" preenchida com suas palavras.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 3 -->
+    <div class="day">
+      <div class="day-rail"><div class="day-num">3</div><div class="day-line"></div></div>
+      <div class="day-card">
+        <div class="day-head">
+          <span class="day-label">Quarta · Prática mínima</span>
+        </div>
+        <div class="day-theme">Dois corpos + uma junta no Godot</div>
+        <div class="day-covers">Cobre da lista: <b>o Godot usa Jolt</b> · <b>linkar dois corpos rígidos (na prática)</b></div>
+
+        <div class="block">
+          <div class="block-label what"><span class="ic">▸</span>O quê</div>
+          <ul class="tasks">
+            <li>Numa cena <b>isolada</b> (não toque no rover!): dois <code class="k">RigidBody3D</code> + um <code class="k">HingeJoint3D</code> ligando eles.</li>
+            <li>Confirmar em <em>Project Settings → Physics → 3D → Physics Engine</em> que o motor é <b>Jolt</b> (padrão no 4.6).</li>
+            <li>Rodar e só <b>observar</b>: um corpo fixo, o outro balançando na dobradiça. Brincar com o eixo e os limites angulares.</li>
+          </ul>
+        </div>
+        <div class="block">
+          <div class="block-label why"><span class="ic">▸</span>Por quê</div>
+          <p class="why-text">Uma coisa é ler "junta remove GDL", outra é <b>ver</b> o corpo obedecer a restrição sem você aplicar nenhuma força. É o mesmo espírito do seu protótipo raycast: um experimento minúsculo e controlado antes de qualquer sistema grande. <b>Uma junta, dois corpos — só isso.</b></p>
+        </div>
+        <div class="block">
+          <div class="block-label out"><span class="ic">▸</span>Entrega</div>
+          <p class="out-text">Cena <code class="k">.tscn</code> de teste versionada + 1 GIF/print pro dossiê. Nada de rover ainda.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 4 -->
+    <div class="day">
+      <div class="day-rail"><div class="day-num">4</div><div class="day-line"></div></div>
+      <div class="day-card">
+        <div class="day-head">
+          <span class="day-label">Quinta · Jolt por dentro</span>
+        </div>
+        <div class="day-theme">Como o Jolt resolve + o que o Godot esconde</div>
+        <div class="day-covers">Cobre da lista: <b>como funciona o Jolt</b> · <b>limitações do Godot vs constraints do Jolt</b> · <b>explorar o repo</b></div>
+
+        <div class="block">
+          <div class="block-label what"><span class="ic">▸</span>O quê</div>
+          <ul class="tasks">
+            <li>Ler (sem implementar) como o Jolt organiza constraints: um <b>solver de impulsos</b> que, a cada passo, corrige velocidades pra manter a restrição — o oposto do "empurrão por penalidade".</li>
+            <li>Explorar o repositório: pastas <code class="k">Physics/Constraints</code> e <code class="k">Physics/Vehicle</code>, e os <code class="k">Samples</code> (guia dedicado no fim).</li>
+            <li>Listar concretamente o que o Godot <b>não</b> te dá do Jolt (limites suaves, juntas quebráveis, iterações por junta, <code class="k">VehicleConstraint</code>).</li>
+          </ul>
+        </div>
+        <div class="block">
+          <div class="block-label why"><span class="ic">▸</span>Por quê</div>
+          <p class="why-text">Esse é o dia que arma a decisão. Saber que o Jolt <b>tem</b> uma <code class="k">VehicleConstraint</code> pronta — mas que o Godot <b>não expõe</b> ela — é exatamente o tipo de restrição que muda o rumo do projeto. E tem uma ponte linda aqui: o modelo de veículo do Jolt usa <b>raycast/shapecast nas rodas</b> por baixo. Ou seja, seu protótipo raycast e o mundo multicorpo <b>não são opostos</b> — o próprio Jolt combina os dois.</p>
+        </div>
+        <div class="block">
+          <div class="block-label out"><span class="ic">▸</span>Entrega</div>
+          <p class="out-text">Nota "Godot ↔ Jolt: o que dá e o que não dá" — insumo direto pra decisão arquitetural com o professor.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 5 -->
+    <div class="day">
+      <div class="day-rail"><div class="day-num">5</div><div class="day-line"></div></div>
+      <div class="day-card">
+        <div class="day-head">
+          <span class="day-label">Sexta · Consolidar</span>
+        </div>
+        <div class="day-theme">Mapear pro rover (no papel) + documentar</div>
+        <div class="day-covers">Cobre da lista: <b>como isso ajuda a começar a mecânica multicorpo do rover</b></div>
+
+        <div class="block">
+          <div class="block-label what"><span class="ic">▸</span>O quê</div>
+          <ul class="tasks">
+            <li><b>Só no papel:</b> qual junta modela cada parte do rover (roda = hinge, curso da suspensão = slider, chassi = corpo-mãe). Sem construir.</li>
+            <li>Escrever a entrada <code class="k">docs/multicorpo/visao-geral</code> no Docusaurus com o que aprendeu.</li>
+            <li>Montar o briefing da semana pra passar pro Claude Code gerar a documentação.</li>
+          </ul>
+        </div>
+        <div class="block">
+          <div class="block-label why"><span class="ic">▸</span>Por quê</div>
+          <p class="why-text">Fechar a semana amarrando tudo ao <b>seu</b> rover — mas em nível de esboço — mantém o escopo honesto e deixa você chegar na próxima reunião com uma posição fundamentada sobre raycast × multicorpo, não uma opinião solta.</p>
+        </div>
+        <div class="block">
+          <div class="block-label out"><span class="ic">▸</span>Entrega</div>
+          <p class="out-text">Entrada nova no dossiê + briefing de handoff (modelo no fim) + posição escrita pra decisão arquitetural.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCOPE GUARD -->
+  <div class="guard">
+    <div class="tag">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      Esta semana você NÃO vai
+    </div>
+    <p class="sub">A trava de escopo — porque "explorar" vira "reconstruir tudo" com uma facilidade assustadora.</p>
+    <ul>
+      <li>Construir o rover de 4/6 rodas em multicorpo</li>
+      <li>Trocar ou aposentar o protótipo raycast</li>
+      <li>Integrar a ExoPhysics ou mexer no <code class="k" style="font-size:12px">sinkage</code></li>
+      <li>Escrever C++ ou tocar em GDExtension</li>
+      <li>Implementar a <code class="k" style="font-size:12px">VehicleConstraint</code> do Jolt</li>
+      <li>Modelar suspensão + direção juntas</li>
+    </ul>
+  </div>
+
+  <!-- CONCEPT: RAYCAST VS MULTIBODY -->
+  <div class="sec-title">Cola conceitual · penalidade vs. constraint</div>
+  <div class="duo">
+    <div class="concept left">
+      <h3>Raycast</h3>
+      <div class="kicker">força de penalidade · o que você já tem</div>
+      <p><span class="verb">Você empurra.</span> A cada frame você <b>calcula</b> as forças (mola-amortecedor, tração, lateral) e <b>aplica</b> no corpo. O corpo é livre; o comportamento certo emerge das forças que você escolhe.</p>
+      <div class="row-label">A favor</div>
+      <span class="pill plus">controle total</span><span class="pill plus">física explícita</span><span class="pill plus">troca fácil p/ ExoPhysics</span>
+      <div class="row-label">Contra</div>
+      <span class="pill minus">instabilidade do integrador</span><span class="pill minus">você reimplementa tudo</span>
+    </div>
+    <div class="concept right">
+      <h3>Multicorpo</h3>
+      <div class="kicker">junta + constraint · o caminho a explorar</div>
+      <p><span class="verb">Você restringe.</span> Você <b>declara</b> uma relação geométrica ("estes dois corpos giram juntos neste eixo") e o <b>solver do Jolt</b> calcula os impulsos que mantêm a relação. Você não empurra — você amarra.</p>
+      <div class="row-label">A favor</div>
+      <span class="pill plus">junções rígidas estáveis</span><span class="pill plus">suspensão/direção "de graça"</span>
+      <div class="row-label">Contra</div>
+      <span class="pill minus">menos controle da física interna</span><span class="pill minus">preso ao que o Godot expõe</span>
+    </div>
+  </div>
+  <div class="bridge-note">
+    <b>A ponte:</b> não é "um ou outro". O modelo de veículo do próprio Jolt usa raycast/shapecast nas rodas <em>combinado</em> com o solver de constraints. Seu protótipo raycast não foi trabalho jogado fora — ele é metade do que um veículo multicorpo maduro faz.
+  </div>
+
+  <!-- DOF TABLE -->
+  <div class="sec-title">Referência · juntas do Godot &amp; graus de liberdade</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Junta (Godot)</th><th>Análogo mecânico</th><th>GDL que sobra</th><th>Uso no rover</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="jn">PinJoint3D</span></td>
+          <td>rótula / ponto</td>
+          <td><span class="dof">3 rotação</span></td>
+          <td class="use">ponto de articulação livre</td>
+        </tr>
+        <tr>
+          <td><span class="jn">HingeJoint3D</span></td>
+          <td>dobradiça / revoluta</td>
+          <td><span class="dof">1 rotação</span></td>
+          <td class="use">eixo da roda girando; braço de suspensão</td>
+        </tr>
+        <tr>
+          <td><span class="jn">SliderJoint3D</span></td>
+          <td>prismática</td>
+          <td><span class="dof">1 translação</span></td>
+          <td class="use">curso vertical da suspensão</td>
+        </tr>
+        <tr>
+          <td><span class="jn">ConeTwistJoint3D</span></td>
+          <td>ombro / esférica limitada</td>
+          <td><span class="dof">cone + twist</span></td>
+          <td class="use">juntas com limite angular</td>
+        </tr>
+        <tr>
+          <td><span class="jn">Generic6DOFJoint3D</span></td>
+          <td>configurável</td>
+          <td><span class="dof">você escolhe</span></td>
+          <td class="use">casos gerais; trava/libera cada eixo + motores</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- REPO GUIDE -->
+  <div class="sec-title">Guia de exploração · repositório do Jolt</div>
+  <div class="repo">
+    <div class="repo-item">
+      <div class="repo-path">Physics/Constraints/</div>
+      <div class="repo-desc"><span class="look">Só ler os headers.</span> <b>HingeConstraint</b>, <b>SliderConstraint</b>, <b>SixDOFConstraint</b> etc. Repare nos parâmetros de cada uma (eixo, limites, motor) — é o "de verdade" por trás dos nós do Godot.</div>
+    </div>
+    <div class="repo-item">
+      <div class="repo-path">Physics/Vehicle/</div>
+      <div class="repo-desc"><span class="look">Olhar, não implementar.</span> A <b>WheeledVehicleConstraint</b>. O objetivo é só perceber que o Jolt já tem um modelo de veículo pronto — e que ele usa raycast nas rodas por baixo. É a ponte entre seus dois mundos.</div>
+    </div>
+    <div class="repo-item">
+      <div class="repo-path">Samples/</div>
+      <div class="repo-desc"><span class="look">Intuição visual.</span> Os exemplos rodáveis (ConstraintTests, Vehicle). Ver os GIFs/vídeos do README dá a intuição de como cada constraint se comporta sem escrever uma linha.</div>
+    </div>
+    <div class="repo-item">
+      <div class="repo-path">Docs/</div>
+      <div class="repo-desc"><span class="look">Fundamento.</span> O documento de arquitetura do Jolt explica o solver de constraints em prosa — casa com o que você lê no dia 4.</div>
+    </div>
+    <a class="repo-link" href="https://github.com/jrouwe/JoltPhysics" target="_blank" rel="noopener">↗ github.com/jrouwe/JoltPhysics</a>
+  </div>
+
+  <!-- HANDOFF -->
+  <div class="sec-title">Para o dossiê &amp; a próxima reunião</div>
+  <div class="handoff">
+    <h3>O que sai desta semana</h3>
+    <div class="item"><span class="num">01</span><div><b>Entrada no Docusaurus</b> — <code>docs/multicorpo/visao-geral</code>: o quadro penalidade × constraint, a tabela de GDL, e a nota Godot↔Jolt.</div></div>
+    <div class="item"><span class="num">02</span><div><b>Cena de teste versionada</b> — os dois corpos + hinge, com print/GIF pro dossiê como registro do experimento mínimo.</div></div>
+    <div class="item"><span class="num">03</span><div><b>Posição escrita sobre a decisão arquitetural</b> — agora com o dado novo: o Godot não expõe a <code>VehicleConstraint</code> do Jolt, e o próprio Jolt mistura raycast + constraint. Isso pesa na conversa sobre o cronograma.</div></div>
+    <div class="item"><span class="num">04</span><div><b>Briefing de handoff</b> pro Claude Code gerar a documentação, no seu formato de sempre (bloco de texto copiável).</div></div>
+  </div>
+
+  <footer>
+    <span>ExoTerra · ExoPhysics — PIBIC / UnB / LASE</span>
+    <span>Roadmap · devagar e sempre</span>
+  </footer>
+
+</div>
+</body>
+</html>
