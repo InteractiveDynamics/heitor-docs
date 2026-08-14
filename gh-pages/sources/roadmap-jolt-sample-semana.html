@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roadmap · Semana 10–17 ago · Do conceito ao sample rodando</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0e13;
+    --panel:#141a24;
+    --panel-2:#1a2130;
+    --border:#28313f;
+    --border-soft:#202836;
+    --text:#e7ecf3;
+    --muted:#8a97a9;
+    --faint:#5d6a7c;
+    --amber:#f5b13d;
+    --amber-soft:rgba(245,177,61,.12);
+    --amber-line:rgba(245,177,61,.35);
+    --cyan:#3fd0e6;
+    --cyan-soft:rgba(63,208,230,.10);
+    --cyan-line:rgba(63,208,230,.35);
+    --green:#63cf94;
+    --green-soft:rgba(99,207,148,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(1200px 600px at 12% -8%, rgba(245,177,61,.06), transparent 60%),
+      radial-gradient(1100px 620px at 100% 8%, rgba(63,208,230,.06), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    padding:48px 22px 72px;
+  }
+  .wrap{max-width:940px;margin:0 auto}
+
+  /* ---------- header ---------- */
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--amber);
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  }
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--amber-line)}
+  h1{
+    font-family:'Chakra Petch',sans-serif;font-weight:700;
+    font-size:clamp(30px,5.4vw,50px);line-height:1.02;letter-spacing:-.01em;
+    margin:16px 0 10px;
+  }
+  h1 .accent{color:var(--amber)}
+  .lede{
+    font-family:'IBM Plex Mono',monospace;font-size:13.5px;color:var(--muted);
+    letter-spacing:.02em;
+  }
+  .lede b{color:var(--text);font-weight:600}
+
+  /* ---------- anchor callout ---------- */
+  .anchor{
+    margin:26px 0 30px;
+    display:flex;gap:16px;align-items:flex-start;
+    background:linear-gradient(180deg,var(--amber-soft),transparent);
+    border:1px solid var(--amber-line);border-radius:14px;padding:18px 20px;
+  }
+  .anchor .star{
+    font-family:'Chakra Petch',sans-serif;font-weight:700;color:var(--amber);
+    font-size:22px;line-height:1;flex:none;margin-top:1px;
+  }
+  .anchor .k{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--amber);display:block;margin-bottom:4px;
+  }
+  .anchor p{font-size:15px;color:var(--text)}
+  .anchor p b{color:var(--amber);font-weight:600}
+
+  /* ---------- track legend ---------- */
+  .legend{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:34px}
+  .track{
+    border:1px solid var(--border);border-radius:12px;padding:14px 16px;
+    background:var(--panel);position:relative;overflow:hidden;
+  }
+  .track::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+  .track.a::before{background:var(--amber)}
+  .track.b::before{background:var(--cyan)}
+  .track .tname{font-family:'Chakra Petch',sans-serif;font-weight:600;font-size:15px}
+  .track.a .tname{color:var(--amber)}
+  .track.b .tname{color:var(--cyan)}
+  .track .tdesc{font-size:12.5px;color:var(--muted);margin-top:3px}
+  .track .pts{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);margin-top:8px;letter-spacing:.05em}
+
+  /* ---------- timeline ---------- */
+  .timeline{position:relative;padding-left:0}
+  .day{
+    position:relative;display:grid;grid-template-columns:118px 1fr;gap:24px;
+    padding-bottom:26px;
+  }
+  .day::before{ /* spine */
+    content:"";position:absolute;left:118px;top:8px;bottom:-2px;width:1px;
+    background:var(--border);transform:translateX(11px);
+  }
+  .day:last-of-type::before{display:none}
+
+  .railhead{text-align:right;position:relative;padding-top:2px}
+  .wd{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:16px;letter-spacing:.02em}
+  .dt{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--faint);margin-top:2px}
+  .node{
+    position:absolute;right:-35px;top:5px;width:15px;height:15px;border-radius:50%;
+    background:var(--bg);border:2px solid var(--border);z-index:2;
+  }
+  .day.a .node{border-color:var(--amber);box-shadow:0 0 0 4px var(--amber-soft)}
+  .day.b .node{border-color:var(--cyan);box-shadow:0 0 0 4px var(--cyan-soft)}
+  .day.end .node{border-color:var(--green);box-shadow:0 0 0 4px var(--green-soft)}
+  .day.soft .node{border-color:var(--faint)}
+
+  .card{
+    background:var(--panel);border:1px solid var(--border-soft);border-radius:14px;
+    padding:18px 20px;
+  }
+  .day.a .card{border-left:2px solid var(--amber-line)}
+  .day.b .card{border-left:2px solid var(--cyan-line)}
+  .day.today .card{
+    border:1px solid var(--cyan);
+    box-shadow:0 0 0 1px var(--cyan-soft),0 14px 40px -18px rgba(63,208,230,.5);
+  }
+
+  .toprow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:9px}
+  .pill{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;padding:3px 9px;border-radius:20px;font-weight:600;
+  }
+  .pill.a{color:var(--amber);background:var(--amber-soft);border:1px solid var(--amber-line)}
+  .pill.b{color:var(--cyan);background:var(--cyan-soft);border:1px solid var(--cyan-line)}
+  .pill.end{color:var(--green);background:var(--green-soft);border:1px solid rgba(99,207,148,.35)}
+  .pill.soft{color:var(--faint);background:transparent;border:1px solid var(--border)}
+  .now{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;
+    color:var(--bg);background:var(--cyan);padding:3px 9px;border-radius:20px;font-weight:600;
+  }
+  .ctitle{font-family:'Chakra Petch',sans-serif;font-weight:600;font-size:18px;letter-spacing:-.005em}
+
+  ul.steps{list-style:none;margin:12px 0 4px}
+  ul.steps li{
+    position:relative;padding-left:20px;font-size:14px;color:#cdd6e2;margin-bottom:7px;
+  }
+  ul.steps li::before{
+    content:"";position:absolute;left:2px;top:9px;width:6px;height:6px;border-radius:1px;
+    transform:rotate(45deg);
+  }
+  .day.a ul.steps li::before{background:var(--amber)}
+  .day.b ul.steps li::before{background:var(--cyan)}
+  .day.soft ul.steps li::before{background:var(--faint)}
+  ul.steps li code{
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;
+    background:var(--panel-2);border:1px solid var(--border);border-radius:5px;
+    padding:1px 6px;color:#dbe3ee;
+  }
+  ul.steps li b{color:#fff;font-weight:600}
+
+  .why{
+    display:flex;gap:9px;margin-top:12px;padding:11px 13px;border-radius:10px;
+    background:var(--panel-2);font-size:13px;color:var(--muted);
+  }
+  .why .lab{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;flex:none;padding-top:1px;
+  }
+  .day.a .why .lab{color:var(--amber)}
+  .day.b .why .lab{color:var(--cyan)}
+  .why b{color:var(--text);font-weight:600}
+
+  .out{
+    margin-top:12px;display:inline-flex;align-items:center;gap:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--green);
+    background:var(--green-soft);border:1px solid rgba(99,207,148,.3);
+    border-radius:8px;padding:6px 11px;
+  }
+  .out::before{content:"↳";color:var(--green);font-weight:700}
+
+  .checklist{list-style:none;margin-top:10px}
+  .checklist li{
+    display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#cdd6e2;margin-bottom:8px;
+  }
+  .checklist li .ck{color:var(--green);font-weight:700;flex:none}
+  .checklist li b{color:#fff;font-weight:600}
+
+  /* ---------- footer notes ---------- */
+  .notes{
+    margin-top:36px;display:grid;grid-template-columns:1fr 1fr;gap:14px;
+  }
+  .note{
+    border:1px dashed var(--border);border-radius:12px;padding:15px 17px;background:rgba(255,255,255,.012);
+  }
+  .note .nk{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block;
+  }
+  .note p{font-size:13px;color:#c3ccda}
+  .note p b{color:var(--text)}
+  .note.scope .nk{color:var(--amber)}
+  .note.mode .nk{color:var(--cyan)}
+
+  .foot{
+    margin-top:30px;text-align:center;font-family:'IBM Plex Mono',monospace;
+    font-size:11px;color:var(--faint);letter-spacing:.06em;
+  }
+
+  @media(max-width:680px){
+    body{padding:34px 16px 56px}
+    .legend{grid-template-columns:1fr}
+    .notes{grid-template-columns:1fr}
+    .day{grid-template-columns:1fr;gap:0}
+    .day::before{left:7px;top:26px;transform:none}
+    .railhead{text-align:left;padding-left:30px;margin-bottom:12px}
+    .node{right:auto;left:0;top:4px}
+    .card{margin-left:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">PIBIC · ExoTerra · Tema 1 — Dinâmica Veicular</div>
+  <h1>Do conceito ao <span class="accent">sample rodando</span></h1>
+  <div class="lede">Roadmap da semana · <b>10 → 17 ago</b> · a partir da reunião de 10/08</div>
+
+  <div class="anchor">
+    <span class="star">★</span>
+    <div>
+      <span class="k">Entregável-âncora da semana</span>
+      <p>O <b>comparativo formal Jolt × Godot</b> — o documento feature-a-feature que fundamenta a decisão arquitetural (raycast × joints × ponte C++). Todo o resto da semana existe pra sustentar essa tabela.</p>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="track a">
+      <div class="tname">Faixa A · Provar até onde o Godot vai</div>
+      <div class="tdesc">Rodar o Jolt de verdade, mapear o gap e testar o limite do Godot na prática.</div>
+      <div class="pts">PONTOS 1 &amp; 2 DA REUNIÃO</div>
+    </div>
+    <div class="track b">
+      <div class="tname">Faixa B · A ponte C++ pra além do Godot</div>
+      <div class="tdesc">Entender o GDExtension e espelhar o caminho que o professor já trilhou com o Chrono.</div>
+      <div class="pts">PONTOS 3 &amp; 4 DA REUNIÃO</div>
+    </div>
+  </div>
+
+  <div class="timeline">
+
+    <!-- SEG -->
+    <div class="day a">
+      <div class="railhead"><div class="node"></div><div class="wd">Seg</div><div class="dt">10 ago · reunião</div></div>
+      <div class="card">
+        <div class="toprow"><span class="pill a">Ponto 1 · parte 1</span><span class="ctitle">Rodar um sample do Jolt</span></div>
+        <ul class="steps">
+          <li>Clonar <code>github.com/jrouwe/JoltPhysics</code>.</li>
+          <li><b>Atalho sem build:</b> abrir a página de demos web (JoltPhysics.js) e passar o olho nos samples — em especial os de <b>Constraints</b> e <b>Vehicle</b> (veículo de esteira com <em>hinge</em>, moto).</li>
+          <li><b>Nativo:</b> compilar o app <code>Samples</code> (precisa de CMake 3.23+; no Windows é o caminho mais direto — usa DirectX, se der erro de GPU ativar "Graphics Tools" nas features opcionais). Alternativa mínima: só a pasta <code>HelloWorld</code>.</li>
+          <li>Controles: começa pausado (<b>P</b> despausa), <b>ESC → Select Test</b> / Run All Tests.</li>
+          <li><b>Escolher O sample-âncora da semana</b> — sugestão: um de Constraints/Vehicle, que casa direto com o <em>hinge</em> do seu <code>teste_junta</code>.</li>
+        </ul>
+        <div class="why"><span class="lab">Porquê</span><span>Sem ver o Jolt rodando, o comparativo vira achismo. Fixar o sample <b>agora</b> trava o alvo do resto da semana.</span></div>
+        <div class="out">Jolt clonado + rodando + 1 sample escolhido</div>
+      </div>
+    </div>
+
+    <!-- TER -->
+    <div class="day a">
+      <div class="railhead"><div class="node"></div><div class="wd">Ter</div><div class="dt">11 ago</div></div>
+      <div class="card">
+        <div class="toprow"><span class="pill a">Ponto 1 · parte 2</span><span class="ctitle">Comparativo feature a feature</span></div>
+        <ul class="steps">
+          <li>Pro sample escolhido, listar as features que ele usa: tipo de constraint, motor, limites, callbacks, integrador.</li>
+          <li>Pra cada uma, responder: <b>o Jolt expõe?</b> · <b>o módulo Jolt embutido do Godot 4.6 expõe?</b> (ex.: <code>VehicleConstraint</code> — Jolt tem, Godot não expõe).</li>
+          <li>Montar a tabela: <b>Feature | Jolt | Godot (módulo Jolt) | Observação</b>.</li>
+        </ul>
+        <div class="why"><span class="lab">Porquê</span><span>É literalmente o <b>"comparativo formal que fundamenta a decisão arquitetural"</b> que saiu da reunião. É o entregável-âncora tomando forma.</span></div>
+        <div class="out">Rascunho da tabela comparativa</div>
+      </div>
+    </div>
+
+    <!-- QUA -->
+    <div class="day a">
+      <div class="railhead"><div class="node"></div><div class="wd">Qua</div><div class="dt">12 ago</div></div>
+      <div class="card">
+        <div class="toprow"><span class="pill a">Ponto 2</span><span class="ctitle">Replicar o sample no Godot</span></div>
+        <ul class="steps">
+          <li>Cena isolada nova (na linha do seu <code>teste_junta.tscn</code>): reconstruir o mesmo cenário do sample com nós <code>Joint3D</code> (<code>HingeJoint3D</code> / <code>Generic6DOFJoint3D</code>).</li>
+          <li>Medir: o que reproduz 1:1, o que só dá pra aproximar, e <b>onde bate no limite</b> do achado de terça.</li>
+          <li>Cada limite encontrado volta anotado pra tabela do comparativo.</li>
+        </ul>
+        <div class="why"><span class="lab">Porquê</span><span>Fecha o par <b>achado teórico → prova prática</b>. Conecta direto com o <em>hinge</em> que você já testou na semana passada.</span></div>
+        <div class="out">Cena Godot replicando o sample + limites anotados</div>
+      </div>
+    </div>
+
+    <!-- QUI -->
+    <div class="day b today">
+      <div class="railhead"><div class="node"></div><div class="wd">Qui</div><div class="dt">13 ago · hoje</div></div>
+      <div class="card">
+        <div class="toprow"><span class="pill b">Ponto 3</span><span class="now">você está aqui</span><span class="ctitle">Ler a doc do GDExtension</span></div>
+        <ul class="steps">
+          <li>Ler a doc oficial <b>godot-cpp</b> (docs.godotengine.org → C++ / "GDExtension C++ example") — foco no <b>conceito</b>, não em construir uma extensão de produção.</li>
+          <li>Entender as peças: <b>ABI estável</b>, o arquivo <code>.gdextension</code>, <code>compatibility_minimum</code>, <code>godot-cpp</code> + <code>godot-cpp-template</code>.</li>
+          <li>Anotar o essencial: o que é preciso pra <b>expor pro Godot algo que o motor não expõe</b> (é o caminho pro <code>VehicleConstraint</code> do Jolt, um dia).</li>
+        </ul>
+        <div class="why"><span class="lab">Porquê</span><span>É a ponte que, no futuro, resolve o gap que o comparativo vai apontar. <b>Ler, não implementar.</b></span></div>
+        <div class="out">Notas de conceito do GDExtension</div>
+      </div>
+    </div>
+
+    <!-- SEX -->
+    <div class="day b">
+      <div class="railhead"><div class="node"></div><div class="wd">Sex</div><div class="dt">14 ago</div></div>
+      <div class="card">
+        <div class="toprow"><span class="pill b">Ponto 4</span><span class="ctitle">Espelhar o GDChrono → Jolt</span></div>
+        <ul class="steps">
+          <li>Estudar a GDExtension do professor (<b>GDChrono</b>): como ele liga o Godot ao Project Chrono — estrutura, o que expôs, como bindou as classes.</li>
+          <li>Traçar o raciocínio equivalente pro Jolt: se fosse um "GDJolt", <b>que classe/constraint</b> precisaria expor pra fechar o gap do comparativo? (ex.: <code>VehicleConstraint</code>).</li>
+          <li>Não construir — só mapear o paralelo. Mesmo espírito do Ponto 2 ("pegar um sample e replicar"), agora pela via da extensão.</li>
+        </ul>
+        <div class="why"><span class="lab">Porquê</span><span>Casa o Ponto 2 (replicar) com o Ponto 3 (GDExtension): mostra o caminho concreto usando um exemplo que <b>já existe dentro do seu grupo</b>.</span></div>
+        <div class="out">Esboço "GDChrono → GDJolt": o que espelharia</div>
+      </div>
+    </div>
+
+    <!-- FDS -->
+    <div class="day soft">
+      <div class="railhead"><div class="node"></div><div class="wd">Fim de semana</div><div class="dt">15–16 ago</div></div>
+      <div class="card">
+        <div class="toprow"><span class="pill soft">Leve · opcional</span><span class="ctitle">Consolidar as notas</span></div>
+        <ul class="steps">
+          <li>Passar a tabela comparativa + as notas a limpo → rascunho de uma entrada no dossiê Docusaurus.</li>
+          <li>Você escreve suas notas a partir do que levantou — do jeito que prefere.</li>
+        </ul>
+        <div class="out">Rascunho da entrada do dossiê</div>
+      </div>
+    </div>
+
+    <!-- SEG 17 -->
+    <div class="day end">
+      <div class="railhead"><div class="node"></div><div class="wd">Seg</div><div class="dt">17 ago · reunião</div></div>
+      <div class="card">
+        <div class="toprow"><span class="pill end">Fechamento</span><span class="ctitle">O que leva pra próxima reunião</span></div>
+        <ul class="checklist">
+          <li><span class="ck">✔</span><span><b>Comparativo formal Jolt × Godot</b> — a decisão arquitetural fundamentada <em>(o entregável-âncora)</em>.</span></li>
+          <li><span class="ck">✔</span><span><b>Cena Godot</b> replicando o sample + limites do módulo Jolt anotados.</span></li>
+          <li><span class="ck">✔</span><span><b>Notas de GDExtension</b> + esboço do espelhamento GDChrono → Jolt.</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="notes">
+    <div class="note scope">
+      <span class="nk">Disciplina de escopo</span>
+      <p>Só os <b>4 pontos da reunião</b>. Nada de rover completo, powertrain ou suspensão aqui — isso é lá na frente no cronograma. A semana é sobre <b>fundamentar a decisão</b>, não construir.</p>
+    </div>
+    <div class="note mode">
+      <span class="nk">Modo da semana</span>
+      <p><b>Exploratório.</b> Rodar sample, mapear features, ler doc, espelhar raciocínio. Os Pontos 3 e 4 são <b>leitura e mapeamento</b> — não construir extensão de produção.</p>
+    </div>
+  </div>
+
+  <div class="foot">ExoTerra · Tema 1 · roadmap 10–17 ago — "do conceito ao sample rodando"</div>
+
+</div>
+</body>
+</html>

@@ -11,6 +11,7 @@ publicados** (estão fora de `docs/`, `src/` e `static/`).
 | `roadmap-base-godot-semana.html` | `docs/roadmaps/semana-2026-07-13.mdx` (componente `RoadmapBaseGodot`) |
 | `roadmap-rover-raycast-semana.html` | `docs/roadmaps/semana-2026-07-20.mdx` (componente `RoadmapRoverRaycast`) |
 | `roadmap-multicorpo-semana.html` | `docs/roadmaps/semana-2026-07-27.mdx` (componente `RoadmapMulticorpo`) |
+| `roadmap-jolt-sample-semana.html` | `docs/roadmaps/semana-2026-08-10.mdx` (componente `RoadmapJoltSample`) |
 
 As imagens de evidência (screenshots) usadas por um componente ficam co-locadas
 com ele — ex.: as do dossiê em `src/components/DossieGodot/img/`.

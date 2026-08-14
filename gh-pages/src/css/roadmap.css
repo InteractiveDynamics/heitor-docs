@@ -580,6 +580,11 @@
   font-weight: 600;
 }
 
+/* justificativa ("Porquê: ...") logo depois da lista de passos de um stop */
+.roadmap .stop .steps + p {
+  margin-top: 13px;
+}
+
 /* ---------- chip "faça agora" dentro de um stop ---------- */
 .roadmap .stop .doit {
   display: inline-block;
