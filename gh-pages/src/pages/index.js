@@ -18,8 +18,8 @@ const FRENTES = [
   },
   {
     titulo: 'Dinâmica multicorpo (C++)',
-    desc: 'Corpos rígidos, articulações e o salto do arcade car pro modelo rigoroso.',
-    status: 'planejada',
+    desc: 'Corpos rígidos, juntas e constraints — do paradigma (e dos limites do Jolt no Godot) ao modelo rigoroso.',
+    status: 'ativa',
     to: '/docs/multicorpo/visao-geral',
   },
   {
@@ -66,7 +66,7 @@ function Telemetry() {
           frentes · <b>7 mapeadas</b>
         </span>
         <span>
-          publicadas · <b>4</b>
+          publicadas · <b>5</b>
         </span>
         <span>
           foco · <b>dinâmica veicular</b>

@@ -72,6 +72,7 @@ const config = {
             './src/css/dossie.css',
             './src/css/roadmap.css',
             './src/css/tecnica.css',
+            './src/css/multicorpo.css',
           ],
         },
       }),

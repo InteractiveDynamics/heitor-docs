@@ -1,0 +1,274 @@
+/**
+ * Peças visuais da doc da frente multicorpo (DossieMulticorpo). A doc renderiza
+ * em `<div className="dossie tecnica mcorpo">`: reaproveita a assinatura do
+ * dossiê (dossie.css: hero-block / telemetry-strip / tree / bug / callout /
+ * shot) e as primitivas técnicas (tecnica.css: fig / duo / facet / code-block),
+ * e ganha aqui só o que faltava — linha do tempo da quinzena, tabelas de
+ * referência, grade de juntas e lista de fontes. Escopado sob `.mcorpo`.
+ *
+ * Convenção de acento herdada do site: ciano = constraint/identidade;
+ * âmbar = força/penalidade e pendências; coral = limite/lacuna.
+ */
+
+.mcorpo {
+  --mc-amber-soft: rgba(234, 169, 60, 0.1);
+  --mc-coral-soft: rgba(232, 99, 91, 0.1);
+  --mc-cyan-soft: rgba(63, 208, 192, 0.09);
+}
+
+/* ---------- data da etapa no cabeçalho de seção ---------- */
+.mcorpo .sec-head .when {
+  margin-left: auto;
+  flex: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+/* ---------- linha do tempo da quinzena ---------- */
+.mcorpo .tl {
+  display: grid;
+  gap: 10px;
+  margin: 22px 0 4px;
+}
+.mcorpo .tl-stop {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-left: 3px solid var(--cyan);
+  border-radius: 0 12px 12px 0;
+  overflow: hidden;
+}
+.mcorpo .tl-stop.done {
+  border-left-color: var(--cyan);
+}
+.mcorpo .tl-stop.open {
+  border-left-color: var(--amber);
+  background: var(--bg-2);
+}
+@media (max-width: 640px) {
+  .mcorpo .tl-stop {
+    grid-template-columns: 1fr;
+  }
+}
+.mcorpo .tl-when {
+  background: var(--bg-2);
+  border-right: 1px solid var(--line-soft);
+  padding: 16px 18px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--cyan);
+}
+.mcorpo .tl-stop.open .tl-when {
+  color: var(--amber);
+}
+.mcorpo .tl-when .wk {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 5px;
+}
+@media (max-width: 640px) {
+  .mcorpo .tl-when {
+    border-right: none;
+    border-bottom: 1px solid var(--line-soft);
+  }
+}
+.mcorpo .tl-what {
+  padding: 15px 20px;
+}
+.mcorpo .tl-what h4 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+.mcorpo .tl-what p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--ink-mid);
+}
+
+/* ---------- tabelas de referência ---------- */
+.mcorpo .tbl-wrap {
+  margin: 22px 0;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.mcorpo table.ctab {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  display: table;
+  margin: 0;
+  font-size: 0.9rem;
+}
+.mcorpo table.ctab thead th {
+  background: var(--bg-2);
+  border: none;
+  border-bottom: 1px solid var(--line);
+  padding: 13px 18px;
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+.mcorpo table.ctab tbody tr {
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--line-soft);
+}
+.mcorpo table.ctab tbody tr:first-child {
+  border-top: none;
+}
+.mcorpo table.ctab td {
+  border: none;
+  padding: 13px 18px;
+  color: var(--ink-mid);
+  vertical-align: top;
+  line-height: 1.5;
+}
+.mcorpo table.ctab td:first-child {
+  color: var(--ink);
+  font-weight: 500;
+}
+.mcorpo table.ctab td.mono {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--cyan);
+  white-space: nowrap;
+}
+.mcorpo table.ctab td b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.mcorpo table.ctab tr.amber td:first-child {
+  color: var(--amber);
+}
+.mcorpo .yes,
+.mcorpo .no {
+  font-family: var(--mono);
+  font-size: 0.86rem;
+  white-space: nowrap;
+}
+.mcorpo .yes {
+  color: var(--green);
+}
+.mcorpo .no {
+  color: var(--coral);
+}
+
+/* ---------- grade das juntas (mini-diagramas de GDL) ---------- */
+.mcorpo .jgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+  margin: 22px 0;
+}
+.mcorpo .jcard {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--cyan);
+  border-radius: 12px;
+  padding: 16px 16px 14px;
+  text-align: center;
+}
+.mcorpo .jcard.wide {
+  border-top-color: var(--violet);
+}
+.mcorpo .jcard svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 10px;
+}
+.mcorpo .jcard .jn {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--cyan);
+  margin-bottom: 5px;
+}
+.mcorpo .jcard.wide .jn {
+  color: var(--violet);
+}
+.mcorpo .jcard .jd {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  line-height: 1.45;
+}
+.mcorpo .jcard .jd b {
+  color: var(--ink-mid);
+  font-weight: 600;
+}
+
+/* ---------- variações de acento do callout ---------- */
+.mcorpo .callout.amber {
+  border-left-color: var(--amber);
+  background: linear-gradient(90deg, var(--mc-amber-soft), var(--surface) 55%);
+}
+.mcorpo .callout.coral {
+  border-left-color: var(--coral);
+  background: linear-gradient(90deg, var(--mc-coral-soft), var(--surface) 55%);
+}
+
+/* ---------- lista de fontes ---------- */
+.mcorpo .refs {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+.mcorpo .refs .rgrp {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin: 14px 0 2px;
+}
+.mcorpo .refs a {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 0.92rem;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.mcorpo .refs a:hover {
+  border-color: var(--cyan-deep);
+  background: var(--surface-2);
+  text-decoration: none;
+}
+.mcorpo .refs a .rd {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  margin-top: 3px;
+}
+.mcorpo .refs a .rk {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  color: var(--cyan);
+}

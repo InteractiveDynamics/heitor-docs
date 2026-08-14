@@ -405,12 +405,16 @@ export default function RoadmapMulticorpo() {
           <h3>O que sai desta quinzena</h3>
           <ul>
             <li>
-              <b>Entrada no Docusaurus</b> — <code>docs/multicorpo/visao-geral</code>:
-              o quadro penalidade × constraint, a tabela de GDL e a nota Godot↔Jolt.
+              <b>Entrada no Docusaurus</b> — ✔ publicada em{' '}
+              <a href="/docs/multicorpo/constraints-e-jolt">
+                Constraints, juntas e o Jolt
+              </a>
+              : o quadro penalidade × constraint, a tabela de GDL, o experimento
+              com <code>HingeJoint3D</code> e a nota Godot↔Jolt.
             </li>
             <li>
-              <b>Cena de teste versionada</b> — os dois corpos + hinge, com
-              print/GIF pro dossiê como registro do experimento mínimo.
+              <b>Cena de teste versionada</b> — ✔ feita: os dois corpos + hinge em{' '}
+              <code>Teste_junta/</code>, com os prints do pêndulo no dossiê.
             </li>
             <li>
               <b>Comparativo Jolt × Godot</b> — a partir de um sample: o que o Jolt

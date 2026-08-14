@@ -15,6 +15,20 @@ publicados** (estão fora de `docs/`, `src/` e `static/`).
 As imagens de evidência (screenshots) usadas por um componente ficam co-locadas
 com ele — ex.: as do dossiê em `src/components/DossieGodot/img/`.
 
+## Docs de aprendizado em Markdown
+
+Nem toda fonte é HTML: as sessões de estudo da quinzena de multicorpo foram
+escritas direto em Markdown (um arquivo por sessão) e depois consolidadas num
+único componente.
+
+| Pasta / arquivos | Virou |
+| --- | --- |
+| `quinzena-multicorpo/dia-01..dia-04.md` | `docs/multicorpo/constraints-e-jolt.mdx` (componente `DossieMulticorpo`) |
+
+> As datas no frontmatter desses `.md` são as do plano original (um dia por
+> arquivo). Na doc publicada elas foram redistribuídas nos intervalos reais da
+> quinzena de 27/jul a 10/ago.
+
 ## Docs de fundamentos (sem HTML original)
 
 As docs técnicas de **powertrain/torque** e **suspensão** não vêm de um HTML
