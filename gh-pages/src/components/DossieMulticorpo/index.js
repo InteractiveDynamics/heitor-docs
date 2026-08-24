@@ -1,4 +1,5 @@
 import React from 'react';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import penduloEmAlta from './img/pendulo-em-alta.png';
 import penduloEmBaixa from './img/pendulo-em-baixa.png';
 
@@ -19,6 +20,8 @@ import penduloEmBaixa from './img/pendulo-em-baixa.png';
  * primitivas técnicas (tecnica.css) e as peças próprias em multicorpo.css.
  */
 export default function DossieMulticorpo() {
+  const roadmapHref = useBaseUrl('/docs/roadmaps/semana-2026-07-27');
+
   // Curvas da figura "impulso × força" (bloco 06): amostragem da velocidade
   // proibida ao longo de alguns passos de física. Na penalidade, a força age ao
   // longo do passo e sobrecorrige (oscila em torno de zero); no constraint, o
@@ -111,7 +114,7 @@ export default function DossieMulticorpo() {
         </div>
         <p className="sec-intro">
           O roadmap desta quinzena está em{' '}
-          <a href="/docs/roadmaps/semana-2026-07-27">
+          <a href={roadmapHref}>
             27 jul–10 ago · Rumo ao multicorpo
           </a>
           . Ele foi montado pra semana de 27/jul e esticado pelas duas semanas

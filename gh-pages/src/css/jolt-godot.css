@@ -1,0 +1,69 @@
+/**
+ * Peças próprias da doc "O tanque do Jolt e o teto do Godot"
+ * (componente DossieJoltGodot · docs/multicorpo/jolt-vs-godot.mdx).
+ *
+ * O componente renderiza sob `.dossie .tecnica .mcorpo .jgodot`: quase tudo vem
+ * de dossie.css, tecnica.css e multicorpo.css. Aqui ficam só os ajustes que a
+ * entrada anterior da frente não precisava — no caso, a tabela comparativa de
+ * quatro colunas, que estoura a largura do conteúdo com `table-layout: auto`.
+ */
+
+.jgodot table.ctab.quad {
+  table-layout: fixed;
+  min-width: 0;
+  font-size: 0.84rem;
+}
+
+.jgodot table.ctab.quad thead th,
+.jgodot table.ctab.quad td {
+  padding: 12px 14px;
+}
+
+/* o cabeçalho padrão é nowrap; com coluna estreita isso faz um título invadir o
+   outro — aqui ele pode quebrar em duas linhas */
+.jgodot table.ctab.quad thead th {
+  white-space: normal;
+  line-height: 1.5;
+}
+
+/* com largura fixa, nome de classe longo precisa poder quebrar — mas só ele:
+   o texto normal quebra por palavra, como em qualquer outra tabela do site */
+.jgodot table.ctab.quad code {
+  overflow-wrap: anywhere;
+}
+.jgodot table.ctab.quad td {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+.jgodot table.ctab.quad .yes,
+.jgodot table.ctab.quad .no {
+  white-space: normal;
+}
+
+/* proporção das quatro colunas — soma 100% */
+.jgodot .col-feature {
+  width: 31%;
+}
+.jgodot .col-jolt {
+  width: 14%;
+}
+.jgodot .col-godot {
+  width: 16%;
+}
+.jgodot .col-obs {
+  width: 39%;
+}
+
+/* no celular a largura fixa espreme demais: volta a rolar na horizontal */
+@media (max-width: 700px) {
+  .jgodot table.ctab.quad {
+    table-layout: auto;
+    min-width: 620px;
+  }
+  .jgodot .col-feature,
+  .jgodot .col-jolt,
+  .jgodot .col-godot,
+  .jgodot .col-obs {
+    width: auto;
+  }
+}

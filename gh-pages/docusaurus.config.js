@@ -15,7 +15,10 @@ const config = {
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
-    v4: true, // Improve compatibility with the upcoming Docusaurus v4
+    // v4 desligado de propósito: com ele ligado, o Docusaurus 3.10.1 deixa de
+    // processar as admonitions (`:::tip`, `:::info`) e elas aparecem como texto
+    // cru nas páginas .md. Religar só depois de conferir que isso foi corrigido.
+    v4: false,
   },
 
   // URL de produção do site (GitHub Pages)
@@ -73,6 +76,7 @@ const config = {
             './src/css/roadmap.css',
             './src/css/tecnica.css',
             './src/css/multicorpo.css',
+            './src/css/jolt-godot.css',
           ],
         },
       }),

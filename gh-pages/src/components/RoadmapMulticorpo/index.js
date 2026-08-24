@@ -1,4 +1,5 @@
 import React from 'react';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
 /**
  * Roadmap da quinzena 27/jul – 10/ago/2026 · Rumo ao multicorpo.
@@ -12,6 +13,8 @@ import React from 'react';
  * Heitor pra si mesmo.
  */
 export default function RoadmapMulticorpo() {
+  const quinzenaHref = useBaseUrl('/docs/multicorpo/constraints-e-jolt');
+
   return (
     <div className="roadmap">
       {/* hero */}
@@ -406,7 +409,7 @@ export default function RoadmapMulticorpo() {
           <ul>
             <li>
               <b>Entrada no Docusaurus</b> — ✔ publicada em{' '}
-              <a href="/docs/multicorpo/constraints-e-jolt">
+              <a href={quinzenaHref}>
                 Constraints, juntas e o Jolt
               </a>
               : o quadro penalidade × constraint, a tabela de GDL, o experimento

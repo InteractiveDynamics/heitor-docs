@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://vyixhr200iip"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6sc8f"]
+size = Vector3(1, 0.4, 2)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_6sc8f"]
+radius = 0.1
+
+[sub_resource type="BoxMesh" id="BoxMesh_6sc8f"]
+size = Vector3(1, 0.4, 2)
+
+[node name="Chassi" type="RigidBody3D" unique_id=1539677458]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1076215725]
+shape = SubResource("BoxShape3D_6sc8f")
+
+[node name="RodaSuporte_FE" type="RigidBody3D" parent="." unique_id=420700096]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55, -0.2, 0.8)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RodaSuporte_FE" unique_id=1587229563]
+shape = SubResource("SphereShape3D_6sc8f")
+
+[node name="Susp_FE" type="SliderJoint3D" parent="." unique_id=1537407187]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -0.55, -0.2, 0.8)
+node_a = NodePath("..")
+node_b = NodePath("../RodaSuporte_FE")
+linear_limit/upper_distance = 0.1
+linear_limit/lower_distance = -0.1
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1363074841]
+mesh = SubResource("BoxMesh_6sc8f")
+
+[node name="Node3D" type="Node3D" parent="." unique_id=278032198]

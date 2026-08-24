@@ -25,10 +25,15 @@ escritas direto em Markdown (um arquivo por sessão) e depois consolidadas num
 | Pasta / arquivos | Virou |
 | --- | --- |
 | `quinzena-multicorpo/dia-01..dia-04.md` | `docs/multicorpo/constraints-e-jolt.mdx` (componente `DossieMulticorpo`) |
+| `semana-jolt-sample/anotacoes-dias-1-3.md` | `docs/multicorpo/jolt-vs-godot.mdx` (componente `DossieJoltGodot`) |
 
 > As datas no frontmatter desses `.md` são as do plano original (um dia por
 > arquivo). Na doc publicada elas foram redistribuídas nos intervalos reais da
 > quinzena de 27/jul a 10/ago.
+
+> As anotações da semana do sample do Jolt (`semana-jolt-sample/`) cobrem só os
+> **três primeiros dias** (10 a 12/ago, pontos 1 e 2 da reunião). A faixa B do
+> roadmap — GDExtension e GDChrono — ainda não foi documentada.
 
 ## Docs de fundamentos (sem HTML original)
 

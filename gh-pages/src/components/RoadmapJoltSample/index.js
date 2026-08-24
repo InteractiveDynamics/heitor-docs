@@ -1,4 +1,5 @@
 import React from 'react';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
 /**
  * Roadmap da semana 10–17/ago/2026 · Do conceito ao sample rodando.
@@ -11,6 +12,8 @@ import React from 'react';
  * notas do Heitor pra si mesmo.
  */
 export default function RoadmapJoltSample() {
+  const quinzenaHref = useBaseUrl('/docs/multicorpo/constraints-e-jolt');
+
   return (
     <div className="roadmap">
       {/* hero */}
@@ -331,7 +334,7 @@ export default function RoadmapJoltSample() {
           <span className="lbl">◈ o que a quinzena anterior já entregou</span>
           <p>
             O arco conceitual está fechado e publicado em{' '}
-            <a href="/docs/multicorpo/constraints-e-jolt">
+            <a href={quinzenaHref}>
               Constraints, juntas e o Jolt por dentro
             </a>
             : penalidade × constraint, a tabela de GDL das juntas do Godot, o

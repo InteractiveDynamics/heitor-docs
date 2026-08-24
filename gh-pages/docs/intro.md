@@ -15,9 +15,12 @@ documentação técnica densa do modelo de verdade.
 Começou com uma **nota de aprendizado** — o
 [dossiê do sandbox no Godot](/docs/notas/dossie-godot), um _arcade car_ pra
 pegar intuição — e já avançou pros **fundamentos**:
-[powertrain e torque](/docs/powertrain/visao-geral) e
-[suspensão](/docs/suspensao/visao-geral). As demais frentes abaixo já estão com
-a estrutura preparada e vão sendo preenchidas.
+[powertrain e torque](/docs/powertrain/visao-geral),
+[suspensão](/docs/suspensao/visao-geral) e o
+[contato roda–solo por raycast](/docs/roda-solo/visao-geral). A frente de
+[dinâmica multicorpo](/docs/multicorpo/visao-geral) já tem duas entradas — o
+paradigma das constraints e o comparativo Jolt × Godot. As demais frentes abaixo
+já estão com a estrutura preparada e vão sendo preenchidas.
 :::
 
 :::tip Planejamento semanal
@@ -31,11 +34,11 @@ curto prazo.
 | Frente | Do que trata | Estado |
 | --- | --- | --- |
 | **[Estudos & notas](/docs/notas/dossie-godot)** | Explorações e notas de aprendizado avulsas (como o dossiê do Godot). | 🟢 Ativa |
-| **Dinâmica multicorpo (C++)** | Corpos rígidos, articulações, o salto do arcade car pro modelo rigoroso. | 🟡 Planejada |
+| **[Dinâmica multicorpo (C++)](/docs/multicorpo/visao-geral)** | Corpos rígidos, articulações, o salto do arcade car pro modelo rigoroso. | 🟢 Ativa |
 | **[Powertrain e tração](/docs/powertrain/visao-geral)** | Motor → transmissão → roda → força de tração via torque. | 🟢 Ativa |
 | **[Suspensão](/docs/suspensao/visao-geral)** | Modelo mola-amortecedor; rocker-bogie pra rovers. | 🟢 Ativa |
 | **Contrato de API** | Interface entre o modelo veicular e a camada ExoPhysics/plataforma. | 🟡 Planejada |
-| **Integração roda–solo** | Simulação acoplada veículo–solo deformável. | 🟡 Planejada |
+| **[Integração roda–solo](/docs/roda-solo/visao-geral)** | Simulação acoplada veículo–solo deformável. | 🟢 Ativa |
 | **Validação comparativa** | Comparação com Chrono, SCM e métricas. | 🟡 Planejada |
 
 ## Como este site cresce

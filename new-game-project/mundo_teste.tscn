@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://brwqxluhuxjx4"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6sc8f"]
+size = Vector3(10, 0.2, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6sc8f"]
+size = Vector3(10, 0.2, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8bujh"]
+size = Vector3(1, 0.4, 2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cb23i"]
+size = Vector3(1, 0.4, 2)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_6sc8f"]
+radius = 0.1
+
+[node name="Node3D" type="Node3D" unique_id=630046807]
+
+[node name="chao" type="StaticBody3D" parent="." unique_id=596446861]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="chao" unique_id=1492424266]
+shape = SubResource("BoxShape3D_6sc8f")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="chao" unique_id=550024963]
+mesh = SubResource("BoxMesh_6sc8f")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=469405709]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25120974, 0)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=2072161857]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1249137, 3.993082)
+
+[node name="Chassi" type="RigidBody3D" parent="." unique_id=869194188]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Chassi" unique_id=963592602]
+shape = SubResource("BoxShape3D_8bujh")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Chassi" unique_id=1322173176]
+mesh = SubResource("BoxMesh_cb23i")
+
+[node name="RodaSuporte_FE" type="RigidBody3D" parent="." unique_id=325794656]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55, 1.8, 0.8)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RodaSuporte_FE" unique_id=970867522]
+shape = SubResource("SphereShape3D_6sc8f")
+
+[node name="Suspe_FE" type="SliderJoint3D" parent="." unique_id=1389662443]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -0.55, 1.8, 0.8)
+node_a = NodePath("../Chassi")
+node_b = NodePath("../RodaSuporte_FE")
+linear_limit/upper_distance = 0.1
+linear_limit/lower_distance = -0.1

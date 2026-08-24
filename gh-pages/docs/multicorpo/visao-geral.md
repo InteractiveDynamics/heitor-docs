@@ -9,12 +9,19 @@ O modelo multicorpo de verdade — cada roda e cada corpo como um nó rígido
 próprio, ligado por articulações, com as forças resolvidas por **restrições** em
 vez de raycast com mola. Esta frente é o passo além do sandbox do Godot.
 
-:::tip Primeira entrada publicada
-A quinzena de **27/jul a 10/ago** foi dedicada a entender o paradigma antes de
-construir qualquer coisa: **[Constraints, juntas e o Jolt por
-dentro](/docs/multicorpo/constraints-e-jolt)** — o que é um sistema multicorpo,
-penalidade × constraint, os graus de liberdade de cada junta do Godot, o
-experimento mínimo com `HingeJoint3D` e o que o Godot **não** expõe do Jolt.
+:::tip Entradas publicadas
+**1 · [Constraints, juntas e o Jolt por
+dentro](/docs/multicorpo/constraints-e-jolt)** — a quinzena de **27/jul a
+10/ago**, dedicada a entender o paradigma antes de construir qualquer coisa: o
+que é um sistema multicorpo, penalidade × constraint, os graus de liberdade de
+cada junta do Godot, o experimento mínimo com `HingeJoint3D` e o que o Godot
+**não** expõe do Jolt.
+
+**2 · [O tanque do Jolt e o teto do
+Godot](/docs/multicorpo/jolt-vs-godot)** — a parte empírica, de **10 a 12/ago**:
+o Tank Controller Demo rodando, as peças do `VehicleConstraint` lidas direto nos
+headers em C++, a prova de que o `VehicleBody3D` do Godot **não** é uma exposição
+dele, e o teste que bate no limite ao tentar suspensão com `SliderJoint3D`.
 :::
 
 ## Escopo previsto
@@ -26,11 +33,13 @@ experimento mínimo com `HingeJoint3D` e o que o Godot **não** expõe do Jolt.
 
 ## O que vem a seguir
 
-A segunda metade do roadmap da quinzena, ainda em aberto: comparativo
-Jolt × Godot a partir de um `Sample`, replicar esse sample no Godot com nós
-`Joint3D`, ler a documentação do **GDExtension** e espelhar o **GDChrono** do
-professor pro Jolt. O plano completo está no roadmap
-[27 jul–10 ago · Rumo ao multicorpo](/docs/roadmaps/semana-2026-07-27).
+O comparativo Jolt × Godot a partir de um `Sample` e a tentativa de replicá-lo
+com nós `Joint3D` já foram feitos e estão documentados em [O tanque do Jolt e o
+teto do Godot](/docs/multicorpo/jolt-vs-godot). Segue **em aberto** a segunda
+faixa do roadmap: ler a documentação do **GDExtension** (conceito, não construir
+extensão de produção) e espelhar o **GDChrono** do professor pro Jolt — o caminho
+que contorna as lacunas de API encontradas. O plano completo está no roadmap
+[10–17 ago · Do conceito ao sample rodando](/docs/roadmaps/semana-2026-08-10).
 
 _Referência de partida: a [nota do sandbox no Godot](/docs/notas/dossie-godot),
 que mostra por que o `VehicleBody3D` **não** é um multicorpo de verdade._
