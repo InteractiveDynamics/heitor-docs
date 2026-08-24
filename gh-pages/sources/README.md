@@ -46,6 +46,12 @@ direto como componente React visual-first.
 | --- | --- | --- |
 | `DossiePowertrain` | `docs/powertrain/visao-geral.mdx` | estudo Gillespie (NotebookLM) |
 | `DossieSuspensao` | `docs/suspensao/visao-geral.mdx` | estudo Gillespie (NotebookLM) |
+| `DossieVehicleConstraint` | `docs/multicorpo/vehicleconstraint-por-dentro.mdx` | leitura do código-fonte do Jolt (`jrouwe/JoltPhysics`, commit `2e28006e`, pasta `Jolt/Physics/Vehicle/`) |
 
 Esses componentes renderizam sob `.dossie .tecnica` — reaproveitam a assinatura
 do dossiê (`dossie.css`) e as peças de fluxo/régua/barras de `tecnica.css`.
+
+O `DossieVehicleConstraint` também não tem fonte em arquivo: nasceu de uma sessão
+de leitura direta do código do Jolt clonado em `~/Projects/JoltPhysics`. As
+citações de `arquivo:linha` na doc valem para o commit registrado na tabela — ao
+atualizar o clone, reconferir antes de editar o texto.

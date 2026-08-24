@@ -21,6 +21,7 @@ export default function DossieJoltGodot() {
   const roadmapHref = useBaseUrl('/docs/roadmaps/semana-2026-08-10');
   const quinzenaHref = useBaseUrl('/docs/multicorpo/constraints-e-jolt');
   const dossieHref = useBaseUrl('/docs/notas/dossie-godot');
+  const porDentroHref = useBaseUrl('/docs/multicorpo/vehicleconstraint-por-dentro');
 
   return (
     <div className="dossie tecnica mcorpo jgodot">
@@ -378,6 +379,13 @@ VehicleDifferential.h      // divisão de torque (usado no controlador de carro)
           razão de cada <code>VehicleTrack</code>. A diferença importa: o torque
           disponível é um recurso compartilhado, não dois independentes.
         </div>
+
+        <p className="sec-intro" style={{marginTop: 26}}>
+          Este bloco levanta <b>de que peças</b> o veículo do Jolt é feito. Como
+          elas operam por dentro — o raycast que encontra o chão, o ciclo de um
+          passo de física e as equações de cada roda — está em{' '}
+          <a href={porDentroHref}>Um corpo só, quatro bengalas</a>.
+        </p>
       </section>
 
       {/* 03 · VehicleBody3D ≠ VehicleConstraint */}
