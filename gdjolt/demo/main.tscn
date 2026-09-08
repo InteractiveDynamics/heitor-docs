@@ -1,0 +1,65 @@
+[gd_scene load_steps=6 format=3]
+
+[sub_resource type="BoxMesh" id="Chassis"]
+size = Vector3(1.8, 0.4, 4)
+
+[sub_resource type="CylinderMesh" id="Wheel"]
+top_radius = 0.3
+bottom_radius = 0.3
+height = 0.1
+
+[sub_resource type="PlaneMesh" id="Ground"]
+size = Vector2(200, 200)
+
+[sub_resource type="StandardMaterial3D" id="GroundMat"]
+albedo_color = Color(0.22, 0.24, 0.27, 1)
+
+[sub_resource type="StandardMaterial3D" id="WheelMat"]
+albedo_color = Color(0.1, 0.1, 0.12, 1)
+
+[node name="Main" type="Node3D"]
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("Ground")
+surface_material_override/0 = SubResource("GroundMat")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.7, 0.7, 0, -0.7, 0.7, 0, 10, 0)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.9, 0.44, 0, -0.44, 0.9, 0, 6, 14)
+
+[node name="Vehicle" type="JoltVehicle" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+vehicle_mass = 1500.0
+read_input = true
+
+[node name="Chassis" type="MeshInstance3D" parent="Vehicle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("Chassis")
+
+[node name="Wheel0" type="MeshInstance3D" parent="Vehicle"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("Wheel")
+surface_material_override/0 = SubResource("WheelMat")
+
+[node name="Wheel1" type="MeshInstance3D" parent="Vehicle"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("Wheel")
+surface_material_override/0 = SubResource("WheelMat")
+
+[node name="Wheel2" type="MeshInstance3D" parent="Vehicle"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("Wheel")
+surface_material_override/0 = SubResource("WheelMat")
+
+[node name="Wheel3" type="MeshInstance3D" parent="Vehicle"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("Wheel")
+surface_material_override/0 = SubResource("WheelMat")
+
+[node name="Hud" type="Label" parent="."]
+offset_right = 520.0
+offset_bottom = 120.0
+text = "setas: dirigir · espaço: freio de mão"

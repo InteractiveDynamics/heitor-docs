@@ -1,0 +1,79 @@
+#!/usr/bin/env python
+"""
+Build da GDExtension que liga o Godot ao Jolt.
+
+O ponto delicado deste arquivo é a PARIDADE DE ABI com a libJolt.a: o Jolt muda
+o layout das structs conforme os defines (JPH_OBJECT_STREAM, JPH_DOUBLE_PRECISION,
+JPH_PROFILE_ENABLED...) e conforme as instruções SIMD habilitadas. Se a lib e esta
+extensão forem compiladas com conjuntos diferentes, o link passa e o programa
+quebra em runtime, sem mensagem de erro útil.
+
+Por isso os flags NÃO são digitados aqui: são lidos do compile_commands.json que o
+CMake gerou ao compilar a própria lib. Se o build do Jolt mudar, este arquivo
+acompanha sozinho.
+"""
+
+import json
+import os
+import re
+import shlex
+
+env = SConscript("godot-cpp/SConstruct", {"api_version": "4.7"})
+
+# --- caminhos ---------------------------------------------------------------
+
+jolt_root = ARGUMENTS.get("jolt_root", os.path.expanduser("~/Projects/JoltPhysics"))
+jolt_build = ARGUMENTS.get("jolt_build", "build/jolt")
+jolt_lib = os.path.join(jolt_build, "libJolt.a")
+jolt_ccjson = os.path.join(jolt_build, "compile_commands.json")
+
+# --- paridade de ABI --------------------------------------------------------
+
+SIMD_RE = re.compile(r"-m(sse|avx|lzcnt|tzcnt|bmi|f16c|fma|popcnt)")
+
+# NDEBUG entra junto: é ele que decide se JPH_ENABLE_ASSERTS existe, e portanto
+# se o símbolo JPH::AssertFailed é esperado no link. Omiti-lo custou um erro de
+# "undefined reference" na primeira tentativa — é ABI, não conveniência.
+DEFINE_RE = re.compile(r"-D(JPH_|NDEBUG)")
+
+
+def jolt_build_flags(compile_commands):
+    """Extrai do build real da lib os flags que afetam a ABI do Jolt."""
+    with open(compile_commands) as f:
+        entries = json.load(f)
+
+    entry = next(e for e in entries if "/Jolt/" in e["file"])
+    args = shlex.split(entry.get("command") or " ".join(entry["arguments"]))
+
+    defines = [a[2:] for a in args if DEFINE_RE.match(a)]
+    simd = [a for a in args if SIMD_RE.match(a)]
+    return defines, simd
+
+
+if os.path.exists(jolt_lib) and os.path.exists(jolt_ccjson):
+    defines, simd = jolt_build_flags(jolt_ccjson)
+    print("[gdjolt] libJolt.a encontrada — espelhando a ABI do build da lib")
+    print("[gdjolt]   defines: %s" % " ".join(sorted(defines)))
+    print("[gdjolt]   simd   : %s" % " ".join(simd))
+
+    env.Append(CPPPATH=[jolt_root])
+    env.Append(CPPDEFINES=defines)
+    env.Append(CCFLAGS=simd)
+    env.Append(LIBS=[File(jolt_lib)])
+    env.Append(CPPDEFINES=["GDJOLT_HAS_JOLT"])
+else:
+    print("[gdjolt] libJolt.a ausente em %s — compilando SÓ a ponte," % jolt_build)
+    print("[gdjolt] sem física. É o estado esperado da etapa 1.")
+
+# --- a extensão -------------------------------------------------------------
+
+env.Append(CPPPATH=["src/"])
+sources = Glob("src/*.cpp")
+
+library = env.SharedLibrary(
+    "demo/bin/libgdjolt{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+    source=sources,
+)
+
+env.NoCache(library)
+Default(library)
