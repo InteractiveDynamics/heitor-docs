@@ -18,9 +18,11 @@ pegar intuição — e já avançou pros **fundamentos**:
 [powertrain e torque](/docs/powertrain/visao-geral),
 [suspensão](/docs/suspensao/visao-geral) e o
 [contato roda–solo por raycast](/docs/roda-solo/visao-geral). A frente de
-[dinâmica multicorpo](/docs/multicorpo/visao-geral) já tem duas entradas — o
-paradigma das constraints e o comparativo Jolt × Godot. As demais frentes abaixo
-já estão com a estrutura preparada e vão sendo preenchidas.
+[dinâmica multicorpo](/docs/multicorpo/visao-geral) é a mais adiantada, com
+quatro entradas — do paradigma das constraints até a
+[GDExtension em C++](/docs/multicorpo/ponte-gdextension) que roda o Jolt dentro
+do Godot. As demais frentes abaixo já estão com a estrutura preparada e vão
+sendo preenchidas.
 :::
 
 :::tip Planejamento semanal

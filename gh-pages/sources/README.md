@@ -33,7 +33,8 @@ escritas direto em Markdown (um arquivo por sessão) e depois consolidadas num
 
 > As anotações da semana do sample do Jolt (`semana-jolt-sample/`) cobrem só os
 > **três primeiros dias** (10 a 12/ago, pontos 1 e 2 da reunião). A faixa B do
-> roadmap — GDExtension e GDChrono — ainda não foi documentada.
+> roadmap — GDExtension e o paralelo com o GDChrono — foi executada em 5/set e
+> está em `docs/multicorpo/ponte-gdextension.mdx`.
 
 ## Docs de fundamentos (sem HTML original)
 
@@ -47,6 +48,7 @@ direto como componente React visual-first.
 | `DossiePowertrain` | `docs/powertrain/visao-geral.mdx` | estudo Gillespie (NotebookLM) |
 | `DossieSuspensao` | `docs/suspensao/visao-geral.mdx` | estudo Gillespie (NotebookLM) |
 | `DossieVehicleConstraint` | `docs/multicorpo/vehicleconstraint-por-dentro.mdx` | leitura do código-fonte do Jolt (`jrouwe/JoltPhysics`, commit `2e28006e`, pasta `Jolt/Physics/Vehicle/`) |
+| `DossiePonteGDExtension` | `docs/multicorpo/ponte-gdextension.mdx` | o código em `gdjolt/` (raiz do repositório) e os números medidos nas verificações headless |
 
 Esses componentes renderizam sob `.dossie .tecnica` — reaproveitam a assinatura
 do dossiê (`dossie.css`) e as peças de fluxo/régua/barras de `tecnica.css`.
@@ -55,3 +57,21 @@ O `DossieVehicleConstraint` também não tem fonte em arquivo: nasceu de uma ses
 de leitura direta do código do Jolt clonado em `~/Projects/JoltPhysics`. As
 citações de `arquivo:linha` na doc valem para o commit registrado na tabela — ao
 atualizar o clone, reconferir antes de editar o texto.
+
+O `DossiePonteGDExtension` também não tem fonte em arquivo: a origem é o código
+que está versionado em `gdjolt/` na raiz do repositório, e **todos os números da
+doc vieram de execução real** — o `vehicle_probe` no terminal e os dois scripts
+de verificação headless (`gdjolt/demo/verify.gd` e `verify_vehicle.gd`). Ao
+mexer no `gdjolt/`, rodar os dois de novo antes de editar as tabelas.
+
+Essa mesma entrada tem três fontes externas ao repositório:
+
+- **vídeo** — `youtu.be/s3Q-pGynNzY`, o veículo sendo dirigido na cena de demo
+  (gravado pelo Heitor, embutido por iframe no bloco 05).
+- **print** — `static/img/gdjolt-demo-tree.png`, a árvore de nós do projeto de
+  demo no editor. É a confirmação visual do que os testes headless só conseguiam
+  afirmar por `ClassDB`.
+- **GdChrono** — `github.com/InteractiveDynamics/GdChrono`, a GDExtension do
+  professor. O bloco 07 compara arquitetura com ela; as afirmações vêm da leitura
+  de `Chrono/ChWorld.{h,cpp}`, `Godot/ChManager.{h,cpp}`, `Godot/ChVisualNode.h`
+  e do `CMakeLists.txt` no commit `fde5589`.

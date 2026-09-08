@@ -100,7 +100,7 @@ export default function DossieJoltGodot() {
         </div>
         <p className="sec-intro">
           O plano da semana está no roadmap{' '}
-          <a href={roadmapHref}>10–17 ago · Do conceito ao sample rodando</a>. Ele
+          <a href={roadmapHref}>10 ago – 7 set · Do sample rodando à ponte em C++</a>. Ele
           separa a semana em duas faixas: a <b>Faixa A</b> (pontos 1 e 2 — provar
           até onde o Godot vai) de segunda a quarta, e a <b>Faixa B</b> (pontos 3
           e 4 — a ponte C++) de quinta em diante. Esta entrada documenta a Faixa A
