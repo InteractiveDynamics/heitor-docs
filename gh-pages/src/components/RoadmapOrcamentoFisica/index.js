@@ -2,21 +2,26 @@ import React from 'react';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 /**
- * Roadmap da semana 14–21/set/2026 · Quanto de física cabe num quadro.
- * Nasce de uma ideia do Heitor depois de ler o GDChrono: se o professor usa
- * passo de 0,5 ms para dar conta de solo deformável, quanto cálculo dá para
- * espremer num quadro do Jolt antes de perder tempo real? A semana transforma
- * essa pergunta numa medição — uma curva de custo × fidelidade — e investiga
- * o que "solo deformável" pode significar dentro do Jolt, que não tem
- * terramecânica.
+ * Roadmap da semana 14–21/set/2026 · O rover cabe no Jolt?
  *
- * Entregável-âncora: a curva do orçamento do quadro.
- * Portado para a estética do site reutilizando src/css/roadmap.css (`.roadmap`).
+ * Nasce de duas ideias do Heitor depois de ler o GDChrono: medir quanto cálculo
+ * de física cabe num quadro (o passo de 0,5 ms do professor contra os 16,7 ms
+ * herdados do Godot), e testar se dá para montar dinâmica multicorpo de verdade
+ * com o Jolt — corpos e juntas, em vez do modelo lumped da VehicleConstraint.
+ *
+ * A reunião de 8/set foi adiada, então as perguntas que iam orientar a semana
+ * seguem abertas. A semana foi remontada para PRODUZIR a evidência que
+ * responderia a principal delas, em vez de esperar por ela.
+ *
+ * Entregável-âncora: a resposta fundamentada para "o rover articulado cabe no
+ * Jolt, em tempo real?" — as três faixas alimentam essa única pergunta.
+ * Reutiliza src/css/roadmap.css (escopo `.roadmap`).
  */
 export default function RoadmapOrcamentoFisica() {
   const ponteHref = useBaseUrl('/docs/multicorpo/ponte-gdextension');
   const gdchronoHref = useBaseUrl('/docs/multicorpo/gdchrono-comparado');
   const porDentroHref = useBaseUrl('/docs/multicorpo/vehicleconstraint-por-dentro');
+  const quinzenaHref = useBaseUrl('/docs/multicorpo/constraints-e-jolt');
   const rodaSoloHref = useBaseUrl('/docs/roda-solo/visao-geral');
 
   return (
@@ -30,20 +35,31 @@ export default function RoadmapOrcamentoFisica() {
         </div>
         <span className="eyebrow">Semana · 14 → 21 set</span>
         <h1>
-          Quanto de física <span className="accent">cabe num quadro</span>
+          O rover cabe <span className="accent">no Jolt</span>?
         </h1>
         <p className="lede">
-          A leitura do <a href={gdchronoHref}>GDChrono</a> deixou uma pergunta
-          incômoda: o professor usa passo de <b>0,5 ms</b> — 33 vezes menor que o
-          meu — porque solo deformável exige isso para convergir. Eu herdei o
-          passo do Godot <b>por omissão</b>, não por escolha.
+          A entrada anterior fechou a ponte C++ e provou que o Jolt roda dentro do
+          Godot. Mas o que roda hoje é um <b>veículo de um corpo só</b> — a{' '}
+          <code>VehicleConstraint</code> é um modelo <em>lumped</em>, sem
+          articulação nenhuma. Rover não é isso.
         </p>
         <p className="lede">
-          Esta semana transforma isso em medição. Cada quadro tem{' '}
-          <b>16,7 milissegundos</b> de orçamento. A pergunta é:{' '}
-          <b>quanto cálculo de física cabe ali dentro</b>, e a partir de que ponto
-          gastar mais deixa de melhorar o resultado?
+          Esta semana ataca a pergunta que decide o rumo do projeto:{' '}
+          <b>dá para montar dinâmica multicorpo de verdade com o Jolt — corpos e
+          juntas — e ainda caber no orçamento de um quadro?</b> Três frentes
+          alimentam essa resposta: quanto cálculo cabe, se a articulação funciona,
+          e o que o terreno custa.
         </p>
+
+        <div className="callout amber" style={{marginTop: 22}}>
+          <span className="lbl">◈ mudança de contexto</span>
+          <b>A reunião de 8/set foi adiada</b> — imprevisto do professor. As
+          perguntas que iam orientar a semana continuam abertas, e a principal
+          delas é justamente <em>"o rover é trabalho de Jolt ou de Chrono?"</em>.
+          Em vez de esperar, a semana foi remontada para <b>produzir a evidência
+          que responde isso</b>. Chegar na reunião com a medição feita é melhor do
+          que chegar com a pergunta.
+        </div>
       </header>
 
       {/* 01 · entregável-âncora */}
@@ -53,60 +69,63 @@ export default function RoadmapOrcamentoFisica() {
           <h2>O entregável-âncora</h2>
         </div>
         <div className="firstmove">
-          <div className="kick">tudo nesta semana existe pra sustentar isto</div>
-          <h3>A curva custo × fidelidade</h3>
+          <div className="kick">as três faixas existem pra sustentar isto</div>
+          <h3>Uma resposta fundamentada: o rover articulado cabe no Jolt?</h3>
           <p>
-            Um gráfico, ou uma tabela, respondendo com número:{' '}
-            <b>quantos sub-passos e quantas iterações do solver</b> cabem em 16,7
-            ms, e <b>a partir de onde o resultado para de mudar</b>. Não é
-            opinião sobre "o que é mais realista": é a fronteira medida entre o
-            que melhora a simulação e o que só queima processador.
+            Não uma opinião — um documento com <b>números medidos</b> dizendo: o
+            mecanismo articulado funciona no Jolt (sim ou não, com evidência), ele
+            custa <em>tanto</em> por quadro, o terreno deformável custa{' '}
+            <em>mais tanto</em>, e sobra ou não sobra orçamento para tempo real.
           </p>
           <p>
-            Com essa curva na mão, escolher o passo deixa de ser herança e passa a
-            ser decisão — que foi exatamente a lição que a leitura do GDChrono
-            entregou.
+            É a base para a decisão mais cara do projeto:{' '}
+            <b>seguir no Jolt, migrar pro Chrono, ou manter os dois</b> — um para
+            tempo real, outro para fidelidade.
           </p>
         </div>
       </section>
 
-      {/* 02 · as duas faixas */}
+      {/* 02 · as três faixas */}
       <section className="rm-sec">
         <div className="sec-head">
           <span className="num">⇉</span>
-          <h2>Duas faixas</h2>
+          <h2>Três faixas, uma pergunta</h2>
         </div>
-        <p className="sec-sub">
-          A primeira mede o que já existe. A segunda descobre o que o Jolt
-          consegue fazer de terreno — e o que ele simplesmente não faz.
-        </p>
         <div className="cards">
           <div className="card amber">
-            <div className="kind">faixa A · seg a qua</div>
-            <h3>O orçamento do quadro</h3>
+            <div className="kind">faixa A · seg e ter</div>
+            <h3>Quanto cabe num quadro</h3>
             <p>
-              Instrumentar o <code>vehicle_probe</code> para cronometrar cada
-              passo, varrer os parâmetros de custo do Jolt e levantar a curva.
-              Termina com um número por configuração, não com uma impressão.
+              Instrumentar o <code>vehicle_probe</code>, varrer os parâmetros de
+              custo do Jolt e levantar a <b>curva custo × fidelidade</b>. Define o
+              orçamento contra o qual tudo mais é medido.
             </p>
           </div>
           <div className="card cyan">
-            <div className="kind">faixa B · qui e sex</div>
-            <h3>O que "solo deformável" pode ser no Jolt</h3>
+            <div className="kind">faixa B · qua e qui · ★ prioridade</div>
+            <h3>Multicorpo de verdade</h3>
             <p>
-              O Jolt permite <b>deformar a geometria</b> do terreno em tempo real,
-              mas não tem <b>modelo de solo</b>. Separar essas duas coisas na
-              prática, e medir quanto custa a parte que existe.
+              Montar uma <b>perna articulada</b> com corpos e juntas — o que a{' '}
+              <code>VehicleConstraint</code> não faz. Testar se ela sobe um degrau
+              melhor que o corpo único, e quanto custa.
+            </p>
+          </div>
+          <div className="card amber">
+            <div className="kind">faixa C · sex · cortável</div>
+            <h3>O terreno</h3>
+            <p>
+              Chão de altura variável e deformação do sulco. É a faixa a sacrificar
+              se a semana apertar — as outras duas respondem mais.
             </p>
           </div>
         </div>
 
         <div className="callout">
-          <span className="lbl">◈ de onde veio a ideia</span>
-          <b>A pergunta é minha, o gatilho foi o código do professor.</b> Ver{' '}
-          <code>DoStepDynamics(5e-4)</code> ao lado de <code>SCMTerrain</code>{' '}
-          deixou claro que passo curto e solo deformável andam juntos — e que eu
-          nunca tinha testado o limite do meu lado.
+          <span className="lbl">⚠ leitura honesta do escopo</span>
+          <b>Três faixas em cinco dias é apertado.</b> A ordem acima é a de
+          prioridade, não só a do calendário: se algo cair, cai a{' '}
+          <b>faixa C</b>. A faixa B é a que responde a pergunta do título — e é a
+          única que produz capacidade nova, não só medição.
         </div>
       </section>
 
@@ -114,11 +133,11 @@ export default function RoadmapOrcamentoFisica() {
       <section className="rm-sec">
         <div className="sec-head">
           <span className="num">◷</span>
-          <h2>Faixa A · medir o orçamento</h2>
+          <h2>Faixa A · o orçamento do quadro</h2>
         </div>
         <p className="sec-sub">
-          Quatro parâmetros controlam quanto o Jolt calcula por passo. Nenhum
-          deles foi tocado até agora — todos estão no padrão.
+          Quatro parâmetros controlam quanto o Jolt calcula por passo. Nenhum foi
+          tocado até agora — todos estão no padrão.
         </p>
 
         <div className="tbl cyan">
@@ -128,7 +147,7 @@ export default function RoadmapOrcamentoFisica() {
             <div className="b">
               Chamar <code>Update</code> várias vezes por quadro com{' '}
               <code>dt/N</code> · <b>o botão principal</b> · é o que aproxima do
-              passo curto do professor
+              passo de 0,5 ms do professor
             </div>
           </div>
           <div className="trow">
@@ -160,79 +179,179 @@ export default function RoadmapOrcamentoFisica() {
             <h3>Instrumentar o medidor</h3>
             <ol className="steps">
               <li>
-                Cronometrar cada <code>PhysicsSystem::Update</code> no{' '}
-                <code>vehicle_probe</code> e reportar mínimo, mediana e máximo —
-                a mediana engana quando o pico é o que estoura o quadro.
+                Cronometrar cada <code>PhysicsSystem::Update</code> e reportar
+                mínimo, mediana e <b>máximo</b> — o pico é o que estoura o quadro,
+                não a média.
               </li>
               <li>
                 Definir uma <b>manobra padrão</b> reproduzível: acelerar em reta,
-                subir rampa, curva fechada. Sem isso não dá pra comparar
-                configurações.
+                subir um degrau, curva fechada. Sem ela, nada é comparável.
               </li>
               <li>
-                Escolher as <b>métricas de fidelidade</b>: erro no impulso de
-                suspensão contra m·g·Δt, penetração máxima da roda, e se o corpo
-                treme parado.
+                Fixar as <b>métricas de fidelidade</b>: erro no impulso de
+                suspensão contra m·g·Δt, penetração máxima da roda, tremor do corpo
+                parado.
               </li>
             </ol>
-            <p>
-              <b>Porquê:</b> sem manobra fixa e métrica definida, a varredura
-              vira coleção de números incomparáveis.
-            </p>
             <span className="doit">↳ vehicle_probe cronometrado e repetível</span>
           </div>
 
           <div className="stop">
             <div className="code">TER · 15 SET</div>
-            <h3>A varredura</h3>
+            <h3>A varredura e a curva</h3>
             <ol className="steps">
               <li>
-                Rodar a manobra padrão variando <b>um parâmetro por vez</b>:
-                sub-passos 1, 2, 4, 8, 16, 32 — até chegar perto do 0,5 ms do
-                professor (33 sub-passos).
+                Variar <b>um parâmetro por vez</b>: sub-passos 1, 2, 4, 8, 16, 32 —
+                até encostar no 0,5 ms do professor (33 sub-passos).
               </li>
               <li>
-                Repetir para as iterações do solver e para a frequência do
-                raycast.
+                Repetir para as iterações do solver e a frequência do raycast.
               </li>
               <li>
-                Registrar, para cada configuração: <b>tempo por quadro</b> e as
-                métricas de fidelidade.
+                Montar a curva e <b>marcar o joelho</b>: o ponto em que dobrar o
+                custo para de melhorar o resultado. E marcar onde os 16,7 ms
+                estouram.
               </li>
             </ol>
             <p>
-              <b>A pergunta que fecha o dia:</b> onde está o joelho da curva — o
-              ponto em que dobrar o custo para de melhorar o resultado?
+              <b>Porquê:</b> a partir daqui, "quanto isso custa" tem resposta em
+              número para qualquer coisa que eu adicionar depois.
             </p>
-            <span className="doit">↳ tabela bruta da varredura</span>
-          </div>
-
-          <div className="stop">
-            <div className="code">QUA · 16 SET</div>
-            <h3>A curva e o teto</h3>
-            <ol className="steps">
-              <li>
-                Transformar a tabela na <b>curva custo × fidelidade</b> e marcar
-                onde os 16,7 ms estouram.
-              </li>
-              <li>
-                Repetir com <b>vários veículos</b> na cena (1, 4, 16) — o
-                orçamento é do quadro inteiro, não de um veículo.
-              </li>
-              <li>
-                Anotar a configuração recomendada e <b>por quê</b>.
-              </li>
-            </ol>
-            <span className="doit">↳ o entregável-âncora</span>
+            <span className="doit">↳ curva custo × fidelidade</span>
           </div>
         </div>
       </section>
 
-      {/* 04 · faixa B */}
+      {/* 04 · faixa B — multicorpo */}
+      <section className="rm-sec">
+        <div className="sec-head">
+          <span className="num">⚙</span>
+          <h2>Faixa B · multicorpo de verdade no Jolt</h2>
+        </div>
+        <p className="sec-sub">
+          A frente inteira se chama "dinâmica multicorpo" e, até agora, o que roda
+          tem <b>um corpo</b>. Esta faixa fecha esse vão — e é a que produz
+          capacidade nova.
+        </p>
+
+        <div className="callout">
+          <span className="lbl">◈ por que a VehicleConstraint não basta</span>
+          O rocker-bogie existe para que, ao subir uma pedra,{' '}
+          <b>uma roda suba enquanto as outras seguem apoiadas</b>, e o chassi quase
+          não incline. Esse comportamento <b>emerge da articulação</b> — não sai de
+          um bloco só com molas calculadas, por melhor que sejam os parâmetros.
+          Detalhado em <a href={porDentroHref}>Um corpo só, quatro bengalas</a>.
+        </div>
+
+        <div className="tbl cyan">
+          <div className="cap">os três caminhos · o que cada um custa</div>
+          <div className="trow">
+            <div className="a">1 · VehicleConstraint</div>
+            <div className="b">
+              O que existe hoje. <b>Modelo de pneu bom</b> (curvas de slip, μ·N),{' '}
+              <b>articulação zero</b>. Ótimo para carro, imprestável para rover
+            </div>
+          </div>
+          <div className="trow">
+            <div className="a">2 · corpos + juntas</div>
+            <div className="b">
+              Cada braço um corpo, cada pivô um <code>HingeConstraint</code>, cada
+              roda um cilindro com <b>motor no eixo</b>. Articulação total; o pneu
+              vira <b>atrito comum de corpo rígido</b>. É o caminho do{' '}
+              <code>VehicleSixDOFTest</code> e do Viper
+            </div>
+          </div>
+          <div className="trow seam">
+            <div className="a">3 · híbrido · hipótese</div>
+            <div className="b">
+              A <code>VehicleConstraint</code> se prende a <b>um</b> corpo — e nada
+              diz que esse corpo é o chassi. Uma constraint de <b>uma roda só</b>{' '}
+              em cada braço articulado daria articulação <b>e</b> modelo de pneu.{' '}
+              <b>Não testado</b>
+            </div>
+          </div>
+        </div>
+
+        <div className="spine">
+          <div className="stop seam">
+            <div className="code">QUA · 16 SET · o caminho 2</div>
+            <h3>Uma perna articulada</h3>
+            <ol className="steps">
+              <li>
+                Um braço (corpo dinâmico) preso ao chassi por{' '}
+                <code>HingeConstraint</code> — o pivô do bogie.
+              </li>
+              <li>
+                Uma roda de verdade: <code>CylinderShape</code>, corpo dinâmico,
+                presa ao braço por outro <code>HingeConstraint</code>{' '}
+                <b>com motor</b> — <code>SetMotorState(Velocity)</code> e{' '}
+                <code>SetTargetAngularVelocity</code>. A roda é acionada pelo{' '}
+                <b>eixo</b>, como na vida real, não por força no corpo.
+              </li>
+              <li>
+                Gabarito: <code>Samples/Tests/Vehicle/VehicleSixDOFTest.cpp</code>,
+                escrito pelo próprio autor do Jolt — "mostra como um carro poderia
+                ser feito com um <code>SixDOFConstraint</code>".
+              </li>
+            </ol>
+            <p>
+              <b>O teste que decide:</b> a mesma manobra de degrau, nas duas
+              montagens. Medir <b>inclinação do chassi</b> e se sobe. Se a
+              articulada inclinar menos, o mecanismo está fazendo o que deveria.
+            </p>
+            <span className="doit">
+              ↳ perna articulada subindo degrau + comparação com o corpo único
+            </span>
+          </div>
+
+          <div className="stop">
+            <div className="code">QUI · 17 SET · o caminho 3</div>
+            <h3>Testar a hipótese do híbrido</h3>
+            <ol className="steps">
+              <li>
+                Montar o braço articulado do dia anterior e prender nele uma{' '}
+                <code>VehicleConstraint</code> de <b>uma roda só</b>.
+              </li>
+              <li>
+                Ver o que quebra. Suspeitas anotadas antes de testar: o{' '}
+                <code>WheeledVehicleController</code> faz motor e diferencial{' '}
+                <em>entre</em> rodas, o que não faz sentido dividido em várias
+                constraints; e o <code>mMaxPitchRollAngle</code> assume um veículo
+                só. Talvez precise de um controller mais simples, ou nenhum.
+              </li>
+              <li>
+                Comparar as três montagens na mesma manobra:{' '}
+                <b>o pneu se comporta diferente?</b> Aparece curva de slip no
+                híbrido que não aparece no caminho 2?
+              </li>
+            </ol>
+            <p>
+              <b>Porquê:</b> se funcionar, é o melhor dos dois mundos e muda a
+              resposta da semana. Se não funcionar, saber <b>por quê</b> vale quase
+              tanto — e é barato descobrir.
+            </p>
+            <span className="doit">
+              ↳ veredito do híbrido, com o motivo anotado
+            </span>
+          </div>
+        </div>
+
+        <div className="callout amber" style={{marginTop: 22}}>
+          <b>O que se perde no caminho 2, e não dá pra esconder:</b> quando a roda
+          vira um corpo que colide, o contato passa a ser <b>atrito comum</b> — um
+          coeficiente, Coulomb. Some o modelo de pneu: sem curvas de{' '}
+          <em>slip</em>, sem tratar longitudinal e lateral separadamente, sem o{' '}
+          <em>clamp</em> μ·N por roda. Troca-se <b>fidelidade de contato</b> por{' '}
+          <b>fidelidade de mecanismo</b>. Essa é a frase que a semana precisa
+          transformar em número.
+        </div>
+      </section>
+
+      {/* 05 · faixa C — terreno */}
       <section className="rm-sec">
         <div className="sec-head">
           <span className="num">⌁</span>
-          <h2>Faixa B · o terreno</h2>
+          <h2>Faixa C · o terreno</h2>
         </div>
 
         <div className="callout">
@@ -246,9 +365,9 @@ export default function RoadmapOrcamentoFisica() {
         </div>
 
         <div className="spine">
-          <div className="stop seam">
-            <div className="code">QUI · 17 SET</div>
-            <h3>Terreno de altura, e o sulco</h3>
+          <div className="stop final">
+            <div className="code">SEX · 18 SET</div>
+            <h3>Relevo, sulco e o custo dos dois</h3>
             <ol className="steps">
               <li>
                 Trocar o chão de caixa por um <code>HeightFieldShape</code> e
@@ -256,49 +375,57 @@ export default function RoadmapOrcamentoFisica() {
                 roda deve deixar de ser simétrica.
               </li>
               <li>
-                Deformar o terreno onde a roda tocou, usando{' '}
-                <code>SetHeights</code> numa janela pequena ao redor do contato —
-                a ideia de <b>domínio ativo</b> copiada do GDChrono.
+                Deformar onde a roda tocou, com <code>SetHeights</code> numa janela
+                pequena ao redor do contato — a ideia de <b>domínio ativo</b>{' '}
+                copiada do <a href={gdchronoHref}>GDChrono</a>.
               </li>
               <li>
-                <b>Medir o custo</b> disso por quadro e somar ao orçamento da
-                faixa A.
+                <b>Medir o custo</b> por quadro e somar ao orçamento da faixa A.
+              </li>
+              <li>
+                Listar o que o <code>SCMTerrain</code> calcula e o Jolt não, e
+                estimar o que seria escrever isso à mão — <b>e se vale</b>, dado
+                que o Chrono entrega pronto.
               </li>
             </ol>
-            <p>
-              <b>Porquê:</b> responde, com número, se solo deformável geométrico é
-              viável em tempo real no Jolt — antes de discutir modelo de solo.
-            </p>
-            <span className="doit">↳ sulco aparecendo + custo medido</span>
-          </div>
-
-          <div className="stop final">
-            <div className="code">SEX · 18 SET</div>
-            <h3>O que falta para ser terramecânica</h3>
-            <ol className="steps">
-              <li>
-                Listar o que o <code>SCMTerrain</code> calcula e o Jolt não:
-                pressão de afundamento, cisalhamento, acúmulo na borda.
-              </li>
-              <li>
-                Estimar o que seria escrever isso à mão sobre o Jolt —{' '}
-                <b>e se vale</b>, dado que o Chrono já entrega pronto.
-              </li>
-              <li>
-                Escrever a comparação honesta para a frente de{' '}
-                <a href={rodaSoloHref}>roda–solo</a>.
-              </li>
-            </ol>
-            <p>
-              <b>Esta é a pergunta estratégica da semana:</b> o rover em solo
-              deformável é trabalho de Jolt, de Chrono, ou dos dois?
-            </p>
-            <span className="doit">↳ nota de decisão para a frente roda–solo</span>
+            <span className="doit">
+              ↳ sulco aparecendo, custo medido, nota de decisão para a frente{' '}
+              <a href={rodaSoloHref}>roda–solo</a>
+            </span>
           </div>
         </div>
       </section>
 
-      {/* 05 · trava de escopo */}
+      {/* 06 · fechamento */}
+      <section className="rm-sec">
+        <div className="sec-head">
+          <span className="num">↹</span>
+          <h2>O que sai desta semana</h2>
+        </div>
+        <div className="deliver">
+          <h3>Para a reunião remarcada</h3>
+          <ul>
+            <li>
+              <b>A curva custo × fidelidade</b> — quanto cálculo cabe em 16,7 ms e
+              onde está o joelho.
+            </li>
+            <li>
+              <b>A perna articulada rodando</b> — corpos e juntas de verdade, com a
+              comparação de inclinação do chassi contra o modelo de um corpo só{' '}
+              <em>(o entregável que muda o rumo)</em>.
+            </li>
+            <li>
+              <b>O veredito do híbrido</b> — funciona, ou não funciona e por quê.
+            </li>
+            <li>
+              <b>A nota de decisão</b>: o rover articulado cabe no Jolt em tempo
+              real, ou terreno deformável empurra para o Chrono?
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      {/* 07 · trava de escopo */}
       <section className="rm-sec">
         <div className="sec-head">
           <span className="num">⚠</span>
@@ -307,75 +434,95 @@ export default function RoadmapOrcamentoFisica() {
         <div className="rm-guard">
           <span className="lbl">✕ trava de escopo</span>
           <p className="sub">
-            A semana é de <b>medição</b>. Medir é o produto; construir é a
-            tentação.
+            <b>Uma perna, não um rover.</b> A pergunta é se o mecanismo funciona e
+            quanto custa — não montar o veículo completo.
           </p>
           <ul>
             <li>
-              Montar o rover articulado — <b>precisa</b> da refatoração da cena
-              primeiro
+              Montar o rocker-bogie de <b>seis rodas</b> — uma perna responde a
+              pergunta
             </li>
-            <li>Migrar o build para CMake (decidido, mas não é esta semana)</li>
-            <li>Escrever um modelo de terramecânica do zero</li>
-            <li>Mexer em powertrain ou aposentar o protótipo raycast</li>
+            <li>
+              Refatorar a cena para nascer da física (decidido, mas é o passo
+              seguinte)
+            </li>
+            <li>Migrar o build para CMake</li>
+            <li>Escrever terramecânica do zero</li>
             <li>Otimizar o que ainda não foi medido</li>
           </ul>
         </div>
         <div className="callout">
           <span className="lbl">◈ modo da semana</span>
-          <b>Experimental.</b> Toda afirmação da semana tem que vir com{' '}
+          <b>Experimental.</b> Toda afirmação tem que vir com{' '}
           <em>o número ao lado</em>. Se não deu pra medir, não entra na conclusão.
         </div>
       </section>
 
-      {/* 06 · perguntas */}
+      {/* 08 · perguntas */}
       <section className="rm-sec">
         <div className="sec-head">
           <span className="num">?</span>
           <h2>Perguntas para o professor</h2>
         </div>
+        <p className="sec-sub">
+          Continuam abertas — a reunião de 8/set foi adiada. Duas delas a semana
+          responde sozinha, e isso está marcado.
+        </p>
+
         <div className="qbox">
-          <h3>Sobre a semana</h3>
+          <h3>Sobre o rumo · as que só ele responde</h3>
           <ul>
             <li>
-              O <b>passo de 0,5 ms</b> do GDChrono foi escolhido por convergência
-              do SCM, por estabilidade das juntas do Viper, ou empiricamente? Isso
-              me diz o que eu deveria estar olhando na minha varredura.
-            </li>
-            <li>
-              Para o objetivo do projeto, o rover precisa rodar em{' '}
-              <b>tempo real</b> ou pode rodar mais devagar que o relógio? A
-              resposta muda toda a leitura da curva.
-            </li>
-            <li>
-              Faz sentido perseguir solo deformável <b>no Jolt</b>, sabendo que
-              ele deforma a geometria mas não tem terramecânica — ou terreno
-              deformável é território do Chrono e o Jolt fica com o veículo?
-            </li>
-          </ul>
-        </div>
-        <div className="qbox">
-          <h3>Sobre o rumo</h3>
-          <ul>
-            <li>
-              O alvo final é <b>uma</b> ponte ou <b>duas</b>? Faz sentido o
-              projeto ter Jolt e Chrono lado a lado — um para tempo real, outro
-              para fidelidade — ou é para convergir numa só?
+              O alvo é <b>uma</b> ponte ou <b>duas</b>? Faz sentido o projeto ter
+              Jolt e Chrono lado a lado — um para tempo real, outro para fidelidade
+              — ou é para convergir numa só?
             </li>
             <li>
               Posso usar o <b>Viper</b> como referência de rover articulado, ou o
-              alvo é um rover específico da ExoTerra com geometria própria?
+              alvo é um rover da ExoTerra com geometria própria?
             </li>
             <li>
-              O que conta como <b>validação</b> para o PIBIC: comparar o meu
-              resultado contra o Chrono na mesma manobra, ou contra dado
-              experimental?
+              O que conta como <b>validação</b> para o PIBIC: comparar contra o
+              Chrono na mesma manobra, ou contra dado experimental?
+            </li>
+            <li>
+              O rover precisa rodar em <b>tempo real</b>, ou pode rodar mais devagar
+              que o relógio? Isso muda toda a leitura da curva da faixa A.
+            </li>
+          </ul>
+        </div>
+
+        <div className="qbox">
+          <h3>Sobre o código dele</h3>
+          <ul>
+            <li>
+              O <b>passo de 0,5 ms</b> do GDChrono foi escolhido por convergência do
+              SCM, por estabilidade das juntas do Viper, ou empiricamente?
+            </li>
+            <li>
+              Em <code>ChWorld.cpp</code>, o <code>SCMTerrain terrain(&amp;sys)</code>{' '}
+              é variável local dentro do <code>Init()</code> — o terreno continua
+              vivo depois que a função retorna?
+            </li>
+          </ul>
+        </div>
+
+        <div className="qbox">
+          <h3>As que eu mesmo respondo esta semana</h3>
+          <ul>
+            <li>
+              <b>Dá para montar multicorpo articulado no Jolt?</b> → faixa B, com
+              medição.
+            </li>
+            <li>
+              <b>Solo deformável é viável no Jolt em tempo real?</b> → faixa C, com
+              o custo por quadro medido.
             </li>
           </ul>
         </div>
       </section>
 
-      {/* 07 · de onde parto */}
+      {/* 09 · de onde parto */}
       <section className="rm-sec">
         <div className="sec-head">
           <span className="num">◉</span>
@@ -387,25 +534,50 @@ export default function RoadmapOrcamentoFisica() {
             A ponte C++ está de pé e verificada — ver{' '}
             <a href={ponteHref}>Dois mundos, uma cena</a>. Tenho um{' '}
             <code>vehicle_probe</code> que roda o veículo sem Godot e imprime
-            telemetria, o que torna esta semana quase só questão de instrumentar o
-            que já existe.
+            telemetria, o que torna a faixa A quase só instrumentar o que já
+            existe.
           </p>
           <p>
-            E tenho a <a href={porDentroHref}>leitura do código da
-            VehicleConstraint</a>, que explica <b>o que</b> cada iteração do
-            solver está resolvendo — sem isso, a varredura seria mexer em botões
-            no escuro.
+            E tenho as duas leituras que sustentam a faixa B: a{' '}
+            <a href={porDentroHref}>mecânica interna da VehicleConstraint</a>, que
+            explica por que ela não articula, e a{' '}
+            <a href={quinzenaHref}>tabela de graus de liberdade das juntas</a>, que
+            é exatamente o material para montar a perna.
           </p>
         </div>
       </section>
 
-      {/* 08 · referências */}
+      {/* 10 · referências */}
       <section className="rm-sec">
         <div className="sec-head">
           <span className="num">↗</span>
           <h2>O que abrir</h2>
         </div>
         <div className="res">
+          <a
+            href="https://github.com/jrouwe/JoltPhysics/blob/master/Samples/Tests/Vehicle/VehicleSixDOFTest.cpp"
+            target="_blank"
+            rel="noopener noreferrer">
+            <span className="rt">
+              VehicleSixDOFTest.cpp — o gabarito da faixa B
+              <span className="rd">
+                veículo feito de corpos e juntas, com motor no eixo da roda
+              </span>
+            </span>
+            <span className="rk">↗ github</span>
+          </a>
+          <a
+            href="https://github.com/jrouwe/JoltPhysics/blob/master/Jolt/Physics/Constraints/HingeConstraint.h"
+            target="_blank"
+            rel="noopener noreferrer">
+            <span className="rt">
+              HingeConstraint.h
+              <span className="rd">
+                SetMotorState e SetTargetAngularVelocity — como se aciona um eixo
+              </span>
+            </span>
+            <span className="rk">↗ github</span>
+          </a>
           <a
             href="https://github.com/jrouwe/JoltPhysics/blob/master/Jolt/Physics/PhysicsSettings.h"
             target="_blank"
@@ -426,18 +598,6 @@ export default function RoadmapOrcamentoFisica() {
               HeightFieldShape.h
               <span className="rd">
                 SetHeights — deformar o terreno em tempo de execução
-              </span>
-            </span>
-            <span className="rk">↗ github</span>
-          </a>
-          <a
-            href="https://github.com/jrouwe/JoltPhysics/blob/master/Docs/Architecture.md"
-            target="_blank"
-            rel="noopener noreferrer">
-            <span className="rt">
-              Docs/Architecture.md
-              <span className="rd">
-                a seção de simulação: sub-passos, colisão e determinismo
               </span>
             </span>
             <span className="rk">↗ github</span>

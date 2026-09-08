@@ -69,16 +69,21 @@ A leitura do **GDChrono** deixou três pontos a adotar, em ordem de importância
 número de rodas estiver escrito no código, não há rover), **unificar o build em
 CMake** e **tratar o passo de simulação como decisão explícita**.
 
-O terceiro ponto virou a semana seguinte: o roadmap [14–21 set · Quanto de física
-cabe num quadro](/docs/roadmaps/semana-2026-09-14) mede o orçamento do quadro —
-quantos sub-passos e iterações de solver cabem em 16,7 ms — e investiga o que
-solo deformável pode significar dentro do Jolt, que **deforma geometria mas não
-tem terramecânica**.
+Os dois primeiros pontos viraram a semana seguinte, no roadmap [14–21 set · O
+rover cabe no Jolt?](/docs/roadmaps/semana-2026-09-14) — que ataca de frente o
+que segue em aberto nesta frente: **o rover articulado**, que a
+`VehicleConstraint` não resolve por ser um modelo de um corpo só.
 
-Segue **em aberto** o **rover articulado**, que a `VehicleConstraint` não resolve
-por ser um modelo de um corpo só. O `GdChrono` já roda o **Viper** sobre terreno
-**SCM**, o que dá alvo concreto para as frentes de [integração
-roda–solo](/docs/roda-solo/visao-geral) e validação comparativa.
+A semana tem três faixas alimentando uma pergunta: quanto cálculo cabe em
+16,7 ms, se dá para montar **multicorpo de verdade no Jolt** — corpos ligados por
+`HingeConstraint` com motor no eixo, como no sample `VehicleSixDOFTest` — e o que
+o terreno deformável custa. Vale registrar o custo dessa troca: ao transformar a
+roda num corpo que colide, ganha-se articulação e **perde-se o modelo de pneu**,
+porque o contato passa a ser atrito comum de corpo rígido.
+
+O `GdChrono` já roda o **Viper** sobre terreno **SCM**, o que dá alvo concreto
+para as frentes de [integração roda–solo](/docs/roda-solo/visao-geral) e
+validação comparativa.
 
 _Referência de partida: a [nota do sandbox no Godot](/docs/notas/dossie-godot),
 que mostra por que o `VehicleBody3D` **não** é um multicorpo de verdade._
