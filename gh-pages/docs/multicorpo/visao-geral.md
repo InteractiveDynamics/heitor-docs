@@ -34,8 +34,13 @@ protótipo raycast.
 entrada que produz binário em vez de leitura: uma **GDExtension** em C++ com um
 `PhysicsSystem` do Jolt próprio rodando dentro do Godot, com **vídeo do veículo
 sendo dirigido**. Traz a decisão de arquitetura, a armadilha de paridade de ABI,
-a medição que fecha com a teoria em 0,1 % e a **comparação com o GDChrono** do
-professor — que confirmou a escolha e mostrou três coisas a copiar.
+a medição que fecha com a teoria em 0,1 %.
+
+**5 · [Duas pontes, um desenho](/docs/multicorpo/gdchrono-comparado)** — a
+conferência cega: o professor já tinha ligado o Godot ao **Project Chrono** e
+chegou ao **mesmo desenho de arquitetura**, sem a gente combinar. Traz o código
+lado a lado, as três diferenças em que ele está à frente, e o achado de que o
+`GdChrono` já roda um **rover Viper** sobre **terreno SCM deformável**.
 :::
 
 ## Escopo previsto
@@ -59,18 +64,21 @@ cena](/docs/multicorpo/ponte-gdextension): o ambiente do `godot-cpp`, a extensã
 compilando, o Jolt rodando isolado e o nó `JoltVehicle` dentro do Godot. O código
 fica em `gdjolt/` na raiz do repositório.
 
-A comparação com o **GDChrono** do professor já foi feita e está na mesma
-entrada: a decisão de arquitetura bate com a dele, e ficaram três pontos a
-copiar — construir a cena a partir da física, unificar o build em CMake e tratar
-o passo de simulação como decisão explícita.
+A leitura do **GDChrono** deixou três pontos a adotar, em ordem de importância:
+**construir a cena a partir da física** (pré-requisito do rover — enquanto o
+número de rodas estiver escrito no código, não há rover), **unificar o build em
+CMake** e **tratar o passo de simulação como decisão explícita**.
 
-Seguem **em aberto**: fazer a geometria da cena virar geometria do Jolt — hoje o
-chão é construído dentro da extensão — e, só então, o **rover articulado**, que a
-`VehicleConstraint` não resolve por ser um modelo de um corpo só. O GDChrono já
-roda o rover **Viper** sobre terreno **SCM** deformável, o que dá um alvo
-concreto para as frentes de [integração roda–solo](/docs/roda-solo/visao-geral) e
-validação comparativa. O plano completo está no roadmap [10 ago – 7 set · Do
-sample rodando à ponte em C++](/docs/roadmaps/semana-2026-08-10).
+O terceiro ponto virou a semana seguinte: o roadmap [14–21 set · Quanto de física
+cabe num quadro](/docs/roadmaps/semana-2026-09-14) mede o orçamento do quadro —
+quantos sub-passos e iterações de solver cabem em 16,7 ms — e investiga o que
+solo deformável pode significar dentro do Jolt, que **deforma geometria mas não
+tem terramecânica**.
+
+Segue **em aberto** o **rover articulado**, que a `VehicleConstraint` não resolve
+por ser um modelo de um corpo só. O `GdChrono` já roda o **Viper** sobre terreno
+**SCM**, o que dá alvo concreto para as frentes de [integração
+roda–solo](/docs/roda-solo/visao-geral) e validação comparativa.
 
 _Referência de partida: a [nota do sandbox no Godot](/docs/notas/dossie-godot),
 que mostra por que o `VehicleBody3D` **não** é um multicorpo de verdade._

@@ -49,6 +49,7 @@ direto como componente React visual-first.
 | `DossieSuspensao` | `docs/suspensao/visao-geral.mdx` | estudo Gillespie (NotebookLM) |
 | `DossieVehicleConstraint` | `docs/multicorpo/vehicleconstraint-por-dentro.mdx` | leitura do código-fonte do Jolt (`jrouwe/JoltPhysics`, commit `2e28006e`, pasta `Jolt/Physics/Vehicle/`) |
 | `DossiePonteGDExtension` | `docs/multicorpo/ponte-gdextension.mdx` | o código em `gdjolt/` (raiz do repositório) e os números medidos nas verificações headless |
+| `DossieGdChrono` | `docs/multicorpo/gdchrono-comparado.mdx` | leitura do repositório `InteractiveDynamics/GdChrono` (commit `fde5589`) |
 
 Esses componentes renderizam sob `.dossie .tecnica` — reaproveitam a assinatura
 do dossiê (`dossie.css`) e as peças de fluxo/régua/barras de `tecnica.css`.
@@ -75,3 +76,9 @@ Essa mesma entrada tem três fontes externas ao repositório:
   professor. O bloco 07 compara arquitetura com ela; as afirmações vêm da leitura
   de `Chrono/ChWorld.{h,cpp}`, `Godot/ChManager.{h,cpp}`, `Godot/ChVisualNode.h`
   e do `CMakeLists.txt` no commit `fde5589`.
+
+O `DossieGdChrono` nasceu de uma sessão de leitura do repositório do professor,
+clonado num diretório temporário — **não** há cópia dele neste repositório. As
+citações de arquivo valem para o commit `fde5589`; ao reler uma versão mais nova,
+reconferir antes de editar as afirmações, em especial o passo de `DoStepDynamics`
+e os parâmetros do `SCMTerrain`.

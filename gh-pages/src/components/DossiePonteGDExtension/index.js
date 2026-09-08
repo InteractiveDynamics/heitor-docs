@@ -20,6 +20,7 @@ export default function DossiePonteGDExtension() {
   const comparativoHref = useBaseUrl('/docs/multicorpo/jolt-vs-godot');
   const porDentroHref = useBaseUrl('/docs/multicorpo/vehicleconstraint-por-dentro');
   const roadmapHref = useBaseUrl('/docs/roadmaps/semana-2026-08-10');
+  const gdchronoHref = useBaseUrl('/docs/multicorpo/gdchrono-comparado');
   const treeShot = useBaseUrl('/img/gdjolt-demo-tree.png');
 
   return (
@@ -603,7 +604,7 @@ simd    = [a for a in args if SIMD_RE.match(a)]         # -mavx2, -mfma, ...`}</
       <section>
         <div className="sec-head">
           <span className="sec-num">07</span>
-          <h2>O molde do professor: o que o GDChrono já resolvia</h2>
+          <h2>A conferência: o molde do professor</h2>
         </div>
         <p className="sec-intro">
           A decisão de arquitetura acima foi tomada <b>antes</b> de eu ver o{' '}
@@ -623,145 +624,22 @@ simd    = [a for a in args if SIMD_RE.match(a)]         # -mavx2, -mfma, ...`}</
           guarda um <code>chrono::ChSystemSMC</code> <b>próprio</b>, e o{' '}
           <code>ChManager</code> é um <code>Node3D</code> com{' '}
           <code>_ready()</code> e <code>_physics_process(double delta)</code> —
-          exatamente o desenho A, exatamente a mesma forma de nó. O{' '}
-          <code>Register.cpp</code> dele e o meu são quase linha a linha o mesmo
-          arquivo. Duas pessoas chegaram no mesmo lugar sem combinar, o que é a
-          melhor evidência de que o lugar está certo.
+          exatamente o desenho A, exatamente a mesma forma de nó. Duas pessoas
+          chegaram no mesmo lugar sem combinar, o que é a melhor evidência de que
+          o lugar está certo.
         </div>
 
         <p style={{marginTop: 22}}>
-          As diferenças, porém, são as partes interessantes — e nas três ele está
-          à frente.
+          As diferenças estão todas em <em>como</em> a decisão é executada, e nas
+          três ele está à frente — a cena construída a partir da física, um
+          sistema de build só, e o passo desacoplado do quadro. Mais o achado que
+          não estava no plano: o código dele já roda um <b>rover Viper</b>{' '}
+          articulado sobre <b>terreno SCM deformável</b>.
         </p>
-
-        <div className="steps">
-          <div className="step">
-            <h4>A cena nasce da física, não o contrário</h4>
-            <p>
-              O meu <code>JoltVehicle</code> procura filhos chamados{' '}
-              <code>Wheel0..3</code> e escreve transform neles: a cena é montada à
-              mão e o código sabe de cor quantas rodas existem. O dele faz o
-              inverso — <code>CreateMeshes</code> percorre o{' '}
-              <code>ChAssembly</code> recursivamente e <b>cria</b> um nó para cada
-              corpo, link e malha que encontrar, carregando o OBJ de cada um.
-            </p>
-            <p>
-              Melhor ainda: cada <code>ChVisualNode</code> guarda um{' '}
-              <code>weak_ptr</code> para o seu item de física e{' '}
-              <b>se sincroniza sozinho</b> no próprio{' '}
-              <code>_physics_process</code>. A sincronia é distribuída, não
-              centralizada num laço que precisa conhecer a cena inteira.
-            </p>
-            <span className="learn">
-              é por isso que ele consegue hospedar um rover inteiro, e eu só um
-              veículo de quatro rodas
-            </span>
-          </div>
-
-          <div className="step">
-            <h4>Um único sistema de build dissolve o problema de ABI</h4>
-            <p>
-              O bloco 03 desta entrada descreve como eu resolvi a paridade de
-              flags: lendo o <code>compile_commands.json</code> da lib. Funciona,
-              mas é remendo — existe porque eu tenho <b>dois</b> sistemas de build
-              (CMake para o Jolt, SCons para a extensão).
-            </p>
-            <p>
-              O professor usa <b>CMake para tudo</b>, com o{' '}
-              <code>godot-cpp</code> entrando como{' '}
-              <code>add_subdirectory(ThirdParty/godot-cpp)</code>. Com um projeto
-              só, os flags propagam pelos alvos e a divergência{' '}
-              <b>não tem como acontecer</b>. Não é que ele resolveu melhor o meu
-              problema: é que, na estrutura dele, o problema não existe.
-            </p>
-            <span className="learn">o remendo tem prazo de validade</span>
-          </div>
-
-          <div className="step">
-            <h4>O passo de física é desacoplado do quadro</h4>
-            <p>
-              O meu <code>_physics_process</code> passa o <code>delta</code> do
-              Godot direto para o <code>PhysicsSystem::Update</code>. O dele{' '}
-              <b>ignora</b> o delta e chama{' '}
-              <code>DoStepDynamics(5e-4)</code> — um passo fixo de 0,5 ms por
-              quadro. Faz sentido para o Chrono com solo deformável, que precisa
-              de passo curto para convergir, mas significa que o tempo simulado
-              anda mais devagar que o tempo do relógio.
-            </p>
-            <span className="learn">
-              escolher entre "tempo real" e "passo estável" é decisão de
-              projeto, não detalhe
-            </span>
-          </div>
-        </div>
-
-        <div className="tbl-wrap" style={{marginTop: 26}}>
-          <table className="ctab">
-            <thead>
-              <tr>
-                <th>Ponto</th>
-                <th>GDChrono</th>
-                <th>gdjolt</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Mundo de física</td>
-                <td>
-                  <b className="yes">próprio</b> (<code>ChSystemSMC</code>)
-                </td>
-                <td>
-                  <b className="yes">próprio</b> (<code>PhysicsSystem</code>)
-                </td>
-              </tr>
-              <tr>
-                <td>Construção da cena</td>
-                <td>gerada da física, recursiva</td>
-                <td>nós fixos, achados por nome</td>
-              </tr>
-              <tr>
-                <td>Sincronia das transforms</td>
-                <td>distribuída (cada nó se atualiza)</td>
-                <td>centralizada (um laço escreve)</td>
-              </tr>
-              <tr>
-                <td>Build</td>
-                <td>CMake para tudo</td>
-                <td>CMake + SCons, paridade lida do JSON</td>
-              </tr>
-              <tr>
-                <td>Passo</td>
-                <td>fixo, 0,5 ms por quadro</td>
-                <td>o delta do Godot, com <em>clamp</em></td>
-              </tr>
-              <tr>
-                <td>Empacotamento</td>
-                <td>todas as plataformas, precisão simples e dupla</td>
-                <td>linux x86_64, precisão simples</td>
-              </tr>
-              <tr>
-                <td>Modelo simulado</td>
-                <td>
-                  rover <b>Viper</b> articulado + terreno <b>SCM</b> deformável
-                </td>
-                <td>
-                  veículo <em>lumped</em> de um corpo
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div className="callout amber" style={{marginTop: 22}}>
-          <b>A linha que mais importa é a última.</b> O GDChrono já roda o{' '}
-          <code>Viper</code> — um rover articulado de verdade, vindo dos modelos
-          do Chrono — sobre <code>SCMTerrain</code>, o solo deformável com
-          parâmetros de Bekker e Janosi. Ou seja: o destino das frentes de{' '}
-          <b>integração roda–solo</b> e <b>validação comparativa</b> não é
-          hipótese, é código que existe e que eu posso ler. O que eu construí
-          alcança o degrau anterior — mas agora dá pra ver o degrau seguinte de
-          perto.
-        </div>
+        <p>
+          A leitura completa, com o código lado a lado e o que ela muda no plano,
+          está em <a href={gdchronoHref}>Duas pontes, um desenho</a>.
+        </p>
       </section>
 
       {/* 08 · o que muda */}
