@@ -50,6 +50,7 @@ direto como componente React visual-first.
 | `DossieVehicleConstraint` | `docs/multicorpo/vehicleconstraint-por-dentro.mdx` | leitura do código-fonte do Jolt (`jrouwe/JoltPhysics`, commit `2e28006e`, pasta `Jolt/Physics/Vehicle/`) |
 | `DossiePonteGDExtension` | `docs/multicorpo/ponte-gdextension.mdx` | o código em `gdjolt/` (raiz do repositório) e os números medidos nas verificações headless |
 | `DossieGdChrono` | `docs/multicorpo/gdchrono-comparado.mdx` | leitura do repositório `InteractiveDynamics/GdChrono` (commit `fde5589`) |
+| `DossieRockerArticulado` | `docs/multicorpo/rocker-articulado.mdx` | execuções do banco de ensaio em `gdjolt/tools/vehicle_probe.cpp` |
 
 Esses componentes renderizam sob `.dossie .tecnica` — reaproveitam a assinatura
 do dossiê (`dossie.css`) e as peças de fluxo/régua/barras de `tecnica.css`.
@@ -82,3 +83,20 @@ clonado num diretório temporário — **não** há cópia dele neste repositór
 citações de arquivo valem para o commit `fde5589`; ao reler uma versão mais nova,
 reconferir antes de editar as afirmações, em especial o passo de `DoStepDynamics`
 e os parâmetros do `SCMTerrain`.
+
+O `DossieRockerArticulado` é a primeira entrada da frente cujas tabelas são
+**medição e não leitura**. Todos os números vieram de rodar
+`gdjolt/build/tools/vehicle_probe` — a comparação de inclinação, a varredura de
+altura de degrau e a curva de convergência do solver. Para reproduzir:
+
+```bash
+cd gdjolt
+./tools/build_probe.sh
+./build/tools/vehicle_probe --quiet --substeps=4          # a comparação
+./build/tools/vehicle_probe --rig=lumped --step-height=0.50   # a batota do raycast
+for c in "--vsteps=10 --psteps=2" "--substeps=4" "--substeps=8"; do \
+  ./build/tools/vehicle_probe --rig=rocker --quiet $c | tail -1; done
+```
+
+Ao mexer em `src/rocker_rig.h`, rodar de novo antes de editar as tabelas da doc —
+a montagem é compartilhada com o nó do Godot, então mudanças ali mexem nos dois.

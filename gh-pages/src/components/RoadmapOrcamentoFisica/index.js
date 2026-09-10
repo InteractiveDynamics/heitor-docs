@@ -9,12 +9,12 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
  * herdados do Godot), e testar se dá para montar dinâmica multicorpo de verdade
  * com o Jolt — corpos e juntas, em vez do modelo lumped da VehicleConstraint.
  *
- * A reunião de 8/set foi adiada, então as perguntas que iam orientar a semana
- * seguem abertas. A semana foi remontada para PRODUZIR a evidência que
- * responderia a principal delas, em vez de esperar por ela.
- *
- * Entregável-âncora: a resposta fundamentada para "o rover articulado cabe no
- * Jolt, em tempo real?" — as três faixas alimentam essa única pergunta.
+ * ATUALIZADO EM 10/set: a reunião de 8/set foi cancelada em definitivo, e sem
+ * motivo para segurar trabalho a faixa B foi executada nos dias 9 e 10 — antes
+ * da sprint começar. A pergunta do título está respondida e publicada em
+ * docs/multicorpo/rocker-articulado. O entregável-âncora passou a ser o BOGIE,
+ * que é o mecanismo que vence o limite exato que o ensaio encontrou: uma roda
+ * rígida não sobe degrau maior que o próprio raio.
  * Reutiliza src/css/roadmap.css (escopo `.roadmap`).
  */
 export default function RoadmapOrcamentoFisica() {
@@ -23,6 +23,7 @@ export default function RoadmapOrcamentoFisica() {
   const porDentroHref = useBaseUrl('/docs/multicorpo/vehicleconstraint-por-dentro');
   const quinzenaHref = useBaseUrl('/docs/multicorpo/constraints-e-jolt');
   const rodaSoloHref = useBaseUrl('/docs/roda-solo/visao-geral');
+  const rockerHref = useBaseUrl('/docs/multicorpo/rocker-articulado');
 
   return (
     <div className="roadmap">
@@ -44,21 +45,26 @@ export default function RoadmapOrcamentoFisica() {
           articulação nenhuma. Rover não é isso.
         </p>
         <p className="lede">
-          Esta semana ataca a pergunta que decide o rumo do projeto:{' '}
+          A pergunta que decide o rumo do projeto era:{' '}
           <b>dá para montar dinâmica multicorpo de verdade com o Jolt — corpos e
-          juntas — e ainda caber no orçamento de um quadro?</b> Três frentes
-          alimentam essa resposta: quanto cálculo cabe, se a articulação funciona,
-          e o que o terreno custa.
+          juntas — e ainda caber no orçamento de um quadro?</b> Ela foi respondida
+          antes da sprint começar. O que a semana faz agora é ir <b>além</b> do
+          limite que a resposta revelou.
         </p>
 
         <div className="callout amber" style={{marginTop: 22}}>
-          <span className="lbl">◈ mudança de contexto</span>
-          <b>A reunião de 8/set foi adiada</b> — imprevisto do professor. As
-          perguntas que iam orientar a semana continuam abertas, e a principal
-          delas é justamente <em>"o rover é trabalho de Jolt ou de Chrono?"</em>.
-          Em vez de esperar, a semana foi remontada para <b>produzir a evidência
-          que responde isso</b>. Chegar na reunião com a medição feita é melhor do
-          que chegar com a pergunta.
+          <span className="lbl">◈ atualização de 10/set · a faixa B foi antecipada</span>
+          A reunião de 8/set foi cancelada e não será remarcada. Sem motivo para
+          segurar trabalho esperando por ela, a <b>faixa B foi executada nos dias
+          9 e 10</b>, antes da sprint começar — e está publicada em{' '}
+          <a href={rockerHref}>Sete corpos, seis juntas</a>.
+          <br />
+          <br />
+          <b>A pergunta do título está respondida:</b> a plataforma articulada
+          existe, mantém o chassi a <b>0,00°</b> onde o modelo de um corpo só
+          inclina <b>4,34°</b>, e custa <b>4 %</b> do orçamento de um quadro.
+          Boa parte da faixa A veio junto, de brinde. O que sobra para a sprint
+          está reorganizado abaixo.
         </div>
       </header>
 
@@ -69,18 +75,29 @@ export default function RoadmapOrcamentoFisica() {
           <h2>O entregável-âncora</h2>
         </div>
         <div className="firstmove">
-          <div className="kick">as três faixas existem pra sustentar isto</div>
-          <h3>Uma resposta fundamentada: o rover articulado cabe no Jolt?</h3>
+          <div className="kick">faixa B · ✔ respondida em 9–10/set</div>
+          <h3>O rover articulado cabe no Jolt — sim, e está medido</h3>
           <p>
-            Não uma opinião — um documento com <b>números medidos</b> dizendo: o
-            mecanismo articulado funciona no Jolt (sim ou não, com evidência), ele
-            custa <em>tanto</em> por quadro, o terreno deformável custa{' '}
-            <em>mais tanto</em>, e sobra ou não sobra orçamento para tempo real.
+            Sete corpos, seis juntas, motor no eixo de cada roda. Chassi a{' '}
+            <b>0,00°</b> contra <b>4,34°</b> do modelo <em>lumped</em> no mesmo
+            degrau, com <b>4 sub-passos</b> por quadro consumindo 4 % do
+            orçamento. Publicado em{' '}
+            <a href={rockerHref}>Sete corpos, seis juntas</a>.
+          </p>
+        </div>
+        <div className="firstmove" style={{marginTop: 18}}>
+          <div className="kick">o novo âncora · ▶ é o que falta</div>
+          <h3>O bogie: vencer o degrau de 0,30 m</h3>
+          <p>
+            O ensaio encontrou um limite <b>exato</b>: o rocker de quatro rodas
+            sobe degrau de 0,20 m e para em <b>0,30 m</b> — que é o raio da roda,
+            o limite geométrico de uma roda rígida sem ajuda.
           </p>
           <p>
-            É a base para a decisão mais cara do projeto:{' '}
-            <b>seguir no Jolt, migrar pro Chrono, ou manter os dois</b> — um para
-            tempo real, outro para fidelidade.
+            <b>É precisamente esse limite que o bogie existe para vencer.</b> A
+            perna dianteira é erguida sobre o obstáculo pela geometria do
+            conjunto. O entregável tem número para bater: <b>subir um degrau que
+            a montagem de quatro rodas não sobe</b>.
           </p>
         </div>
       </section>
@@ -92,40 +109,44 @@ export default function RoadmapOrcamentoFisica() {
           <h2>Três faixas, uma pergunta</h2>
         </div>
         <div className="cards">
-          <div className="card amber">
-            <div className="kind">faixa A · seg e ter</div>
-            <h3>Quanto cabe num quadro</h3>
-            <p>
-              Instrumentar o <code>vehicle_probe</code>, varrer os parâmetros de
-              custo do Jolt e levantar a <b>curva custo × fidelidade</b>. Define o
-              orçamento contra o qual tudo mais é medido.
-            </p>
-          </div>
           <div className="card cyan">
-            <div className="kind">faixa B · qua e qui · ★ prioridade</div>
+            <div className="kind">faixa B · ✔ feita em 9–10/set</div>
             <h3>Multicorpo de verdade</h3>
             <p>
-              Montar uma <b>perna articulada</b> com corpos e juntas — o que a{' '}
-              <code>VehicleConstraint</code> não faz. Testar se ela sobe um degrau
-              melhor que o corpo único, e quanto custa.
+              Plataforma articulada montada, medida e rodando no Godot. Trouxe
+              junto duas descobertas: o modelo <em>lumped</em>{' '}
+              <b>sobe degraus maiores que a própria roda</b> porque ignora a face
+              do obstáculo, e o passo padrão do Jolt <b>erra 12 cm</b> nesta
+              montagem.
             </p>
           </div>
           <div className="card amber">
-            <div className="kind">faixa C · sex · cortável</div>
+            <div className="kind">faixa A · ~70 % adiantada</div>
+            <h3>Quanto cabe num quadro</h3>
+            <p>
+              O cronômetro está no <code>vehicle_probe</code> e a curva do solver
+              já foi levantada para a montagem articulada. <b>Falta</b> repetir
+              com vários veículos na cena — o orçamento é do quadro inteiro, não
+              de um veículo.
+            </p>
+          </div>
+          <div className="card amber">
+            <div className="kind">faixa C · intacta</div>
             <h3>O terreno</h3>
             <p>
-              Chão de altura variável e deformação do sulco. É a faixa a sacrificar
-              se a semana apertar — as outras duas respondem mais.
+              Chão de altura variável e deformação do sulco. Nada feito ainda, e
+              agora com um motivo a mais: o obstáculo de face vertical mostrou que
+              a forma do terreno importa.
             </p>
           </div>
         </div>
 
         <div className="callout">
-          <span className="lbl">⚠ leitura honesta do escopo</span>
-          <b>Três faixas em cinco dias é apertado.</b> A ordem acima é a de
-          prioridade, não só a do calendário: se algo cair, cai a{' '}
-          <b>faixa C</b>. A faixa B é a que responde a pergunta do título — e é a
-          única que produz capacidade nova, não só medição.
+          <span className="lbl">◈ o que a antecipação mudou</span>
+          A sprint deixou de ser <b>três faixas espremidas em cinco dias</b> — que
+          eu mesmo tinha admitido ser apertado — e virou{' '}
+          <b>uma faixa nova com espaço</b>. O bogie é a continuação direta do
+          limite medido, e as duas faixas restantes deixam de competir por tempo.
         </div>
       </section>
 
@@ -136,8 +157,12 @@ export default function RoadmapOrcamentoFisica() {
           <h2>Faixa A · o orçamento do quadro</h2>
         </div>
         <p className="sec-sub">
-          Quatro parâmetros controlam quanto o Jolt calcula por passo. Nenhum foi
-          tocado até agora — todos estão no padrão.
+          Quatro parâmetros controlam quanto o Jolt calcula por passo. Os três
+          primeiros já foram varridos na montagem articulada — o resultado está em{' '}
+          <a href={rockerHref}>Sete corpos, seis juntas</a>, e a conclusão é que a
+          configuração recomendada é <b>4 sub-passos</b>. Falta repetir com{' '}
+          <b>vários veículos na cena</b>: o orçamento é do quadro inteiro, não de
+          um veículo.
         </p>
 
         <div className="tbl cyan">
@@ -222,136 +247,133 @@ export default function RoadmapOrcamentoFisica() {
         </div>
       </section>
 
-      {/* 04 · faixa B — multicorpo */}
+      {/* 04 · faixa B — feita, e a continuação */}
       <section className="rm-sec">
         <div className="sec-head">
           <span className="num">⚙</span>
-          <h2>Faixa B · multicorpo de verdade no Jolt</h2>
+          <h2>Faixa B · feita — e o que ela abriu</h2>
         </div>
         <p className="sec-sub">
-          A frente inteira se chama "dinâmica multicorpo" e, até agora, o que roda
-          tem <b>um corpo</b>. Esta faixa fecha esse vão — e é a que produz
-          capacidade nova.
+          Executada em 9–10/set. O relato completo, com as tabelas e os dois erros
+          de projeto que o ensaio precisou corrigir antes de valer alguma coisa,
+          está em <a href={rockerHref}>Sete corpos, seis juntas</a>.
+        </p>
+
+        <div className="deliv">
+          <div className="drow">
+            <span className="dn mono">a articulação funciona</span>
+            <span className="dt">
+              Sete corpos, seis juntas, motor no eixo de cada roda. No mesmo
+              degrau, mesma velocidade e mesma massa: chassi a <b>0,00°</b> contra{' '}
+              <b>4,34°</b> do modelo de um corpo só. Os braços giram <b>−4,1°</b> e
+              absorvem o obstáculo inteiro.
+            </span>
+          </div>
+          <div className="drow">
+            <span className="dn mono">o lumped trapaceia</span>
+            <span className="dt">
+              Ele "sobe" degraus de <b>0,50 m com rodas de 0,30 m</b> — porque a
+              face vertical do degrau <b>não existe no modelo</b>. O raycast acha o
+              topo e a fórmula puxa o veículo. Isso obriga a reler o que foi medido
+              com ele sobre terreno acidentado.
+            </span>
+          </div>
+          <div className="drow">
+            <span className="dn mono">o custo, medido</span>
+            <span className="dt">
+              A razão de massa (chassi 1200 kg em braços de 50 kg) deixa o solver
+              padrão <b>12 cm abaixo</b> da altura correta. O joelho da curva está
+              em <b>4 sub-passos</b>; mesmo 8 usam só <b>4 %</b> do quadro.
+            </span>
+          </div>
+          <div className="drow">
+            <span className="dn mono">o limite encontrado</span>
+            <span className="dt">
+              O rocker de quatro rodas sobe 0,20 m e <b>para em 0,30 m</b> — o raio
+              da roda. É o limite geométrico correto, e é o alvo da semana.
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* 05 · o bogie */}
+      <section className="rm-sec">
+        <div className="sec-head">
+          <span className="num">★</span>
+          <h2>O bogie · o entregável da sprint</h2>
+        </div>
+        <p className="sec-sub">
+          Uma roda rígida sozinha não sobe degrau maior que o próprio raio. O
+          rocker-bogie resolve isso com <b>geometria</b>: a perna dianteira é
+          erguida sobre o obstáculo pelo conjunto, em vez de ter que escalá-lo.
         </p>
 
         <div className="callout">
-          <span className="lbl">◈ por que a VehicleConstraint não basta</span>
-          O rocker-bogie existe para que, ao subir uma pedra,{' '}
-          <b>uma roda suba enquanto as outras seguem apoiadas</b>, e o chassi quase
-          não incline. Esse comportamento <b>emerge da articulação</b> — não sai de
-          um bloco só com molas calculadas, por melhor que sejam os parâmetros.
-          Detalhado em <a href={porDentroHref}>Um corpo só, quatro bengalas</a>.
-        </div>
-
-        <div className="tbl cyan">
-          <div className="cap">os três caminhos · o que cada um custa</div>
-          <div className="trow">
-            <div className="a">1 · VehicleConstraint</div>
-            <div className="b">
-              O que existe hoje. <b>Modelo de pneu bom</b> (curvas de slip, μ·N),{' '}
-              <b>articulação zero</b>. Ótimo para carro, imprestável para rover
-            </div>
-          </div>
-          <div className="trow">
-            <div className="a">2 · corpos + juntas</div>
-            <div className="b">
-              Cada braço um corpo, cada pivô um <code>HingeConstraint</code>, cada
-              roda um cilindro com <b>motor no eixo</b>. Articulação total; o pneu
-              vira <b>atrito comum de corpo rígido</b>. É o caminho do{' '}
-              <code>VehicleSixDOFTest</code> e do Viper
-            </div>
-          </div>
-          <div className="trow seam">
-            <div className="a">3 · híbrido · hipótese</div>
-            <div className="b">
-              A <code>VehicleConstraint</code> se prende a <b>um</b> corpo — e nada
-              diz que esse corpo é o chassi. Uma constraint de <b>uma roda só</b>{' '}
-              em cada braço articulado daria articulação <b>e</b> modelo de pneu.{' '}
-              <b>Não testado</b>
-            </div>
-          </div>
+          <span className="lbl">◈ por que este é o passo certo agora</span>
+          Não é "mais rodas por ser mais bonito". O ensaio produziu um{' '}
+          <b>número exato</b> — 0,30 m — e o bogie é o mecanismo cuja razão de
+          existir é justamente vencer esse número. O critério de sucesso já está
+          definido antes de começar: <b>subir um degrau que a montagem de quatro
+          rodas não sobe</b>.
         </div>
 
         <div className="spine">
           <div className="stop seam">
-            <div className="code">QUA · 16 SET · o caminho 2</div>
-            <h3>Uma perna articulada</h3>
+            <div className="code">SEG · 14 SET</div>
+            <h3>A geometria de seis rodas</h3>
             <ol className="steps">
               <li>
-                Um braço (corpo dinâmico) preso ao chassi por{' '}
-                <code>HingeConstraint</code> — o pivô do bogie.
+                Estender <code>src/rocker_rig.h</code>: cada rocker ganha, na
+                ponta traseira, um <b>bogie</b> — um segundo braço articulado com
+                duas rodas. Total: 11 corpos, 10 juntas.
               </li>
               <li>
-                Uma roda de verdade: <code>CylinderShape</code>, corpo dinâmico,
-                presa ao braço por outro <code>HingeConstraint</code>{' '}
-                <b>com motor</b> — <code>SetMotorState(Velocity)</code> e{' '}
-                <code>SetTargetAngularVelocity</code>. A roda é acionada pelo{' '}
-                <b>eixo</b>, como na vida real, não por força no corpo.
+                O <code>GroupFilterTable</code> e o filtro de auto-colisão já
+                existem e escalam sozinhos; o header foi escrito com isso em mente.
               </li>
               <li>
-                Gabarito: <code>Samples/Tests/Vehicle/VehicleSixDOFTest.cpp</code>,
-                escrito pelo próprio autor do Jolt — "mostra como um carro poderia
-                ser feito com um <code>SixDOFConstraint</code>".
+                Ajustar o curso de cada junta. O curso errado trava o mecanismo
+                antes dele trabalhar.
+              </li>
+            </ol>
+            <span className="doit">↳ rocker-bogie montado e de pé</span>
+          </div>
+
+          <div className="stop final">
+            <div className="code">TER · 15 SET</div>
+            <h3>A varredura de degrau, de novo</h3>
+            <ol className="steps">
+              <li>
+                Rodar a <b>mesma manobra padrão</b> nas três montagens — lumped,
+                rocker de quatro, rocker-bogie de seis — varrendo o degrau de
+                0,10 a 0,50 m.
+              </li>
+              <li>
+                A tabela responde de uma vez: até onde cada uma sobe, e com quanta
+                inclinação de chassi.
+              </li>
+              <li>
+                Medir o custo por quadro das 11 peças e conferir se ainda cabe nos
+                16,7 ms.
               </li>
             </ol>
             <p>
-              <b>O teste que decide:</b> a mesma manobra de degrau, nas duas
-              montagens. Medir <b>inclinação do chassi</b> e se sobe. Se a
-              articulada inclinar menos, o mecanismo está fazendo o que deveria.
+              <b>A pergunta que fecha:</b> o bogie passa dos 0,30 m? Se passar, o
+              rover está a uma refatoração de distância. Se não passar, saber{' '}
+              <b>por quê</b> vale igual.
             </p>
             <span className="doit">
-              ↳ perna articulada subindo degrau + comparação com o corpo único
+              ↳ tabela das três montagens + vídeo do bogie subindo o que o rocker não sobe
             </span>
           </div>
-
-          <div className="stop">
-            <div className="code">QUI · 17 SET · o caminho 3</div>
-            <h3>Testar a hipótese do híbrido</h3>
-            <ol className="steps">
-              <li>
-                Montar o braço articulado do dia anterior e prender nele uma{' '}
-                <code>VehicleConstraint</code> de <b>uma roda só</b>.
-              </li>
-              <li>
-                Ver o que quebra. Suspeitas anotadas antes de testar: o{' '}
-                <code>WheeledVehicleController</code> faz motor e diferencial{' '}
-                <em>entre</em> rodas, o que não faz sentido dividido em várias
-                constraints; e o <code>mMaxPitchRollAngle</code> assume um veículo
-                só. Talvez precise de um controller mais simples, ou nenhum.
-              </li>
-              <li>
-                Comparar as três montagens na mesma manobra:{' '}
-                <b>o pneu se comporta diferente?</b> Aparece curva de slip no
-                híbrido que não aparece no caminho 2?
-              </li>
-            </ol>
-            <p>
-              <b>Porquê:</b> se funcionar, é o melhor dos dois mundos e muda a
-              resposta da semana. Se não funcionar, saber <b>por quê</b> vale quase
-              tanto — e é barato descobrir.
-            </p>
-            <span className="doit">
-              ↳ veredito do híbrido, com o motivo anotado
-            </span>
-          </div>
-        </div>
-
-        <div className="callout amber" style={{marginTop: 22}}>
-          <b>O que se perde no caminho 2, e não dá pra esconder:</b> quando a roda
-          vira um corpo que colide, o contato passa a ser <b>atrito comum</b> — um
-          coeficiente, Coulomb. Some o modelo de pneu: sem curvas de{' '}
-          <em>slip</em>, sem tratar longitudinal e lateral separadamente, sem o{' '}
-          <em>clamp</em> μ·N por roda. Troca-se <b>fidelidade de contato</b> por{' '}
-          <b>fidelidade de mecanismo</b>. Essa é a frase que a semana precisa
-          transformar em número.
         </div>
       </section>
 
-      {/* 05 · faixa C — terreno */}
+      {/* 06 · faixa C — terreno */}
       <section className="rm-sec">
         <div className="sec-head">
           <span className="num">⌁</span>
-          <h2>Faixa C · o terreno</h2>
+          <h2>Faixa C · o terreno, se sobrar tempo</h2>
         </div>
 
         <div className="callout">
@@ -400,26 +422,45 @@ export default function RoadmapOrcamentoFisica() {
       <section className="rm-sec">
         <div className="sec-head">
           <span className="num">↹</span>
-          <h2>O que sai desta semana</h2>
+          <h2>O que sai desta sprint</h2>
         </div>
         <div className="deliver">
-          <h3>Para a reunião remarcada</h3>
+          <h3>Já entregue · 9–10 set</h3>
           <ul>
             <li>
-              <b>A curva custo × fidelidade</b> — quanto cálculo cabe em 16,7 ms e
-              onde está o joelho.
+              <b>A plataforma articulada</b> rodando no terminal e no Godot, com a
+              comparação contra o modelo de um corpo só.
             </li>
             <li>
-              <b>A perna articulada rodando</b> — corpos e juntas de verdade, com a
-              comparação de inclinação do chassi contra o modelo de um corpo só{' '}
-              <em>(o entregável que muda o rumo)</em>.
+              <b>A curva do solver</b> — o joelho em 4 sub-passos, e a constatação
+              de que o padrão do Jolt erra 12 cm nesta montagem.
             </li>
             <li>
-              <b>O veredito do híbrido</b> — funciona, ou não funciona e por quê.
+              <b>O limite geométrico medido</b> — 0,30 m, o raio da roda.
             </li>
             <li>
-              <b>A nota de decisão</b>: o rover articulado cabe no Jolt em tempo
-              real, ou terreno deformável empurra para o Chrono?
+              <b>A entrada publicada</b>:{' '}
+              <a href={rockerHref}>Sete corpos, seis juntas</a>.
+            </li>
+          </ul>
+        </div>
+        <div className="deliver" style={{marginTop: 18}}>
+          <h3>Até terça, 15 de setembro</h3>
+          <ul>
+            <li>
+              <b>O rocker-bogie de seis rodas</b> — 11 corpos, 10 juntas{' '}
+              <em>(o entregável-âncora)</em>.
+            </li>
+            <li>
+              <b>A tabela das três montagens</b> — até onde cada uma sobe, e com
+              quanta inclinação.
+            </li>
+            <li>
+              <b>O custo por quadro das 11 peças</b>, conferido contra os 16,7 ms.
+            </li>
+            <li>
+              <b>Vídeo</b> do bogie subindo o degrau que o rocker de quatro não
+              sobe.
             </li>
           </ul>
         </div>
@@ -434,21 +475,21 @@ export default function RoadmapOrcamentoFisica() {
         <div className="rm-guard">
           <span className="lbl">✕ trava de escopo</span>
           <p className="sub">
-            <b>Uma perna, não um rover.</b> A pergunta é se o mecanismo funciona e
-            quanto custa — não montar o veículo completo.
+            <b>Um mecanismo, não um veículo.</b> O bogie existe para responder uma
+            pergunta com número — não para virar o rover final.
           </p>
           <ul>
             <li>
-              Montar o rocker-bogie de <b>seis rodas</b> — uma perna responde a
-              pergunta
+              Modelar o rover da ExoTerra com geometria real — a montagem é
+              genérica de propósito
             </li>
             <li>
-              Refatorar a cena para nascer da física (decidido, mas é o passo
-              seguinte)
+              Refatorar a cena para nascer da física — agora há <b>duas</b>{' '}
+              montagens, o que torna a abstração fácil, mas não é esta semana
             </li>
             <li>Migrar o build para CMake</li>
             <li>Escrever terramecânica do zero</li>
-            <li>Otimizar o que ainda não foi medido</li>
+            <li>Recuperar o modelo de pneu perdido na troca</li>
           </ul>
         </div>
         <div className="callout">
@@ -508,15 +549,19 @@ export default function RoadmapOrcamentoFisica() {
         </div>
 
         <div className="qbox">
-          <h3>As que eu mesmo respondo esta semana</h3>
+          <h3>As que eu mesmo respondi</h3>
           <ul>
             <li>
-              <b>Dá para montar multicorpo articulado no Jolt?</b> → faixa B, com
-              medição.
+              <b>Dá para montar multicorpo articulado no Jolt?</b> ✔ Sim — 7
+              corpos, 6 juntas, chassi a 0,00° contra 4,34°.
             </li>
             <li>
-              <b>Solo deformável é viável no Jolt em tempo real?</b> → faixa C, com
-              o custo por quadro medido.
+              <b>Cabe no orçamento de um quadro?</b> ✔ Sim, com folga — 4 % em 4
+              sub-passos, que é onde a curva para de melhorar.
+            </li>
+            <li>
+              <b>Solo deformável é viável no Jolt em tempo real?</b> → ainda em
+              aberto, faixa C.
             </li>
           </ul>
         </div>

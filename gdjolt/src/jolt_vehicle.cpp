@@ -17,6 +17,8 @@ using namespace godot;
 #include <Jolt/Physics/Vehicle/WheeledVehicleController.h>
 #include <Jolt/RegisterTypes.h>
 
+#include "jolt_runtime.h"
+
 #include <thread>
 
 JPH_SUPPRESS_WARNINGS
@@ -27,29 +29,6 @@ using namespace JPH::literals;
 namespace gdjolt {
 
 namespace {
-
-// RegisterTypes/Factory são globais do Jolt: valem para o processo, não para o
-// nó. Vários JoltVehicle na cena não podem registrar duas vezes, e o último a
-// sair é quem desfaz.
-int g_jolt_users = 0;
-
-void jolt_acquire() {
-	if (g_jolt_users++ > 0) {
-		return;
-	}
-	RegisterDefaultAllocator();
-	Factory::sInstance = new Factory();
-	RegisterTypes();
-}
-
-void jolt_release() {
-	if (--g_jolt_users > 0) {
-		return;
-	}
-	UnregisterTypes();
-	delete Factory::sInstance;
-	Factory::sInstance = nullptr;
-}
 
 constexpr float kWheelRadius = 0.3f;
 constexpr float kWheelWidth = 0.1f;
@@ -102,7 +81,7 @@ void JoltVehicle::build_world() {
 		return;
 	}
 
-	jolt_acquire();
+	JoltAcquire();
 
 	temp_allocator = std::make_unique<TempAllocatorImpl>(10 * 1024 * 1024);
 	job_system = std::make_unique<JobSystemThreadPool>(
@@ -189,7 +168,7 @@ void JoltVehicle::teardown_world() {
 	job_system.reset();
 	temp_allocator.reset();
 
-	jolt_release();
+	JoltRelease();
 }
 
 void JoltVehicle::_physics_process(double delta) {

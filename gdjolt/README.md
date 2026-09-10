@@ -16,10 +16,13 @@ O Godot vira renderizador e input. Quem simula é o Jolt.
 | Caminho | O que é |
 | --- | --- |
 | `src/jolt_probe.{h,cpp}` | Nó sem física nenhuma. Prova que a ponte carrega e que o Godot chama o nosso C++ a cada passo |
-| `src/jolt_vehicle.{h,cpp}` | O nó de verdade: mundo do Jolt, `VehicleConstraint` de quatro rodas, transforms escritas na cena |
-| `src/jolt_layers.h` | Camadas de colisão e filtros — compartilhados pelo nó e pelo programa de teste |
-| `tools/vehicle_probe.cpp` | O mesmo veículo **sem o Godot no caminho**, imprimindo telemetria no terminal |
-| `demo/` | Projeto Godot mínimo que carrega a extensão |
+| `src/jolt_vehicle.{h,cpp}` | `VehicleConstraint` de quatro rodas — **um corpo só**, modelo *lumped* |
+| `src/jolt_rocker.{h,cpp}` | A plataforma **articulada** — 7 corpos, 6 juntas, motor no eixo de cada roda |
+| `src/rocker_rig.h` | A montagem articulada, compartilhada entre o nó do Godot e o banco de ensaio |
+| `src/jolt_layers.h` | Camadas de colisão e filtros |
+| `src/jolt_runtime.h` | Contagem de uso do `RegisterTypes` do Jolt, que é global do processo |
+| `tools/vehicle_probe.cpp` | Banco de ensaio **sem o Godot no caminho**: monta as duas plataformas e submete as duas à mesma manobra |
+| `demo/` | Projeto Godot: `main.tscn` (veículo) e `rocker.tscn` (plataforma articulada) |
 
 ## Como compilar
 
@@ -52,8 +55,36 @@ scons platform=linux target=template_debug -j"$(nproc)"
 ```bash
 GODOT=~/Downloads/Godot_v4.7-stable_linux.x86_64
 $GODOT --headless --path demo --script verify.gd          # a ponte
-$GODOT --headless --path demo --script verify_vehicle.gd  # a física
+$GODOT --headless --path demo --script verify_vehicle.gd  # a física lumped
+$GODOT --headless --path demo --script verify_rocker.gd   # a plataforma articulada
 ```
+
+## O banco de ensaio
+
+```bash
+./build/tools/vehicle_probe                    # as duas plataformas, degrau de 0,20 m
+./build/tools/vehicle_probe --rig=rocker       # só a articulada, com detalhe
+./build/tools/vehicle_probe --substeps=4       # sub-passos por quadro
+./build/tools/vehicle_probe --vsteps=30 --psteps=6   # iterações do solver
+./build/tools/vehicle_probe --step-height=0.30 --quiet
+```
+
+**Use `--substeps=4`.** Com o padrão do Jolt (1 sub-passo, 10 iterações de
+velocidade), a razão de massa da plataforma articulada — chassi de 1200 kg
+pendurado em braços de 50 kg — deixa o solver **12 cm abaixo** da altura
+geométrica correta. Não é física: é o solver não convergindo. A partir de 4
+sub-passos o resultado para de mudar.
+
+| configuração | altura final | incl. máx | µs/quadro (mediana) |
+| --- | --- | --- | --- |
+| 10 vel / 2 pos (padrão) | 0,727 | 1,09° | 103 |
+| 30 vel / 6 pos | 0,828 | 0,12° | 132 |
+| 60 vel / 12 pos | 0,843 | 0,49° | 172 |
+| **4 sub-passos** | **0,850** | **0,10°** | **335** |
+| 8 sub-passos | 0,850 | 0,24° | 673 |
+
+A altura geometricamente correta é 0,850. Todas as configurações cabem
+folgadamente nos 16 700 µs de um quadro a 60 Hz.
 
 ## A armadilha que custou caro: paridade de ABI
 

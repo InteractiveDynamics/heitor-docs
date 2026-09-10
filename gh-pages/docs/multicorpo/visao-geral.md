@@ -41,6 +41,14 @@ conferência cega: o professor já tinha ligado o Godot ao **Project Chrono** e
 chegou ao **mesmo desenho de arquitetura**, sem a gente combinar. Traz o código
 lado a lado, as três diferenças em que ele está à frente, e o achado de que o
 `GdChrono` já roda um **rover Viper** sobre **terreno SCM deformável**.
+
+**6 · [Sete corpos, seis juntas](/docs/multicorpo/rocker-articulado)** — a
+primeira entrada que **mede** em vez de descrever. Monta a plataforma articulada
+de verdade — corpos ligados por `HingeConstraint`, motor no eixo de cada roda — e
+a compara com a `VehicleConstraint` na mesma manobra: **0,00° contra 4,34°** de
+inclinação do chassi ao passar um degrau. Descobre, de quebra, que o modelo de um
+corpo só **sobe degraus maiores que a própria roda** porque ignora a face do
+obstáculo.
 :::
 
 ## Escopo previsto
@@ -69,17 +77,22 @@ A leitura do **GDChrono** deixou três pontos a adotar, em ordem de importância
 número de rodas estiver escrito no código, não há rover), **unificar o build em
 CMake** e **tratar o passo de simulação como decisão explícita**.
 
-Os dois primeiros pontos viraram a semana seguinte, no roadmap [14–21 set · O
-rover cabe no Jolt?](/docs/roadmaps/semana-2026-09-14) — que ataca de frente o
-que segue em aberto nesta frente: **o rover articulado**, que a
-`VehicleConstraint` não resolve por ser um modelo de um corpo só.
+Esses pontos viraram o roadmap [14–21 set · O rover cabe no
+Jolt?](/docs/roadmaps/semana-2026-09-14) — e a resposta chegou **antes da sprint
+começar**, em [Sete corpos, seis juntas](/docs/multicorpo/rocker-articulado): a
+plataforma articulada existe, roda no Godot, mantém o chassi nivelado onde o
+modelo de um corpo só inclina 4,34°, e custa **4 % do orçamento de um quadro**.
 
-A semana tem três faixas alimentando uma pergunta: quanto cálculo cabe em
-16,7 ms, se dá para montar **multicorpo de verdade no Jolt** — corpos ligados por
-`HingeConstraint` com motor no eixo, como no sample `VehicleSixDOFTest` — e o que
-o terreno deformável custa. Vale registrar o custo dessa troca: ao transformar a
-roda num corpo que colide, ganha-se articulação e **perde-se o modelo de pneu**,
-porque o contato passa a ser atrito comum de corpo rígido.
+Fica registrado o preço dessa troca: ao transformar a roda num corpo que colide,
+ganha-se articulação e **perde-se o modelo de pneu**, porque o contato passa a
+ser atrito comum de corpo rígido. E fica registrado o custo escondido: a razão de
+massa entre chassi e braços exige **4 sub-passos** por quadro — com o padrão do
+Jolt, o solver para 12 cm abaixo da altura correta.
+
+Segue **em aberto**, agora com alvo numérico: o **bogie** de seis rodas, que é o
+mecanismo que vence o limite encontrado — uma roda rígida não sobe degrau maior
+que o próprio raio, e o rocker de quatro rodas para em `0,30 m`. Depois dele, o
+**terreno** e a refatoração que faz a cena nascer da física.
 
 O `GdChrono` já roda o **Viper** sobre terreno **SCM**, o que dá alvo concreto
 para as frentes de [integração roda–solo](/docs/roda-solo/visao-geral) e

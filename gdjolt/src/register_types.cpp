@@ -1,6 +1,7 @@
 #include "register_types.h"
 
 #include "jolt_probe.h"
+#include "jolt_rocker.h"
 #include "jolt_vehicle.h"
 
 #include <gdextension_interface.h>
@@ -17,6 +18,7 @@ void initialize_gdjolt_module(ModuleInitializationLevel p_level) {
 
 	GDREGISTER_CLASS(gdjolt::JoltProbe);
 	GDREGISTER_CLASS(gdjolt::JoltVehicle);
+	GDREGISTER_CLASS(gdjolt::JoltRocker);
 }
 
 void uninitialize_gdjolt_module(ModuleInitializationLevel p_level) {

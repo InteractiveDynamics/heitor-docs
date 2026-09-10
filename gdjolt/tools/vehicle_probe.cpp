@@ -1,16 +1,29 @@
-// Etapa 2 · Jolt puro, sem o Godot no caminho.
+// Banco de ensaio · Jolt puro, sem o Godot no caminho.
 //
-// Sobe um PhysicsSystem, cria um chão estático e um veículo de quatro rodas com
-// VehicleConstraint + WheeledVehicleController + VehicleCollisionTesterRay, e
-// imprime a telemetria por roda passo a passo.
+// Monta DUAS plataformas diferentes e submete as duas à MESMA manobra — acelerar
+// em reta contra um degrau — para responder a pergunta que decide o rumo do
+// projeto: a articulação de verdade segura o chassi mais nivelado que o modelo
+// de um corpo só?
 //
-// O ponto de isolar isto num binário de terminal: se mais adiante a extensão
-// der problema, este programa diz se o Jolt sozinho estava certo. É também onde
-// dá pra ver de perto o que a doc "Um corpo só, quatro bengalas" descreveu —
-// a suspensão comprimindo até o equilíbrio e o clamp μ·N no impulso lateral.
+//   --rig=lumped   VehicleConstraint de quatro rodas · UM corpo rígido, sem
+//                  articulação nenhuma. Boa modelagem de pneu (curvas de slip,
+//                  clamp μ·N), zero mecanismo.
 //
-// Baseado em HelloWorld/HelloWorld.cpp e em
-// Samples/Tests/Vehicle/VehicleConstraintTest.cpp do repositório do Jolt.
+//   --rig=rocker   chassi + dois braços articulados + quatro rodas, ligados por
+//                  HingeConstraint. Sete corpos, seis juntas. As rodas são
+//                  acionadas pelo EIXO, com motor na junta, como na vida real.
+//                  Mecanismo de verdade; o pneu vira atrito comum de corpo
+//                  rígido.
+//
+// A métrica principal é a INCLINAÇÃO DO CHASSI durante a passagem pelo degrau.
+// É ela que diz se o mecanismo está fazendo o que o rocker-bogie existe para
+// fazer: deixar uma roda subir sem levar o chassi junto.
+//
+// O cronômetro em volta do Update também mede o custo por passo — é a
+// instrumentação que a faixa A do roadmap vai precisar.
+//
+// Baseado em HelloWorld/HelloWorld.cpp, Samples/Tests/Vehicle/
+// VehicleConstraintTest.cpp e VehicleSixDOFTest.cpp do repositório do Jolt.
 
 #include <Jolt/Jolt.h>
 
@@ -18,8 +31,11 @@
 #include <Jolt/Core/JobSystemThreadPool.h>
 #include <Jolt/Core/TempAllocator.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
+#include <Jolt/Physics/Collision/GroupFilterTable.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
+#include <Jolt/Physics/Collision/Shape/CylinderShape.h>
 #include <Jolt/Physics/Collision/Shape/OffsetCenterOfMassShape.h>
+#include <Jolt/Physics/Constraints/HingeConstraint.h>
 #include <Jolt/Physics/PhysicsSettings.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Physics/Vehicle/VehicleCollisionTester.h>
@@ -28,17 +44,27 @@
 #include <Jolt/RegisterTypes.h>
 
 #include "../src/jolt_layers.h"
+#include "../src/rocker_rig.h"
 
+#include <algorithm>
+#include <chrono>
+#include <cmath>
 #include <cstdarg>
 #include <cstdio>
+#include <cstring>
 #include <iostream>
 #include <thread>
+#include <vector>
 
 JPH_SUPPRESS_WARNINGS
 
 using namespace JPH;
 using namespace JPH::literals;
 using namespace gdjolt;
+
+// ---------------------------------------------------------------------------
+// infraestrutura
+// ---------------------------------------------------------------------------
 
 static void TraceImpl(const char *inFMT, ...) {
 	va_list list;
@@ -57,175 +83,421 @@ static bool AssertFailedImpl(const char *inExpression, const char *inMessage, co
 }
 #endif
 
-// Dimensões do veículo — as mesmas proporções do sample, para que a telemetria
-// seja comparável com o que se vê rodando o VehicleConstraintTest.
+// ---------------------------------------------------------------------------
+// parâmetros comuns às duas plataformas
+//
+// Mesma pegada no chão, mesma massa total, mesmo raio de roda. Sem isso a
+// comparação não vale nada: qualquer diferença de inclinação poderia ser
+// geometria em vez de mecanismo.
+// ---------------------------------------------------------------------------
+
 static constexpr float kWheelRadius = 0.3f;
-static constexpr float kWheelWidth = 0.1f;
-static constexpr float kHalfLength = 2.0f;
-static constexpr float kHalfWidth = 0.9f;
+static constexpr float kWheelWidth = 0.2f;
+static constexpr float kHalfLength = 2.0f; // meia distância entre eixos + folga
+static constexpr float kHalfWidth = 0.9f;  // meia bitola
 static constexpr float kHalfHeight = 0.2f;
-static constexpr float kVehicleMass = 1500.0f;
+static constexpr float kTotalMass = 1500.0f;
 
-static constexpr float kSuspensionMin = 0.3f;
-static constexpr float kSuspensionMax = 0.5f;
-static constexpr float kSuspensionFreq = 1.5f;
-static constexpr float kSuspensionDamping = 0.5f;
+// Onde as rodas ficam, em Z, nas duas plataformas.
+static constexpr float kAxleZ = kHalfLength - 2.0f * kWheelRadius; // 1.4
 
-static WheelSettingsWV *MakeWheel(Vec3Arg inPosition, float inMaxSteerAngle, float inHandBrakeTorque) {
+// O atrito PADRÃO de corpo no Jolt é 0.2 (BodyCreationSettings.h:107) — baixo
+// demais: a roda acionada por motor patina em vez de subir o degrau. Este valor
+// é parâmetro do experimento, não detalhe.
+static constexpr float kGroundFriction = 1.0f;
+static constexpr float kWheelFriction = 1.0f;
+
+// A manobra padrão.
+static constexpr float kDeltaTime = 1.0f / 60.0f;
+// Velocidade-alvo em m/s, IGUAL para as duas plataformas. Sem isto o ensaio
+// compara um carro a 19 m/s com um rover a 1,8 m/s, e qualquer diferença de
+// inclinação vira artefato da velocidade em vez de resultado do mecanismo.
+static constexpr float kTargetSpeed = 1.5f;
+static constexpr int kSettleSteps = 60;    // 1 s parado, para assentar
+static constexpr float kSpawnHeight = 0.75f;
+
+struct World {
+	PhysicsSystem *system = nullptr;
+	BodyInterface *bi = nullptr;
+	Ref<GroupFilterTable> group_filter;
+};
+
+// ---------------------------------------------------------------------------
+// a interface que as duas plataformas implementam
+// ---------------------------------------------------------------------------
+
+class Rig {
+public:
+	virtual ~Rig() = default;
+
+	virtual const char *Name() const = 0;
+	virtual void Build(World &w, RVec3Arg origin) = 0;
+	virtual void Drive(World &w, bool go) = 0;
+	virtual const Body *Chassis() const = 0;
+
+	/// Uma linha de telemetria específica da plataforma (ângulos das juntas,
+	/// comprimento da suspensão...). Vazio é aceitável.
+	virtual void DetailRow(char *out, size_t n) const { out[0] = '\0'; (void)n; }
+	virtual const char *DetailHeader() const { return ""; }
+
+	/// Inclinação do chassi em relação à vertical do mundo, em graus.
+	/// É a métrica principal do experimento.
+	float TiltDegrees() const {
+		Vec3 up = Chassis()->GetRotation().RotateAxisY();
+		float c = std::min(1.0f, std::max(-1.0f, up.Dot(Vec3::sAxisY())));
+		return RadiansToDegrees(std::acos(c));
+	}
+};
+
+// ---------------------------------------------------------------------------
+// plataforma A · lumped — a VehicleConstraint que já existia
+// ---------------------------------------------------------------------------
+
+static WheelSettingsWV *MakeWheelWV(Vec3Arg position, float max_steer, float hand_brake) {
 	WheelSettingsWV *w = new WheelSettingsWV;
-	w->mPosition = inPosition;
+	w->mPosition = position;
 	w->mRadius = kWheelRadius;
 	w->mWidth = kWheelWidth;
-	w->mSuspensionMinLength = kSuspensionMin;
-	w->mSuspensionMaxLength = kSuspensionMax;
-	w->mSuspensionSpring.mFrequency = kSuspensionFreq;
-	w->mSuspensionSpring.mDamping = kSuspensionDamping;
-	w->mMaxSteerAngle = inMaxSteerAngle;
-	w->mMaxHandBrakeTorque = inHandBrakeTorque;
+	w->mSuspensionMinLength = 0.3f;
+	w->mSuspensionMaxLength = 0.5f;
+	w->mSuspensionSpring.mFrequency = 1.5f;
+	w->mSuspensionSpring.mDamping = 0.5f;
+	w->mMaxSteerAngle = max_steer;
+	w->mMaxHandBrakeTorque = hand_brake;
 	return w;
 }
 
-int main() {
-	RegisterDefaultAllocator();
+class LumpedRig final : public Rig {
+public:
+	const char *Name() const override { return "lumped"; }
+	const Body *Chassis() const override { return mBody; }
 
-	Trace = TraceImpl;
-	JPH_IF_ENABLE_ASSERTS(AssertFailed = AssertFailedImpl;)
-
-	Factory::sInstance = new Factory();
-	RegisterTypes();
-
-	TempAllocatorImpl temp_allocator(10 * 1024 * 1024);
-	JobSystemThreadPool job_system(cMaxPhysicsJobs, cMaxPhysicsBarriers,
-			std::thread::hardware_concurrency() - 1);
-
-	const uint cMaxBodies = 1024;
-	const uint cNumBodyMutexes = 0;
-	const uint cMaxBodyPairs = 1024;
-	const uint cMaxContactConstraints = 1024;
-
-	BPLayerInterfaceImpl broad_phase_layer_interface;
-	ObjectVsBroadPhaseLayerFilterImpl object_vs_broadphase_layer_filter;
-	ObjectLayerPairFilterImpl object_vs_object_layer_filter;
-
-	PhysicsSystem physics_system;
-	physics_system.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints,
-			broad_phase_layer_interface, object_vs_broadphase_layer_filter,
-			object_vs_object_layer_filter);
-
-	BodyInterface &body_interface = physics_system.GetBodyInterface();
-
-	// --- chão ---------------------------------------------------------------
-	BodyCreationSettings floor_settings(new BoxShape(Vec3(100.0f, 1.0f, 100.0f)),
-			RVec3(0.0_r, -1.0_r, 0.0_r), Quat::sIdentity(),
-			EMotionType::Static, Layers::NON_MOVING);
-	Body *floor = body_interface.CreateBody(floor_settings);
-	body_interface.AddBody(floor->GetID(), EActivation::DontActivate);
-
-	// --- corpo do veículo ---------------------------------------------------
-	// Um corpo rígido SÓ. As rodas não são corpos: são dados dentro da constraint.
-	RefConst<Shape> car_shape = OffsetCenterOfMassShapeSettings(
-			Vec3(0, -kHalfHeight, 0),
-			new BoxShape(Vec3(kHalfWidth, kHalfHeight, kHalfLength)))
+	void Build(World &w, RVec3Arg origin) override {
+		// Um corpo rígido SÓ. As rodas não são corpos: são dados na constraint.
+		RefConst<Shape> shape = OffsetCenterOfMassShapeSettings(
+				Vec3(0, -kHalfHeight, 0),
+				new BoxShape(Vec3(kHalfWidth, kHalfHeight, kHalfLength)))
 									.Create()
 									.Get();
 
-	BodyCreationSettings car_settings(car_shape, RVec3(0.0_r, 2.0_r, 0.0_r),
-			Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
-	car_settings.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;
-	car_settings.mMassPropertiesOverride.mMass = kVehicleMass;
+		BodyCreationSettings bcs(shape, origin, Quat::sIdentity(),
+				EMotionType::Dynamic, Layers::MOVING);
+		bcs.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;
+		bcs.mMassPropertiesOverride.mMass = kTotalMass;
+		bcs.mFriction = kWheelFriction;
 
-	Body *car_body = body_interface.CreateBody(car_settings);
-	body_interface.AddBody(car_body->GetID(), EActivation::Activate);
+		mBody = w.bi->CreateBody(bcs);
+		w.bi->AddBody(mBody->GetID(), EActivation::Activate);
 
-	// --- a constraint -------------------------------------------------------
-	VehicleConstraintSettings vehicle;
+		VehicleConstraintSettings v;
+		const float wy = -0.9f * kHalfHeight;
+		v.mWheels = {
+			MakeWheelWV(Vec3(kHalfWidth, wy, kAxleZ), 0.0f, 0.0f),
+			MakeWheelWV(Vec3(-kHalfWidth, wy, kAxleZ), 0.0f, 0.0f),
+			MakeWheelWV(Vec3(kHalfWidth, wy, -kAxleZ), 0.0f, 0.0f),
+			MakeWheelWV(Vec3(-kHalfWidth, wy, -kAxleZ), 0.0f, 0.0f),
+		};
 
-	const float front_z = kHalfLength - 2.0f * kWheelRadius;
-	const float rear_z = -kHalfLength + 2.0f * kWheelRadius;
-	const float wheel_y = -0.9f * kHalfHeight;
-	const float max_steer = DegreesToRadians(30.0f);
-	const float hand_brake = 4000.0f;
+		// Tração nas quatro, para ser comparável com o rocker (que também tem
+		// motor nas quatro).
+		WheeledVehicleControllerSettings *ctrl = new WheeledVehicleControllerSettings;
+		ctrl->mDifferentials.resize(2);
+		ctrl->mDifferentials[0].mLeftWheel = 0;
+		ctrl->mDifferentials[0].mRightWheel = 1;
+		ctrl->mDifferentials[1].mLeftWheel = 2;
+		ctrl->mDifferentials[1].mRightWheel = 3;
+		ctrl->mDifferentials[0].mEngineTorqueRatio = 0.5f;
+		ctrl->mDifferentials[1].mEngineTorqueRatio = 0.5f;
+		v.mController = ctrl;
 
-	vehicle.mWheels = {
-		MakeWheel(Vec3(kHalfWidth, wheel_y, front_z), max_steer, 0.0f), // 0 · diant. esq.
-		MakeWheel(Vec3(-kHalfWidth, wheel_y, front_z), max_steer, 0.0f), // 1 · diant. dir.
-		MakeWheel(Vec3(kHalfWidth, wheel_y, rear_z), 0.0f, hand_brake), // 2 · tras. esq.
-		MakeWheel(Vec3(-kHalfWidth, wheel_y, rear_z), 0.0f, hand_brake), // 3 · tras. dir.
-	};
+		mConstraint = new VehicleConstraint(*mBody, v);
+		mConstraint->SetVehicleCollisionTester(new VehicleCollisionTesterRay(Layers::MOVING));
 
-	WheeledVehicleControllerSettings *controller = new WheeledVehicleControllerSettings;
-	controller->mDifferentials.resize(1);
-	controller->mDifferentials[0].mLeftWheel = 0;
-	controller->mDifferentials[0].mRightWheel = 1;
-	vehicle.mController = controller;
+		w.system->AddConstraint(mConstraint);
+		w.system->AddStepListener(mConstraint);
+	}
 
-	VehicleConstraint *constraint = new VehicleConstraint(*car_body, vehicle);
-	constraint->SetVehicleCollisionTester(new VehicleCollisionTesterRay(Layers::MOVING));
+	void Drive(World &w, bool go) override {
+		auto *c = static_cast<WheeledVehicleController *>(mConstraint->GetController());
+		if (go) {
+			// Acelerador proporcional: o motor do WheeledVehicleController tem
+			// curva de torque própria e sairia a 19 m/s se recebesse 1.0 fixo.
+			// Segurar a velocidade-alvo é o que torna o ensaio comparável.
+			float v = mBody->GetLinearVelocity().Dot(mBody->GetRotation().RotateAxisZ());
+			float err = kTargetSpeed - v;
+			float throttle = std::min(1.0f, std::max(0.0f, err));
+			float brake = err < -0.5f ? std::min(1.0f, -err - 0.5f) : 0.0f;
+			c->SetDriverInput(throttle, 0.0f, brake, 0.0f);
+		} else {
+			c->SetDriverInput(0.0f, 0.0f, 0.0f, 1.0f);
+		}
+		w.bi->ActivateBody(mBody->GetID());
+	}
 
-	// A constraint entra DUAS vezes no sistema: como restrição (resolvida pelo
-	// solver) e como step listener (é aí que o raycast acontece, antes do solver).
-	physics_system.AddConstraint(constraint);
-	physics_system.AddStepListener(constraint);
+	const char *DetailHeader() const override { return " susp0  susp1  susp2  susp3"; }
+
+	void DetailRow(char *out, size_t n) const override {
+		std::snprintf(out, n, " %6.3f %6.3f %6.3f %6.3f",
+				(double)mConstraint->GetWheel(0)->GetSuspensionLength(),
+				(double)mConstraint->GetWheel(1)->GetSuspensionLength(),
+				(double)mConstraint->GetWheel(2)->GetSuspensionLength(),
+				(double)mConstraint->GetWheel(3)->GetSuspensionLength());
+	}
+
+private:
+	Body *mBody = nullptr;
+	Ref<VehicleConstraint> mConstraint;
+};
+
+// ---------------------------------------------------------------------------
+// plataforma B · rocker — corpos e juntas de verdade
+//
+//   chassi
+//    ├─ HingeConstraint livre ──→ braço esquerdo
+//    │                             ├─ Hinge + motor → roda diant. esq
+//    │                             └─ Hinge + motor → roda tras. esq
+//    └─ HingeConstraint livre ──→ braço direito
+//                                  ├─ Hinge + motor → roda diant. dir
+//                                  └─ Hinge + motor → roda tras. dir
+//
+// Sem mola nenhuma: quem absorve o degrau é a GEOMETRIA. É esse o princípio do
+// rocker-bogie, e é o que não cabe num modelo de corpo único.
+// ---------------------------------------------------------------------------
+
+class RockerRig final : public Rig {
+public:
+	const char *Name() const override { return "rocker"; }
+	const Body *Chassis() const override { return mParts.chassis; }
+
+	void Build(World &w, RVec3Arg origin) override {
+		// A montagem em si vive em src/rocker_rig.h, compartilhada com o nó do
+		// Godot — o que aparece no vídeo é exatamente o que foi medido aqui.
+		mParts = BuildRocker(*w.system, *w.bi, w.group_filter, origin, mParams);
+	}
+
+	void Drive(World &w, bool go) override {
+		DriveRocker(mParts, *w.bi, mParams, go ? 1.0f : 0.0f, 0.0f, kTargetSpeed);
+	}
+
+	const char *DetailHeader() const override { return " braco_e braco_d  torque"; }
+
+	void DetailRow(char *out, size_t n) const override {
+		float torque = 0.0f;
+		for (int i = 0; i < 4; ++i) {
+			torque += std::abs(mParts.wheel_hinges[i]->GetTotalLambdaMotor());
+		}
+		std::snprintf(out, n, "  %+6.2f  %+6.2f %8.1f",
+				(double)RadiansToDegrees(mParts.arm_hinges[0]->GetCurrentAngle()),
+				(double)RadiansToDegrees(mParts.arm_hinges[1]->GetCurrentAngle()),
+				(double)torque);
+	}
+
+private:
+	RockerParams mParams;
+	RockerParts mParts;
+};
+
+// ---------------------------------------------------------------------------
+// o ensaio
+// ---------------------------------------------------------------------------
+
+struct TrialResult {
+	float max_tilt = 0.0f;
+	float tilt_at_obstacle = 0.0f;
+	float start_z = 0.0f;
+	float final_z = 0.0f;
+	float final_height = 0.0f;
+	bool climbed = false;
+	double step_us_min = 1e18, step_us_med = 0.0, step_us_max = 0.0;
+};
+
+static TrialResult RunTrial(Rig &rig, float step_height, int total_steps, bool verbose,
+		int vsteps, int psteps, int substeps) {
+	TempAllocatorImpl temp_allocator(16 * 1024 * 1024);
+	JobSystemThreadPool job_system(cMaxPhysicsJobs, cMaxPhysicsBarriers,
+			std::max(1u, std::thread::hardware_concurrency() - 1));
+
+	BPLayerInterfaceImpl bpl;
+	ObjectVsBroadPhaseLayerFilterImpl obvbp;
+	ObjectLayerPairFilterImpl obvob;
+
+	PhysicsSystem physics_system;
+	physics_system.Init(1024, 0, 1024, 1024, bpl, obvbp, obvob);
+
+	// Os botões de custo do solver. Ficam expostos porque a razão de massa deste
+	// tipo de montagem (chassi pesado pendurado em braços leves) é justamente o
+	// caso em que o solver iterativo precisa de mais insistência.
+	PhysicsSettings settings = physics_system.GetPhysicsSettings();
+	settings.mNumVelocitySteps = vsteps;
+	settings.mNumPositionSteps = psteps;
+	physics_system.SetPhysicsSettings(settings);
+
+	World w;
+	w.system = &physics_system;
+	w.bi = &physics_system.GetBodyInterface();
+	w.group_filter = MakeRockerGroupFilter(16);
+
+	// --- chão ---------------------------------------------------------------
+	{
+		BodyCreationSettings floor(new BoxShape(Vec3(100.0f, 1.0f, 100.0f)),
+				RVec3(0.0_r, -1.0_r, 0.0_r), Quat::sIdentity(),
+				EMotionType::Static, Layers::NON_MOVING);
+		floor.mFriction = kGroundFriction;
+		Body *b = w.bi->CreateBody(floor);
+		w.bi->AddBody(b->GetID(), EActivation::DontActivate);
+	}
+
+	// --- o degrau -----------------------------------------------------------
+	const float obstacle_z = 6.0f;
+	if (step_height > 0.0f) {
+		BodyCreationSettings step(
+				new BoxShape(Vec3(20.0f, 0.5f * step_height, 4.0f)),
+				RVec3(0.0_r, Real(0.5f * step_height), Real(obstacle_z + 4.0f)),
+				Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		step.mFriction = kGroundFriction;
+		Body *b = w.bi->CreateBody(step);
+		w.bi->AddBody(b->GetID(), EActivation::DontActivate);
+	}
+
+	// --- a plataforma -------------------------------------------------------
+	// Nasce um pouco acima do chão, com o MESMO valor para as duas montagens:
+	// se a queda inicial fosse diferente, ela já criaria diferença de inclinação.
+	rig.Build(w, RVec3(0.0_r, Real(kSpawnHeight), 0.0_r));
 
 	physics_system.OptimizeBroadPhase();
 
-	// --- o laço -------------------------------------------------------------
-	const float delta_time = 1.0f / 60.0f;
-	const int collision_steps = 1;
-	const int total_steps = 180; // 3 segundos
-	const int report_every = 15;
+	TrialResult r;
+	r.start_z = (float)rig.Chassis()->GetPosition().GetZ();
 
-	WheeledVehicleController *wvc = static_cast<WheeledVehicleController *>(constraint->GetController());
+	std::vector<double> timings;
+	timings.reserve(total_steps);
 
-	std::printf("passo | altura |  vel  | roda |  susp  | imp.susp | imp.lat | contato\n");
-	std::printf("------+--------+-------+------+--------+----------+---------+--------\n");
+	char detail[128];
 
-	for (int step = 1; step <= total_steps; ++step) {
-		// Depois de um segundo, acelera pra frente: a partir daí o impulso
-		// longitudinal e o lateral deixam de ser zero.
-		wvc->SetDriverInput(step > 60 ? 1.0f : 0.0f, 0.0f, 0.0f, step > 60 ? 0.0f : 1.0f);
-		body_interface.ActivateBody(car_body->GetID());
-
-		physics_system.Update(delta_time, collision_steps, &temp_allocator, &job_system);
-
-		if (step % report_every != 0) {
-			continue;
-		}
-
-		RVec3 pos = car_body->GetPosition();
-		Vec3 vel = car_body->GetLinearVelocity();
-
-		for (uint i = 0; i < constraint->GetWheels().size(); ++i) {
-			const Wheel *w = constraint->GetWheel(i);
-			const bool has_contact = w->HasContact();
-
-			if (i == 0) {
-				std::printf("%5d | %6.3f | %5.2f |", step, (double)pos.GetY(), (double)vel.Length());
-			} else {
-				std::printf("      |        |       |");
-			}
-
-			std::printf("  %d   | %6.4f | %8.1f | %7.1f | %s\n",
-					i,
-					(double)w->GetSuspensionLength(),
-					(double)w->GetSuspensionLambda(),
-					(double)w->GetLateralLambda(),
-					has_contact ? "sim" : "NAO");
-		}
-		std::printf("------+--------+-------+------+--------+----------+---------+--------\n");
+	if (verbose) {
+		std::printf("\n  passo |   z    | altura | incl.° |%s\n", rig.DetailHeader());
+		std::printf("  ------+--------+--------+--------+%s\n",
+				"---------------------------");
 	}
 
-	// --- limpeza ------------------------------------------------------------
-	physics_system.RemoveStepListener(constraint);
-	physics_system.RemoveConstraint(constraint);
-	body_interface.RemoveBody(car_body->GetID());
-	body_interface.DestroyBody(car_body->GetID());
-	body_interface.RemoveBody(floor->GetID());
-	body_interface.DestroyBody(floor->GetID());
+	for (int step = 1; step <= total_steps; ++step) {
+		const bool go = step > kSettleSteps;
+		rig.Drive(w, go);
+
+		auto t0 = std::chrono::steady_clock::now();
+		// Sub-passos: o mesmo quadro dividido em N updates menores. É o botão
+		// principal de fidelidade, e o que aproxima do passo curto do GDChrono.
+		for (int sub = 0; sub < substeps; ++sub) {
+			physics_system.Update(kDeltaTime / substeps, 1, &temp_allocator, &job_system);
+		}
+		auto t1 = std::chrono::steady_clock::now();
+		timings.push_back(std::chrono::duration<double, std::micro>(t1 - t0).count());
+
+		const float tilt = rig.TiltDegrees();
+		const float z = (float)rig.Chassis()->GetPosition().GetZ();
+
+		// Só conta inclinação depois de assentar e enquanto está dirigindo.
+		if (go) {
+			r.max_tilt = std::max(r.max_tilt, tilt);
+			if (std::abs(z - obstacle_z) < 0.5f) {
+				r.tilt_at_obstacle = std::max(r.tilt_at_obstacle, tilt);
+			}
+		}
+
+		if (verbose && step % 30 == 0) {
+			rig.DetailRow(detail, sizeof(detail));
+			std::printf("  %5d | %6.2f | %6.3f | %6.2f |%s\n", step, (double)z,
+					(double)rig.Chassis()->GetPosition().GetY(), (double)tilt, detail);
+		}
+	}
+
+	r.final_z = (float)rig.Chassis()->GetPosition().GetZ();
+	r.final_height = (float)rig.Chassis()->GetPosition().GetY();
+	r.climbed = step_height > 0.0f && r.final_z > obstacle_z + 1.0f;
+
+	std::sort(timings.begin(), timings.end());
+	r.step_us_min = timings.front();
+	r.step_us_med = timings[timings.size() / 2];
+	r.step_us_max = timings.back();
+
+	return r;
+}
+
+// ---------------------------------------------------------------------------
+
+int main(int argc, char **argv) {
+	const char *rig_name = "both";
+	float step_height = 0.20f;
+	int total_steps = 420; // 7 s
+	bool verbose = true;
+	int vsteps = 10; // padrão do Jolt
+	int psteps = 2;  // padrão do Jolt
+	int substeps = 1;
+
+	for (int i = 1; i < argc; ++i) {
+		if (std::strncmp(argv[i], "--rig=", 6) == 0) {
+			rig_name = argv[i] + 6;
+		} else if (std::strncmp(argv[i], "--step-height=", 14) == 0) {
+			step_height = (float)std::atof(argv[i] + 14);
+		} else if (std::strncmp(argv[i], "--steps=", 8) == 0) {
+			total_steps = std::atoi(argv[i] + 8);
+		} else if (std::strncmp(argv[i], "--vsteps=", 9) == 0) {
+			vsteps = std::atoi(argv[i] + 9);
+		} else if (std::strncmp(argv[i], "--psteps=", 9) == 0) {
+			psteps = std::atoi(argv[i] + 9);
+		} else if (std::strncmp(argv[i], "--substeps=", 11) == 0) {
+			substeps = std::atoi(argv[i] + 11);
+		} else if (std::strcmp(argv[i], "--quiet") == 0) {
+			verbose = false;
+		}
+	}
+
+	RegisterDefaultAllocator();
+	Trace = TraceImpl;
+	JPH_IF_ENABLE_ASSERTS(AssertFailed = AssertFailedImpl;)
+	Factory::sInstance = new Factory();
+	RegisterTypes();
+
+	std::printf("=== banco de ensaio · degrau de %.2f m · %d passos ===\n",
+			(double)step_height, total_steps);
+	std::printf("    atrito chao/roda %.2f · velocidade-alvo %.1f m/s · massa total %.0f kg\n",
+			(double)kGroundFriction, (double)kTargetSpeed, (double)kTotalMass);
+	std::printf("    solver: %d vel · %d pos · %d sub-passo(s) por quadro\n",
+			vsteps, psteps, substeps);
+
+	struct Row {
+		const char *name;
+		TrialResult r;
+	};
+	std::vector<Row> rows;
+
+	const bool do_lumped = std::strcmp(rig_name, "lumped") == 0 || std::strcmp(rig_name, "both") == 0;
+	const bool do_rocker = std::strcmp(rig_name, "rocker") == 0 || std::strcmp(rig_name, "both") == 0;
+
+	if (do_lumped) {
+		std::printf("\n--- lumped · VehicleConstraint, um corpo -------------------\n");
+		LumpedRig rig;
+		rows.push_back({"lumped", RunTrial(rig, step_height, total_steps, verbose, vsteps, psteps, substeps)});
+	}
+	if (do_rocker) {
+		std::printf("\n--- rocker · 7 corpos, 6 juntas ----------------------------\n");
+		RockerRig rig;
+		rows.push_back({"rocker", RunTrial(rig, step_height, total_steps, verbose, vsteps, psteps, substeps)});
+	}
+
+	std::printf("\n=== resumo ===\n");
+	std::printf("plataforma | incl.max | incl.@degrau | z final | alt.final | subiu | us/quadro (min/med/max)\n");
+	std::printf("-----------+----------+--------------+---------+-----------+-------+------------------------\n");
+	for (const Row &row : rows) {
+		std::printf("%-10s | %7.2f° | %11.2f° | %7.2f | %9.3f | %-5s | %6.1f %6.1f %7.1f\n",
+				row.name, (double)row.r.max_tilt, (double)row.r.tilt_at_obstacle,
+				(double)row.r.final_z, (double)row.r.final_height,
+				row.r.climbed ? "sim" : "NAO",
+				row.r.step_us_min, row.r.step_us_med, row.r.step_us_max);
+	}
 
 	UnregisterTypes();
 	delete Factory::sInstance;
 	Factory::sInstance = nullptr;
-
 	return 0;
 }
