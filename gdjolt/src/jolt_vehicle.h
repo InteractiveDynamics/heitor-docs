@@ -47,9 +47,15 @@ public:
 	double get_suspension_impulse(int wheel) const;
 	double get_lateral_impulse(int wheel) const;
 	bool has_wheel_contact(int wheel) const;
+	double get_chassis_tilt() const; ///< graus em relação à vertical
+	double get_forward_speed() const; ///< m/s ao longo do eixo do veículo
 
 	void set_vehicle_mass(double p_mass);
 	double get_vehicle_mass() const;
+	void set_step_height(double p_height);
+	double get_step_height() const;
+	void set_four_wheel_drive(bool p_awd);
+	bool get_four_wheel_drive() const;
 	void set_read_input(bool p_read);
 	bool get_read_input() const;
 
@@ -71,10 +77,15 @@ private:
 
 	JPH::Body *car_body = nullptr;
 	JPH::Body *floor_body = nullptr;
+	JPH::Body *step_body = nullptr;
 	JPH::Ref<JPH::VehicleConstraint> constraint;
 
 	double vehicle_mass = 1500.0;
 	bool read_input = true;
+	// Os dois abaixo existem para a cena comparativa: mesmo degrau e mesma
+	// tração do banco de ensaio, senão o vídeo compara coisas diferentes.
+	double step_height = 0.0;
+	bool four_wheel_drive = false;
 
 	float in_forward = 0.0f;
 	float in_right = 0.0f;

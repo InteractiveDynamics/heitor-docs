@@ -1,0 +1,192 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://comparativo.gd" id="1"]
+
+[sub_resource type="PlaneMesh" id="GroundMesh"]
+size = Vector2(200, 200)
+
+[sub_resource type="StandardMaterial3D" id="GroundMat"]
+albedo_color = Color(0.22, 0.24, 0.27, 1)
+
+[sub_resource type="StandardMaterial3D" id="StepMat"]
+albedo_color = Color(0.36, 0.39, 0.43, 1)
+
+[sub_resource type="BoxMesh" id="ChassisMesh"]
+size = Vector3(1.8, 0.4, 4)
+
+[sub_resource type="StandardMaterial3D" id="LumpedMat"]
+albedo_color = Color(0.95, 0.55, 0.35, 1)
+
+[sub_resource type="StandardMaterial3D" id="RockerMat"]
+albedo_color = Color(0.96, 0.72, 0.2, 1)
+
+[sub_resource type="StandardMaterial3D" id="BogieMat"]
+albedo_color = Color(0.2, 0.78, 0.86, 1)
+
+[sub_resource type="StandardMaterial3D" id="DarkMat"]
+albedo_color = Color(0.1, 0.1, 0.12, 1)
+
+[sub_resource type="BoxMesh" id="ArmMesh"]
+size = Vector3(0.12, 0.12, 2.8)
+
+[sub_resource type="BoxMesh" id="RockerArmMesh"]
+size = Vector3(0.12, 0.12, 2.1)
+
+[sub_resource type="BoxMesh" id="BogieArmMesh"]
+size = Vector3(0.12, 0.12, 1.4)
+
+[sub_resource type="CylinderMesh" id="WheelMesh"]
+top_radius = 0.3
+bottom_radius = 0.3
+height = 0.2
+
+
+[node name="Comparativo" type="Node3D"]
+script = ExtResource("1")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("GroundMesh")
+surface_material_override/0 = SubResource("GroundMat")
+
+[node name="Step" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 10)
+surface_material_override/0 = SubResource("StepMat")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.87, -0.35, 0.35, 0, 0.7, 0.7, -0.5, -0.61, 0.61, 0, 10, 0)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+current = true
+fov = 55.0
+
+[node name="Lumped" type="JoltVehicle" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.75, 0)
+vehicle_mass = 1500.0
+four_wheel_drive = true
+read_input = false
+
+[node name="Chassis" type="MeshInstance3D" parent="Lumped"]
+mesh = SubResource("ChassisMesh")
+surface_material_override/0 = SubResource("LumpedMat")
+
+[node name="Wheel0" type="Node3D" parent="Lumped"]
+
+[node name="Mesh" type="MeshInstance3D" parent="Lumped/Wheel0"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel1" type="Node3D" parent="Lumped"]
+
+[node name="Mesh" type="MeshInstance3D" parent="Lumped/Wheel1"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel2" type="Node3D" parent="Lumped"]
+
+[node name="Mesh" type="MeshInstance3D" parent="Lumped/Wheel2"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel3" type="Node3D" parent="Lumped"]
+
+[node name="Mesh" type="MeshInstance3D" parent="Lumped/Wheel3"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Rocker" type="JoltRocker" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+bogie = false
+read_input = false
+
+[node name="Chassis" type="MeshInstance3D" parent="Rocker"]
+mesh = SubResource("ChassisMesh")
+surface_material_override/0 = SubResource("RockerMat")
+
+[node name="Arm0" type="MeshInstance3D" parent="Rocker"]
+mesh = SubResource("ArmMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Arm1" type="MeshInstance3D" parent="Rocker"]
+mesh = SubResource("ArmMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel0" type="MeshInstance3D" parent="Rocker"]
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel1" type="MeshInstance3D" parent="Rocker"]
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel2" type="MeshInstance3D" parent="Rocker"]
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel3" type="MeshInstance3D" parent="Rocker"]
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Bogie" type="JoltRocker" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.75, 0)
+bogie = true
+read_input = false
+
+[node name="Chassis" type="MeshInstance3D" parent="Bogie"]
+mesh = SubResource("ChassisMesh")
+surface_material_override/0 = SubResource("BogieMat")
+
+[node name="Arm0" type="MeshInstance3D" parent="Bogie"]
+mesh = SubResource("RockerArmMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Arm1" type="MeshInstance3D" parent="Bogie"]
+mesh = SubResource("RockerArmMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Bogie0" type="MeshInstance3D" parent="Bogie"]
+mesh = SubResource("BogieArmMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Bogie1" type="MeshInstance3D" parent="Bogie"]
+mesh = SubResource("BogieArmMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel0" type="MeshInstance3D" parent="Bogie"]
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel1" type="MeshInstance3D" parent="Bogie"]
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel2" type="MeshInstance3D" parent="Bogie"]
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel3" type="MeshInstance3D" parent="Bogie"]
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel4" type="MeshInstance3D" parent="Bogie"]
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel5" type="MeshInstance3D" parent="Bogie"]
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Overlay" type="CanvasLayer" parent="."]
+
+[node name="Hud" type="Label" parent="Overlay"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 900.0
+offset_bottom = 200.0
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6

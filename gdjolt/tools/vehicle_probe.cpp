@@ -15,6 +15,17 @@
 //                  Mecanismo de verdade; o pneu vira atrito comum de corpo
 //                  rígido.
 //
+//   --rig=bogie    rocker-bogie de seis rodas: o rocker segura a roda traseira
+//                  e, na frente, um bogie articulado com duas rodas. Onze
+//                  corpos, dez juntas. Mesmo entre-eixos, bitola e massa do
+//                  rocker de quatro — muda só o mecanismo.
+//
+//   --rig=all      as três, uma depois da outra ("both" continua sendo lumped
+//                  e rocker, como na primeira versão do ensaio).
+//
+//   --sweep        varre o degrau de 0,10 a 0,50 m nas três montagens e
+//                  imprime só a tabela de quem sobe o quê.
+//
 // A métrica principal é a INCLINAÇÃO DO CHASSI durante a passagem pelo degrau.
 // É ela que diz se o mecanismo está fazendo o que o rocker-bogie existe para
 // fazer: deixar uma roda subir sem levar o chassi junto.
@@ -266,7 +277,9 @@ private:
 
 class RockerRig final : public Rig {
 public:
-	const char *Name() const override { return "rocker"; }
+	explicit RockerRig(bool bogie) { mParams.bogie = bogie; }
+
+	const char *Name() const override { return mParams.bogie ? "bogie" : "rocker"; }
 	const Body *Chassis() const override { return mParts.chassis; }
 
 	void Build(World &w, RVec3Arg origin) override {
@@ -279,17 +292,26 @@ public:
 		DriveRocker(mParts, *w.bi, mParams, go ? 1.0f : 0.0f, 0.0f, kTargetSpeed);
 	}
 
-	const char *DetailHeader() const override { return " braco_e braco_d  torque"; }
+	const char *DetailHeader() const override {
+		return mParams.bogie ? " braco_e braco_d bogie_e bogie_d  torque"
+							 : " braco_e braco_d  torque";
+	}
 
 	void DetailRow(char *out, size_t n) const override {
 		float torque = 0.0f;
-		for (int i = 0; i < 4; ++i) {
+		for (int i = 0; i < mParts.num_wheels; ++i) {
 			torque += std::abs(mParts.wheel_hinges[i]->GetTotalLambdaMotor());
 		}
-		std::snprintf(out, n, "  %+6.2f  %+6.2f %8.1f",
-				(double)RadiansToDegrees(mParts.arm_hinges[0]->GetCurrentAngle()),
-				(double)RadiansToDegrees(mParts.arm_hinges[1]->GetCurrentAngle()),
-				(double)torque);
+		const double a0 = RadiansToDegrees(mParts.arm_hinges[0]->GetCurrentAngle());
+		const double a1 = RadiansToDegrees(mParts.arm_hinges[1]->GetCurrentAngle());
+		if (mParams.bogie) {
+			std::snprintf(out, n, "  %+6.2f  %+6.2f  %+6.2f  %+6.2f %8.1f", a0, a1,
+					(double)RadiansToDegrees(mParts.bogie_hinges[0]->GetCurrentAngle()),
+					(double)RadiansToDegrees(mParts.bogie_hinges[1]->GetCurrentAngle()),
+					(double)torque);
+		} else {
+			std::snprintf(out, n, "  %+6.2f  %+6.2f %8.1f", a0, a1, (double)torque);
+		}
 	}
 
 private:
@@ -308,6 +330,7 @@ struct TrialResult {
 	float final_z = 0.0f;
 	float final_height = 0.0f;
 	bool climbed = false;
+	float cross_time = -1.0f; ///< s desde a partida até a roda traseira passar da face
 	double step_us_min = 1e18, step_us_med = 0.0, step_us_max = 0.0;
 };
 
@@ -396,12 +419,23 @@ static TrialResult RunTrial(Rig &rig, float step_height, int total_steps, bool v
 		const float tilt = rig.TiltDegrees();
 		const float z = (float)rig.Chassis()->GetPosition().GetZ();
 
-		// Só conta inclinação depois de assentar e enquanto está dirigindo.
-		if (go) {
+		// Só conta inclinação depois de assentar e enquanto está dirigindo. E só
+		// até a roda dianteira chegar perto da ponta final da laje: descer dela
+		// do outro lado é outra manobra, e com o ensaio longo da varredura a
+		// queda contaminava a inclinação máxima.
+		if (go && z < obstacle_z + 6.0f) {
 			r.max_tilt = std::max(r.max_tilt, tilt);
 			if (std::abs(z - obstacle_z) < 0.5f) {
 				r.tilt_at_obstacle = std::max(r.tilt_at_obstacle, tilt);
 			}
+		}
+
+		// A travessia termina quando a roda TRASEIRA passa da face do degrau —
+		// o mesmo critério de "subiu". Tempo acima dos ~5,1 s de andar livre é
+		// o tempo que a montagem passou brigando com a face.
+		if (go && r.cross_time < 0.0f && step_height > 0.0f
+				&& z > obstacle_z + kAxleZ + kWheelRadius) {
+			r.cross_time = (step - kSettleSteps) * kDeltaTime;
 		}
 
 		if (verbose && step % 30 == 0) {
@@ -413,7 +447,10 @@ static TrialResult RunTrial(Rig &rig, float step_height, int total_steps, bool v
 
 	r.final_z = (float)rig.Chassis()->GetPosition().GetZ();
 	r.final_height = (float)rig.Chassis()->GetPosition().GetY();
-	r.climbed = step_height > 0.0f && r.final_z > obstacle_z + 1.0f;
+	// Subiu = a roda TRASEIRA passou da face do degrau. Só o chassi passar
+	// não basta: no rocker-bogie a frente pode estar em cima com a traseira
+	// ainda presa embaixo.
+	r.climbed = step_height > 0.0f && r.final_z > obstacle_z + kAxleZ + kWheelRadius;
 
 	std::sort(timings.begin(), timings.end());
 	r.step_us_min = timings.front();
@@ -433,6 +470,7 @@ int main(int argc, char **argv) {
 	int vsteps = 10; // padrão do Jolt
 	int psteps = 2;  // padrão do Jolt
 	int substeps = 1;
+	bool sweep = false;
 
 	for (int i = 1; i < argc; ++i) {
 		if (std::strncmp(argv[i], "--rig=", 6) == 0) {
@@ -449,6 +487,8 @@ int main(int argc, char **argv) {
 			substeps = std::atoi(argv[i] + 11);
 		} else if (std::strcmp(argv[i], "--quiet") == 0) {
 			verbose = false;
+		} else if (std::strcmp(argv[i], "--sweep") == 0) {
+			sweep = true;
 		}
 	}
 
@@ -458,42 +498,85 @@ int main(int argc, char **argv) {
 	Factory::sInstance = new Factory();
 	RegisterTypes();
 
-	std::printf("=== banco de ensaio · degrau de %.2f m · %d passos ===\n",
-			(double)step_height, total_steps);
-	std::printf("    atrito chao/roda %.2f · velocidade-alvo %.1f m/s · massa total %.0f kg\n",
-			(double)kGroundFriction, (double)kTargetSpeed, (double)kTotalMass);
-	std::printf("    solver: %d vel · %d pos · %d sub-passo(s) por quadro\n",
-			vsteps, psteps, substeps);
-
-	struct Row {
-		const char *name;
-		TrialResult r;
+	auto wants = [rig_name](const char *name) {
+		if (std::strcmp(rig_name, "all") == 0) {
+			return true;
+		}
+		if (std::strcmp(rig_name, "both") == 0) {
+			return std::strcmp(name, "bogie") != 0;
+		}
+		return std::strcmp(rig_name, name) == 0;
 	};
-	std::vector<Row> rows;
 
-	const bool do_lumped = std::strcmp(rig_name, "lumped") == 0 || std::strcmp(rig_name, "both") == 0;
-	const bool do_rocker = std::strcmp(rig_name, "rocker") == 0 || std::strcmp(rig_name, "both") == 0;
+	if (sweep) {
+		// A varredura responde de uma vez até onde cada montagem sobe. Roda
+		// sempre as três, calada, e com mais tempo de manobra: quem sobe devagar
+		// não pode ser contado como quem não sobe.
+		const int sweep_steps = std::max(total_steps, 720); // 12 s
+		std::printf("=== varredura de degrau · %d passos · solver %d vel · %d pos · %d sub-passo(s) ===\n",
+				sweep_steps, vsteps, psteps, substeps);
+		std::printf("    subiu = a roda traseira passou da face · tempo de travessia (andar livre: %.1f s) · inclinação máxima\n\n",
+				(double)((kAxleZ + kWheelRadius + 6.0f) / kTargetSpeed));
+		std::printf("degrau  |        lumped         |        rocker         |        bogie\n");
+		std::printf("--------+-----------------------+-----------------------+-----------------------\n");
+		for (int hi = 10; hi <= 50; hi += 5) {
+			const float h = hi / 100.0f;
+			LumpedRig lumped;
+			RockerRig rocker(false);
+			RockerRig bogie(true);
+			Rig *rigs[] = { &lumped, &rocker, &bogie };
+			std::printf("%.2f m ", (double)h);
+			for (Rig *rig : rigs) {
+				TrialResult r = RunTrial(*rig, h, sweep_steps, false, vsteps, psteps, substeps);
+				if (r.climbed) {
+					std::printf(" | sim %5.1f s  %6.2f° ", (double)r.cross_time, (double)r.max_tilt);
+				} else {
+					std::printf(" | NAO    —     %6.2f° ", (double)r.max_tilt);
+				}
+			}
+			std::printf("\n");
+			std::fflush(stdout);
+		}
+	} else {
+		std::printf("=== banco de ensaio · degrau de %.2f m · %d passos ===\n",
+				(double)step_height, total_steps);
+		std::printf("    atrito chao/roda %.2f · velocidade-alvo %.1f m/s · massa total %.0f kg\n",
+				(double)kGroundFriction, (double)kTargetSpeed, (double)kTotalMass);
+		std::printf("    solver: %d vel · %d pos · %d sub-passo(s) por quadro\n",
+				vsteps, psteps, substeps);
 
-	if (do_lumped) {
-		std::printf("\n--- lumped · VehicleConstraint, um corpo -------------------\n");
-		LumpedRig rig;
-		rows.push_back({"lumped", RunTrial(rig, step_height, total_steps, verbose, vsteps, psteps, substeps)});
-	}
-	if (do_rocker) {
-		std::printf("\n--- rocker · 7 corpos, 6 juntas ----------------------------\n");
-		RockerRig rig;
-		rows.push_back({"rocker", RunTrial(rig, step_height, total_steps, verbose, vsteps, psteps, substeps)});
-	}
+		struct Row {
+			const char *name;
+			TrialResult r;
+		};
+		std::vector<Row> rows;
 
-	std::printf("\n=== resumo ===\n");
-	std::printf("plataforma | incl.max | incl.@degrau | z final | alt.final | subiu | us/quadro (min/med/max)\n");
-	std::printf("-----------+----------+--------------+---------+-----------+-------+------------------------\n");
-	for (const Row &row : rows) {
-		std::printf("%-10s | %7.2f° | %11.2f° | %7.2f | %9.3f | %-5s | %6.1f %6.1f %7.1f\n",
-				row.name, (double)row.r.max_tilt, (double)row.r.tilt_at_obstacle,
-				(double)row.r.final_z, (double)row.r.final_height,
-				row.r.climbed ? "sim" : "NAO",
-				row.r.step_us_min, row.r.step_us_med, row.r.step_us_max);
+		if (wants("lumped")) {
+			std::printf("\n--- lumped · VehicleConstraint, um corpo -------------------\n");
+			LumpedRig rig;
+			rows.push_back({"lumped", RunTrial(rig, step_height, total_steps, verbose, vsteps, psteps, substeps)});
+		}
+		if (wants("rocker")) {
+			std::printf("\n--- rocker · 7 corpos, 6 juntas ----------------------------\n");
+			RockerRig rig(false);
+			rows.push_back({"rocker", RunTrial(rig, step_height, total_steps, verbose, vsteps, psteps, substeps)});
+		}
+		if (wants("bogie")) {
+			std::printf("\n--- bogie · 11 corpos, 10 juntas ---------------------------\n");
+			RockerRig rig(true);
+			rows.push_back({"bogie", RunTrial(rig, step_height, total_steps, verbose, vsteps, psteps, substeps)});
+		}
+
+		std::printf("\n=== resumo ===\n");
+		std::printf("plataforma | incl.max | incl.@degrau | z final | alt.final | subiu | us/quadro (min/med/max)\n");
+		std::printf("-----------+----------+--------------+---------+-----------+-------+------------------------\n");
+		for (const Row &row : rows) {
+			std::printf("%-10s | %7.2f° | %11.2f° | %7.2f | %9.3f | %-5s | %6.1f %6.1f %7.1f\n",
+					row.name, (double)row.r.max_tilt, (double)row.r.tilt_at_obstacle,
+					(double)row.r.final_z, (double)row.r.final_height,
+					row.r.climbed ? "sim" : "NAO",
+					row.r.step_us_min, row.r.step_us_med, row.r.step_us_max);
+		}
 	}
 
 	UnregisterTypes();

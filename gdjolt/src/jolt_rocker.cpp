@@ -55,8 +55,9 @@ void JoltRocker::_ready() {
 		return;
 	}
 	build_world();
-	UtilityFunctions::print(godot::String::utf8(
-			"[JoltRocker] plataforma articulada no ar — 7 corpos, 6 juntas, "),
+	UtilityFunctions::print(godot::String::utf8("[JoltRocker] plataforma articulada no ar — "),
+			params.NumBodies(), godot::String::utf8(" corpos, "),
+			params.NumBodies() - 1, godot::String::utf8(" juntas, "),
 			substeps, godot::String::utf8(" sub-passo(s) por quadro."));
 }
 
@@ -101,7 +102,7 @@ void JoltRocker::build_world() {
 	}
 
 	// --- a plataforma -------------------------------------------------------
-	group_filter = MakeRockerGroupFilter(8);
+	group_filter = MakeRockerGroupFilter(params.NumBodies());
 	Vector3 origin = get_global_transform().origin;
 	parts = BuildRocker(*physics_system, bi, group_filter,
 			RVec3(origin.x, origin.y, origin.z), params);
@@ -114,26 +115,15 @@ void JoltRocker::teardown_world() {
 		return;
 	}
 
-	for (int i = 0; i < 2; ++i) {
-		physics_system->RemoveConstraint(parts.arm_hinges[i]);
-		parts.arm_hinges[i] = nullptr;
-	}
-	for (int i = 0; i < 4; ++i) {
-		physics_system->RemoveConstraint(parts.wheel_hinges[i]);
-		parts.wheel_hinges[i] = nullptr;
-	}
+	DestroyRocker(*physics_system, parts);
 
 	BodyInterface &bi = physics_system->GetBodyInterface();
-	Body *all[] = { parts.chassis, parts.arms[0], parts.arms[1],
-		parts.wheels[0], parts.wheels[1], parts.wheels[2], parts.wheels[3],
-		floor_body, step_body };
-	for (Body *b : all) {
+	for (Body *b : { floor_body, step_body }) {
 		if (b != nullptr) {
 			bi.RemoveBody(b->GetID());
 			bi.DestroyBody(b->GetID());
 		}
 	}
-	parts = RockerParts();
 	floor_body = nullptr;
 	step_body = nullptr;
 	group_filter = nullptr;
@@ -175,7 +165,9 @@ void JoltRocker::push_transforms() {
 	place(this, "Chassis", parts.chassis);
 	place(this, "Arm0", parts.arms[0]);
 	place(this, "Arm1", parts.arms[1]);
-	for (int i = 0; i < 4; ++i) {
+	place(this, "Bogie0", parts.bogies[0]);
+	place(this, "Bogie1", parts.bogies[1]);
+	for (int i = 0; i < parts.num_wheels; ++i) {
 		place(this, vformat("Wheel%d", i).utf8().get_data(), parts.wheels[i]);
 	}
 }
@@ -201,8 +193,19 @@ double JoltRocker::get_arm_angle(int side) const {
 	return RadiansToDegrees(parts.arm_hinges[side]->GetCurrentAngle());
 }
 
+double JoltRocker::get_bogie_angle(int side) const {
+	if (side < 0 || side > 1 || parts.bogie_hinges[side] == nullptr) {
+		return 0.0;
+	}
+	return RadiansToDegrees(parts.bogie_hinges[side]->GetCurrentAngle());
+}
+
+double JoltRocker::get_chassis_z() const {
+	return parts.chassis == nullptr ? 0.0 : parts.chassis->GetPosition().GetZ();
+}
+
 double JoltRocker::get_motor_torque(int wheel) const {
-	if (wheel < 0 || wheel > 3 || parts.wheel_hinges[wheel] == nullptr) {
+	if (wheel < 0 || wheel >= parts.num_wheels || parts.wheel_hinges[wheel] == nullptr) {
 		return 0.0;
 	}
 	return parts.wheel_hinges[wheel]->GetTotalLambdaMotor();
@@ -214,6 +217,16 @@ void JoltRocker::set_target_speed(double p_speed) { target_speed = p_speed; }
 double JoltRocker::get_target_speed() const { return target_speed; }
 void JoltRocker::set_step_height(double p_height) { step_height = p_height < 0.0 ? 0.0 : p_height; }
 double JoltRocker::get_step_height() const { return step_height; }
+void JoltRocker::set_bogie(bool p_bogie) {
+	// A montagem é decidida na construção do mundo. Trocar depois exigiria
+	// desmontar e remontar tudo, e nenhum uso precisa disso.
+	if (physics_system) {
+		UtilityFunctions::push_warning("[JoltRocker] bogie só vale antes do _ready.");
+		return;
+	}
+	params.bogie = p_bogie;
+}
+bool JoltRocker::get_bogie() const { return params.bogie; }
 void JoltRocker::set_read_input(bool p_read) { read_input = p_read; }
 bool JoltRocker::get_read_input() const { return read_input; }
 
@@ -222,7 +235,13 @@ void JoltRocker::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_chassis_tilt"), &JoltRocker::get_chassis_tilt);
 	ClassDB::bind_method(D_METHOD("get_arm_angle", "side"), &JoltRocker::get_arm_angle);
+	ClassDB::bind_method(D_METHOD("get_bogie_angle", "side"), &JoltRocker::get_bogie_angle);
+	ClassDB::bind_method(D_METHOD("get_chassis_z"), &JoltRocker::get_chassis_z);
 	ClassDB::bind_method(D_METHOD("get_motor_torque", "wheel"), &JoltRocker::get_motor_torque);
+
+	ClassDB::bind_method(D_METHOD("set_bogie", "bogie"), &JoltRocker::set_bogie);
+	ClassDB::bind_method(D_METHOD("get_bogie"), &JoltRocker::get_bogie);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "bogie"), "set_bogie", "get_bogie");
 
 	ClassDB::bind_method(D_METHOD("set_substeps", "substeps"), &JoltRocker::set_substeps);
 	ClassDB::bind_method(D_METHOD("get_substeps"), &JoltRocker::get_substeps);

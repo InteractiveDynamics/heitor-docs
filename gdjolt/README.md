@@ -16,13 +16,13 @@ O Godot vira renderizador e input. Quem simula é o Jolt.
 | Caminho | O que é |
 | --- | --- |
 | `src/jolt_probe.{h,cpp}` | Nó sem física nenhuma. Prova que a ponte carrega e que o Godot chama o nosso C++ a cada passo |
-| `src/jolt_vehicle.{h,cpp}` | `VehicleConstraint` de quatro rodas — **um corpo só**, modelo *lumped* |
-| `src/jolt_rocker.{h,cpp}` | A plataforma **articulada** — 7 corpos, 6 juntas, motor no eixo de cada roda |
-| `src/rocker_rig.h` | A montagem articulada, compartilhada entre o nó do Godot e o banco de ensaio |
+| `src/jolt_vehicle.{h,cpp}` | `VehicleConstraint` de quatro rodas — **um corpo só**, modelo *lumped*. Degrau e tração nas quatro opcionais, para a cena comparativa |
+| `src/jolt_rocker.{h,cpp}` | A plataforma **articulada**: rocker de 4 rodas (7 corpos, 6 juntas) ou, com `bogie = true`, rocker-bogie de 6 (11 corpos, 10 juntas) |
+| `src/rocker_rig.h` | As duas montagens articuladas, compartilhadas entre o nó do Godot e o banco de ensaio |
 | `src/jolt_layers.h` | Camadas de colisão e filtros |
 | `src/jolt_runtime.h` | Contagem de uso do `RegisterTypes` do Jolt, que é global do processo |
-| `tools/vehicle_probe.cpp` | Banco de ensaio **sem o Godot no caminho**: monta as duas plataformas e submete as duas à mesma manobra |
-| `demo/` | Projeto Godot: `main.tscn` (veículo) e `rocker.tscn` (plataforma articulada) |
+| `tools/vehicle_probe.cpp` | Banco de ensaio **sem o Godot no caminho**: monta as três plataformas e submete todas à mesma manobra |
+| `demo/` | Projeto Godot: `main.tscn` (veículo), `rocker.tscn` (plataforma articulada) e `comparativo.tscn` (as três lado a lado, com placar e gravação de vídeo) |
 
 ## Como compilar
 
@@ -67,7 +67,14 @@ $GODOT --headless --path demo --script verify_rocker.gd   # a plataforma articul
 ./build/tools/vehicle_probe --substeps=4       # sub-passos por quadro
 ./build/tools/vehicle_probe --vsteps=30 --psteps=6   # iterações do solver
 ./build/tools/vehicle_probe --step-height=0.30 --quiet
+./build/tools/vehicle_probe --rig=bogie        # o rocker-bogie de seis rodas
+./build/tools/vehicle_probe --rig=all          # as três: lumped, rocker e bogie
+./build/tools/vehicle_probe --sweep --substeps=4   # degrau de 0,10 a 0,50 m nas três
 ```
+
+"Subiu" quer dizer que a **roda traseira** passou da face do degrau. A varredura
+dá 12 s de manobra e imprime o tempo de travessia: o que passar dos ~5,1 s de
+andar livre é tempo brigando com a face.
 
 **Use `--substeps=4`.** Com o padrão do Jolt (1 sub-passo, 10 iterações de
 velocidade), a razão de massa da plataforma articulada — chassi de 1200 kg
@@ -85,6 +92,23 @@ sub-passos o resultado para de mudar.
 
 A altura geometricamente correta é 0,850. Todas as configurações cabem
 folgadamente nos 16 700 µs de um quadro a 60 Hz.
+
+## A cena comparativa e os vídeos
+
+`demo/comparativo.tscn` põe as três montagens lado a lado, cada uma no seu
+próprio `PhysicsSystem`, com piloto automático e a manobra do banco de ensaio.
+As opções e as teclas estão no cabeçalho de `demo/comparativo.gd`.
+
+```bash
+$GODOT --path demo comparativo.tscn -- --step=0.40              # interativa
+$GODOT --headless --path demo comparativo.tscn -- --step=0.40 --auto   # só o placar
+$GODOT --path demo --fixed-fps 60 comparativo.tscn -- --step=0.40 --cam=0 --secs=13 --record=/tmp/q
+ffmpeg -framerate 60 -i /tmp/q/%05d.png -c:v libx264 -crf 20 -pix_fmt yuv420p video.mp4
+```
+
+O `--record` grava de um `SubViewport` de 1280×720, e não da janela. Com o
+Hyprland a janela nasce do tamanho que o mosaico quiser, e o `--write-movie` do
+Godot perdia o HUD.
 
 ## A armadilha que custou caro: paridade de ABI
 

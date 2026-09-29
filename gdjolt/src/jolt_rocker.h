@@ -18,15 +18,17 @@
 
 namespace gdjolt {
 
-// A plataforma ARTICULADA dentro do Godot: sete corpos rígidos ligados por seis
-// juntas, com motor no eixo de cada roda. É o contraste direto com o
-// JoltVehicle, que é a VehicleConstraint — um corpo só, sem articulação.
+// A plataforma ARTICULADA dentro do Godot: corpos rígidos ligados por juntas,
+// com motor no eixo de cada roda. Duas variantes, escolhidas pela propriedade
+// `bogie`: o rocker de quatro rodas (7 corpos, 6 juntas) e o rocker-bogie de
+// seis (11 corpos, 10 juntas). É o contraste direto com o JoltVehicle, que é a
+// VehicleConstraint — um corpo só, sem articulação.
 //
 // A montagem vem de rocker_rig.h, o mesmo header que o banco de ensaio no
 // terminal usa. Isso é deliberado: o que se vê aqui é o que foi medido lá.
 //
-// Se existirem filhos Node3D chamados Chassis, Arm0, Arm1 e Wheel0..3, eles
-// recebem a transform da peça correspondente a cada passo.
+// Se existirem filhos Node3D chamados Chassis, Arm0, Arm1, Bogie0, Bogie1 e
+// Wheel0..5, eles recebem a transform da peça correspondente a cada passo.
 class JoltRocker : public godot::Node3D {
 	GDCLASS(JoltRocker, godot::Node3D)
 
@@ -42,6 +44,8 @@ public:
 	// Telemetria — os mesmos números que o vehicle_probe imprime.
 	double get_chassis_tilt() const;   ///< graus em relação à vertical
 	double get_arm_angle(int side) const; ///< graus, articulação de cada braço
+	double get_bogie_angle(int side) const; ///< graus, bogie em relação ao rocker
+	double get_chassis_z() const;
 	double get_motor_torque(int wheel) const;
 
 	void set_substeps(int p_substeps);
@@ -50,6 +54,8 @@ public:
 	double get_target_speed() const;
 	void set_step_height(double p_height);
 	double get_step_height() const;
+	void set_bogie(bool p_bogie);
+	bool get_bogie() const;
 	void set_read_input(bool p_read);
 	bool get_read_input() const;
 

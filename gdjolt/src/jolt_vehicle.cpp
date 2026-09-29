@@ -19,6 +19,8 @@ using namespace godot;
 
 #include "jolt_runtime.h"
 
+#include <algorithm>
+#include <cmath>
 #include <thread>
 
 JPH_SUPPRESS_WARNINGS
@@ -100,6 +102,16 @@ void JoltVehicle::build_world() {
 	floor_body = bi.CreateBody(floor_settings);
 	bi.AddBody(floor_body->GetID(), EActivation::DontActivate);
 
+	// O degrau: a mesma laje do JoltRocker e do banco de ensaio, face em z = 6.
+	if (step_height > 0.0) {
+		const float h = (float)step_height;
+		BodyCreationSettings step(new BoxShape(Vec3(20.0f, 0.5f * h, 4.0f)),
+				RVec3(0.0_r, Real(0.5f * h), Real(10.0f)), Quat::sIdentity(),
+				EMotionType::Static, Layers::NON_MOVING);
+		step_body = bi.CreateBody(step);
+		bi.AddBody(step_body->GetID(), EActivation::DontActivate);
+	}
+
 	// O corpo nasce onde o nó está na cena.
 	Vector3 origin = get_global_transform().origin;
 
@@ -132,7 +144,17 @@ void JoltVehicle::build_world() {
 	};
 
 	WheeledVehicleControllerSettings *controller = new WheeledVehicleControllerSettings;
-	controller->mDifferentials.resize(1);
+	if (four_wheel_drive) {
+		// Como no banco de ensaio: tração nas quatro, para ser comparável com a
+		// plataforma articulada, que tem motor em todas as rodas.
+		controller->mDifferentials.resize(2);
+		controller->mDifferentials[1].mLeftWheel = 2;
+		controller->mDifferentials[1].mRightWheel = 3;
+		controller->mDifferentials[0].mEngineTorqueRatio = 0.5f;
+		controller->mDifferentials[1].mEngineTorqueRatio = 0.5f;
+	} else {
+		controller->mDifferentials.resize(1);
+	}
 	controller->mDifferentials[0].mLeftWheel = 0;
 	controller->mDifferentials[0].mRightWheel = 1;
 	vehicle.mController = controller;
@@ -155,7 +177,7 @@ void JoltVehicle::teardown_world() {
 	constraint = nullptr;
 
 	BodyInterface &bi = physics_system->GetBodyInterface();
-	for (Body *b : { car_body, floor_body }) {
+	for (Body *b : { car_body, floor_body, step_body }) {
 		if (b != nullptr) {
 			bi.RemoveBody(b->GetID());
 			bi.DestroyBody(b->GetID());
@@ -163,6 +185,7 @@ void JoltVehicle::teardown_world() {
 	}
 	car_body = nullptr;
 	floor_body = nullptr;
+	step_body = nullptr;
 
 	physics_system.reset();
 	job_system.reset();
@@ -245,6 +268,38 @@ bool JoltVehicle::has_wheel_contact(int wheel) const {
 	return constraint->GetWheel(wheel)->HasContact();
 }
 
+double JoltVehicle::get_chassis_tilt() const {
+	if (car_body == nullptr) {
+		return 0.0;
+	}
+	Vec3 up = car_body->GetRotation().RotateAxisY();
+	float c = std::min(1.0f, std::max(-1.0f, up.Dot(Vec3::sAxisY())));
+	return RadiansToDegrees(std::acos(c));
+}
+
+double JoltVehicle::get_forward_speed() const {
+	if (car_body == nullptr) {
+		return 0.0;
+	}
+	return car_body->GetLinearVelocity().Dot(car_body->GetRotation().RotateAxisZ());
+}
+
+void JoltVehicle::set_step_height(double p_height) {
+	step_height = p_height < 0.0 ? 0.0 : p_height;
+}
+
+double JoltVehicle::get_step_height() const {
+	return step_height;
+}
+
+void JoltVehicle::set_four_wheel_drive(bool p_awd) {
+	four_wheel_drive = p_awd;
+}
+
+bool JoltVehicle::get_four_wheel_drive() const {
+	return four_wheel_drive;
+}
+
 void JoltVehicle::set_vehicle_mass(double p_mass) {
 	vehicle_mass = p_mass > 1.0 ? p_mass : 1.0;
 }
@@ -269,6 +324,18 @@ void JoltVehicle::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_suspension_impulse", "wheel"), &JoltVehicle::get_suspension_impulse);
 	ClassDB::bind_method(D_METHOD("get_lateral_impulse", "wheel"), &JoltVehicle::get_lateral_impulse);
 	ClassDB::bind_method(D_METHOD("has_wheel_contact", "wheel"), &JoltVehicle::has_wheel_contact);
+
+	ClassDB::bind_method(D_METHOD("get_chassis_tilt"), &JoltVehicle::get_chassis_tilt);
+	ClassDB::bind_method(D_METHOD("get_forward_speed"), &JoltVehicle::get_forward_speed);
+
+	ClassDB::bind_method(D_METHOD("set_step_height", "height"), &JoltVehicle::set_step_height);
+	ClassDB::bind_method(D_METHOD("get_step_height"), &JoltVehicle::get_step_height);
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "step_height", PROPERTY_HINT_RANGE, "0,1,0.01"),
+			"set_step_height", "get_step_height");
+
+	ClassDB::bind_method(D_METHOD("set_four_wheel_drive", "awd"), &JoltVehicle::set_four_wheel_drive);
+	ClassDB::bind_method(D_METHOD("get_four_wheel_drive"), &JoltVehicle::get_four_wheel_drive);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "four_wheel_drive"), "set_four_wheel_drive", "get_four_wheel_drive");
 
 	ClassDB::bind_method(D_METHOD("set_vehicle_mass", "mass"), &JoltVehicle::set_vehicle_mass);
 	ClassDB::bind_method(D_METHOD("get_vehicle_mass"), &JoltVehicle::get_vehicle_mass);
