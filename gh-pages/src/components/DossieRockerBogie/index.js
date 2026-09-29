@@ -13,6 +13,30 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
  *
  * Renderiza sob `.dossie .tecnica .mcorpo`, sem CSS próprio.
  */
+/**
+ * Um vídeo do YouTube embutido, com a legenda e o link direto logo abaixo.
+ * Reaproveita a moldura `figure.shot` do dossiê (dossie.css).
+ */
+function Video({id, title, children}) {
+  return (
+    <figure className="shot">
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${id}`}
+        title={title}
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+      />
+      <figcaption>
+        {children}{' '}
+        <a href={`https://youtu.be/${id}`} target="_blank" rel="noopener noreferrer">
+          ↗ youtube
+        </a>
+      </figcaption>
+    </figure>
+  );
+}
+
 export default function DossieRockerBogie() {
   const rockerHref = useBaseUrl('/docs/multicorpo/rocker-articulado');
   const porDentroHref = useBaseUrl('/docs/multicorpo/vehicleconstraint-por-dentro');
@@ -122,6 +146,11 @@ export default function DossieRockerBogie() {
             </p>
           </div>
         </div>
+
+        <Video id="aOc7P4dhIiA" title="O bogie de perto, degrau de 0,40 m">
+          O bogie de perto, degrau de 0,40 m — a articulação trabalhando com o
+          chassi nivelado
+        </Video>
 
         <div className="callout" style={{marginTop: 22}}>
           <b>Um header só, de novo:</b> a variante é um parâmetro (
@@ -290,6 +319,11 @@ export default function DossieRockerBogie() {
           </table>
         </div>
 
+        <Video id="asxpnhdJ-Lk" title="As três montagens lado a lado, degrau de 0,40 m">
+          As três lado a lado, degrau de 0,40 m — o bogie sobe, o rocker empaca,
+          o lumped atravessa a face
+        </Video>
+
         <p style={{marginTop: 22}}>Três leituras:</p>
         <ul>
           <li>
@@ -310,6 +344,11 @@ export default function DossieRockerBogie() {
             escalou.
           </li>
         </ul>
+
+        <Video id="LW7gbjetI8E" title="O lumped de perto, degrau de 0,40 m">
+          O lumped de perto, degrau de 0,40 m — a roda atravessando a face do
+          degrau
+        </Video>
 
         <div className="callout coral" style={{marginTop: 22}}>
           <b>O 0,45 m custa caro:</b> o bogie fica uns <b>4 s</b> brigando com a
@@ -477,35 +516,10 @@ export default function DossieRockerBogie() {
           </table>
         </div>
 
-        <div className="refs" style={{marginTop: 22}}>
-          <div className="rgrp">
-            <h4>Os vídeos · gravados desta cena</h4>
-          <a href="https://youtu.be/asxpnhdJ-Lk" target="_blank" rel="noopener noreferrer">
-            <span className="rd">
-              As três lado a lado, degrau de 0,40 m — o bogie sobe, o rocker empaca, o lumped atravessa a face
-            </span>
-            <span className="rk">↗ youtube</span>
-          </a>
-          <a href="https://youtu.be/aOc7P4dhIiA" target="_blank" rel="noopener noreferrer">
-            <span className="rd">
-              O bogie de perto, degrau de 0,40 m — a articulação trabalhando com o chassi nivelado
-            </span>
-            <span className="rk">↗ youtube</span>
-          </a>
-          <a href="https://youtu.be/LW7gbjetI8E" target="_blank" rel="noopener noreferrer">
-            <span className="rd">
-              O lumped de perto, degrau de 0,40 m — a roda atravessando a face do degrau
-            </span>
-            <span className="rk">↗ youtube</span>
-          </a>
-          <a href="https://youtu.be/9ldDGWAAwVI" target="_blank" rel="noopener noreferrer">
-            <span className="rd">
-              As três lado a lado, degrau de 0,20 m — a comparação original de inclinação
-            </span>
-            <span className="rk">↗ youtube</span>
-          </a>
-          </div>
-        </div>
+        <Video id="9ldDGWAAwVI" title="As três montagens lado a lado, degrau de 0,20 m">
+          As três lado a lado, degrau de 0,20 m — a comparação original de
+          inclinação
+        </Video>
 
         <p style={{marginTop: 22}}>
           Os números batem com o terminal nas quatro alturas conferidas (0,20,
