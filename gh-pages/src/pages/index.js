@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import {usePluginData} from '@docusaurus/useGlobalData';
 import Layout from '@theme/Layout';
 import styles from './index.module.css';
 
@@ -115,6 +116,8 @@ function Card({frente, num}) {
 
 export default function Home() {
   const {siteConfig} = useDocusaurusContext();
+  // Calculada no build por plugins/ultima-doc.js: sempre a doc mais recente.
+  const ultima = usePluginData('ultima-doc');
   return (
     <Layout
       title={siteConfig.title}
@@ -138,10 +141,11 @@ export default function Home() {
             correspondente aparece aqui.
           </p>
           <div className={styles.actions}>
-            <Link
-              className={styles.btnPrimary}
-              to="/docs/notas/dossie-godot">
-              Ler o primeiro dossiê →
+            <Link className={styles.btnPrimary} to={ultima.permalink}>
+              Última publicação · {ultima.titulo} →
+            </Link>
+            <Link className={styles.btnGhost} to="/docs/notas/dossie-godot">
+              Primeiro dossiê
             </Link>
             <Link className={styles.btnGhost} to="/docs/roadmaps">
               Sprints semanais

@@ -83,6 +83,9 @@ const config = {
     ],
   ],
 
+  // Descobre a doc publicada por último (home e rota /ultima).
+  plugins: ['./plugins/ultima-doc.js'],
+
   // Fontes do design system (Space Grotesk display, Inter body, JetBrains Mono dados)
   stylesheets: [
     'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap',
@@ -127,6 +130,7 @@ const config = {
             position: 'left',
             label: 'Documentação',
           },
+          {to: '/ultima', label: 'Última publicação', position: 'left'},
           {to: '/docs/roadmaps', label: 'Sprints semanais', position: 'left'},
           {to: '/blog', label: 'Diário de bordo', position: 'left'},
           {
