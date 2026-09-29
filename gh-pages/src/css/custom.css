@@ -1,62 +1,76 @@
 /**
- * Tokens de design do site — extraídos do dossiê de dinâmica veicular.
- * Paleta slate escuro, acento ciano/teal, âmbar e coral.
- * Tipografia: Space Grotesk (display), Inter (corpo), JetBrains Mono (dados).
+ * Tokens de design do site — "regolito e folha dourada".
+ *
+ * Escuro, mas quente: grafite de solo lunar no fundo, texto cor de poeira,
+ * acento dourado de manta térmica (kapton) e azul de instrumento. O assunto do
+ * projeto é um rover multicorpo em terreno planetário, e a paleta vem dele.
+ *
+ * Tipografia: uma família só, IBM Plex — Sans Condensed nos títulos, Sans no
+ * corpo, Mono só para dado (números, código, tabelas).
+ *
+ * NOMES LEGADOS: os tokens --cyan, --amber e --coral mantêm o nome da paleta
+ * antiga porque os componentes dos dossiês e roadmaps usam esses nomes em
+ * classes (`card cyan`, `callout amber`). Leia pelo papel, não pela cor:
+ *   --cyan  = acento principal / positivo  → dourado
+ *   --amber = segunda cor / em andamento    → azul de instrumento
+ *   --coral = erro / "não"                  → óxido
+ *
  * Este arquivo é global e mapeia o design system pro tema Infima do Docusaurus.
  */
 
 :root {
-  /* ---- paleta base (mesma do dossiê) ---- */
-  --bg: #0d1119;
-  --bg-2: #0a0e15;
-  --surface: #151d2b;
-  --surface-2: #1b2536;
-  --line: #26324a;
-  --line-soft: #1e2839;
-  --ink: #e7edf5;
-  --ink-mid: #aab6c8;
-  --ink-dim: #6f7d93;
-  --cyan: #3fd0c0;
-  --cyan-deep: #1c8f84;
-  --amber: #eaa93c;
-  --coral: #e8635b;
-  --violet: #8f8cf0;
-  --green: #57c98a;
-  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03), 0 18px 40px -22px rgba(0, 0, 0, 0.9);
+  /* ---- paleta base ---- */
+  --bg: #1f1e1b;
+  --bg-2: #191816;
+  --surface: #2a2824;
+  --surface-2: #332f2a;
+  --line: #454038;
+  --line-soft: #37332d;
+  --ink: #e9e3d6;
+  --ink-mid: #a39c8e;
+  --ink-dim: #7a7367;
+  --cyan: #d9a441;
+  --cyan-deep: #9c7424;
+  --amber: #6fa8dc;
+  --coral: #d2694a;
+  --violet: #9a8fc7;
+  --green: #8fb573;
+  --shadow: 0 1px 0 rgba(233, 227, 214, 0.03);
 
   /* ---- tipografia ---- */
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: 'IBM Plex Sans Condensed', 'IBM Plex Sans', sans-serif;
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
 
-  /* ---- Infima: cor primária = acento ciano ---- */
-  --ifm-color-primary: #3fd0c0;
-  --ifm-color-primary-dark: #2bc4b3;
-  --ifm-color-primary-darker: #29b9a9;
-  --ifm-color-primary-darkest: #22998b;
-  --ifm-color-primary-light: #57d6c8;
-  --ifm-color-primary-lighter: #63d8cb;
-  --ifm-color-primary-lightest: #86e1d7;
+  /* ---- Infima: cor primária = acento dourado ---- */
+  --ifm-color-primary: #d9a441;
+  --ifm-color-primary-dark: #d29a2f;
+  --ifm-color-primary-darker: #c6912c;
+  --ifm-color-primary-darkest: #a37824;
+  --ifm-color-primary-light: #dfb055;
+  --ifm-color-primary-lighter: #e1b661;
+  --ifm-color-primary-lightest: #e8c684;
 
   --ifm-font-family-base: var(--font-body);
   --ifm-font-family-monospace: var(--mono);
   --ifm-heading-font-family: var(--font-display);
   --ifm-heading-font-weight: 600;
   --ifm-font-size-base: 16px;
-  --ifm-line-height-base: 1.62;
+  --ifm-line-height-base: 1.6;
   --ifm-code-font-size: 88%;
-  --ifm-code-border-radius: 5px;
+  --ifm-code-border-radius: 4px;
+  --ifm-global-radius: 6px;
 }
 
 /* O site é dark-only; os overrides valem pro tema escuro (fixo). */
 [data-theme='dark'] {
-  --ifm-color-primary: #3fd0c0;
-  --ifm-color-primary-dark: #2bc4b3;
-  --ifm-color-primary-darker: #29b9a9;
-  --ifm-color-primary-darkest: #22998b;
-  --ifm-color-primary-light: #57d6c8;
-  --ifm-color-primary-lighter: #63d8cb;
-  --ifm-color-primary-lightest: #86e1d7;
+  --ifm-color-primary: #d9a441;
+  --ifm-color-primary-dark: #d29a2f;
+  --ifm-color-primary-darker: #c6912c;
+  --ifm-color-primary-darkest: #a37824;
+  --ifm-color-primary-light: #dfb055;
+  --ifm-color-primary-lighter: #e1b661;
+  --ifm-color-primary-lightest: #e8c684;
 
   --ifm-background-color: var(--bg);
   --ifm-background-surface-color: var(--surface);
@@ -64,7 +78,7 @@
   --ifm-color-content-secondary: var(--ink-mid);
   --ifm-heading-color: var(--ink);
 
-  --ifm-navbar-background-color: rgba(10, 14, 21, 0.82);
+  --ifm-navbar-background-color: color-mix(in srgb, var(--bg-2) 88%, transparent);
   --ifm-navbar-shadow: 0 1px 0 var(--line-soft);
   --ifm-footer-background-color: var(--bg-2);
   --ifm-footer-color: var(--ink-dim);
@@ -83,38 +97,38 @@
   --ifm-code-background: var(--surface-2);
   --ifm-color-emphasis-300: var(--line);
 
-  --docusaurus-highlighted-code-line-bg: rgba(63, 208, 192, 0.1);
+  --docusaurus-highlighted-code-line-bg: color-mix(in srgb, var(--cyan) 12%, transparent);
 }
 
-/* ---------- fundo com os gradientes radiais do dossiê ---------- */
+/* ---------- fundo: grafite com o grão fino do regolito ---------- */
 html,
 body {
   background: var(--bg);
 }
 
 body {
-  background:
-    radial-gradient(1100px 600px at 78% -8%, rgba(63, 208, 192, 0.07), transparent 60%),
-    radial-gradient(900px 500px at 12% 4%, rgba(143, 140, 240, 0.06), transparent 55%),
-    var(--bg);
-  background-attachment: fixed;
+  /* Ruído SVG em opacidade muito baixa: dá textura de solo sem virar imagem. */
+  background-color: var(--bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .91 0 0 0 0 .89 0 0 0 0 .84 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
   -webkit-font-smoothing: antialiased;
 }
 
-/* ---------- navbar: barra de telemetria translúcida ---------- */
+/* ---------- navbar ---------- */
 .navbar {
-  backdrop-filter: saturate(140%) blur(8px);
+  backdrop-filter: saturate(120%) blur(8px);
   border-bottom: 1px solid var(--line-soft);
 }
 .navbar__title {
-  font-family: var(--mono);
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-size: 0.9rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-size: 1.05rem;
+}
+.navbar__logo {
+  height: 1.9rem;
 }
 .navbar__link {
-  font-size: 0.92rem;
+  font-size: 0.93rem;
 }
 
 /* ---------- títulos ---------- */
@@ -122,14 +136,17 @@ h1,
 h2,
 h3,
 h4 {
-  letter-spacing: -0.015em;
+  letter-spacing: -0.005em;
 }
 .markdown h1:first-child {
   font-size: clamp(2rem, 4.4vw, 3rem);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+}
+.markdown {
+  --ifm-h2-font-size: 1.75rem;
 }
 
-/* ---------- código inline com o mesmo tratamento do dossiê ---------- */
+/* ---------- código inline ---------- */
 code {
   font-family: var(--mono);
   border: 1px solid var(--line-soft);
@@ -144,31 +161,44 @@ a {
   text-decoration: none;
 }
 a:hover {
-  text-decoration: none;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* ---------- foco visível no teclado ---------- */
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 /* ---------- sidebar / menu ---------- */
 .menu {
-  font-size: 0.9rem;
+  font-size: 0.92rem;
+}
+.menu__link {
+  border-radius: 4px;
 }
 .menu__link--active:not(.menu__link--sublist) {
   border-left: 2px solid var(--cyan);
+  border-radius: 0 4px 4px 0;
   background: var(--surface);
 }
 .menu__list-item-collapsible .menu__link {
-  font-family: var(--mono);
-  font-size: 0.82rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--ink-dim);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+  color: var(--ink-mid);
 }
 
-/* ---------- tabelas em estilo de painel ---------- */
+/* ---------- tabelas ---------- */
 .markdown table {
   display: table;
   width: 100%;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 6px;
   border-collapse: separate;
   border-spacing: 0;
   overflow: hidden;
@@ -177,32 +207,42 @@ a:hover {
   background: var(--surface-2);
 }
 .markdown table th {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink-dim);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.86rem;
+  letter-spacing: 0.01em;
+  color: var(--ink-mid);
   border: none;
 }
 .markdown table td {
   border: none;
   border-top: 1px solid var(--line-soft);
 }
-.markdown table tr {
-  background: var(--surface);
-}
+.markdown table tr,
 .markdown table tr:nth-child(2n) {
   background: var(--surface);
 }
 
-/* ---------- admonitions (callouts nativos) na paleta do dossiê ---------- */
+/* ---------- admonitions (callouts nativos) ---------- */
 .theme-admonition {
   border: 1px solid var(--line);
+  border-left-width: 3px;
   background: var(--surface);
-  border-radius: 12px;
+  border-radius: 0 6px 6px 0;
+}
+.theme-admonition [class*='admonitionHeading'] {
+  text-transform: none;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
 }
 .theme-admonition code {
   background: var(--bg-2);
+}
+
+/* ---------- rodapé ---------- */
+.footer {
+  border-top: 1px solid var(--line-soft);
 }
 
 /* ---------- barra de rolagem discreta ---------- */
@@ -218,6 +258,14 @@ a:hover {
   border-radius: 6px;
   border: 3px solid var(--bg-2);
 }
-::-webkit-scrollbar-thumb:hover {
-  background: var(--line);
+
+/* ---------- movimento reduzido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -10,11 +10,11 @@
  */
 
 .roadmap {
-  --amber-soft: rgba(234, 169, 60, 0.12);
-  --amber-line: rgba(234, 169, 60, 0.34);
-  --cyan-soft: rgba(63, 208, 192, 0.1);
-  --cyan-line: rgba(63, 208, 192, 0.32);
-  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03), 0 18px 40px -22px rgba(0, 0, 0, 0.9);
+  --amber-soft: color-mix(in srgb, var(--amber) 12%, transparent);
+  --amber-line: color-mix(in srgb, var(--amber) 34%, transparent);
+  --cyan-soft: color-mix(in srgb, var(--cyan) 10%, transparent);
+  --cyan-line: color-mix(in srgb, var(--cyan) 32%, transparent);
+  --shadow: 0 1px 0 rgba(233, 227, 214, 0.03);
 }
 .roadmap .mono {
   font-family: var(--mono);
@@ -43,7 +43,7 @@
   inset: 0;
   background:
     radial-gradient(120% 80% at 88% -10%, var(--amber-soft), transparent 60%),
-    repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, 0.012) 3px 4px);
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(233, 227, 214, 0.012) 3px 4px);
   pointer-events: none;
 }
 .roadmap .rm-hero > * {
@@ -70,7 +70,7 @@
   font-family: var(--mono);
   font-size: 12px;
   color: var(--ink-dim);
-  letter-spacing: 0.15em;
+  letter-spacing: 0.02em;
 }
 .roadmap .rm-hero h1 {
   font-family: var(--font-display);
@@ -143,15 +143,15 @@
 .roadmap .chip {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 6px;
   padding: 14px 15px;
 }
 .roadmap .chip .tag {
   font-family: var(--mono);
   font-size: 10px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.02em;
   color: var(--cyan);
-  text-transform: uppercase;
+  text-transform: none;
 }
 .roadmap .chip p {
   font-size: 13.5px;
@@ -168,7 +168,7 @@
 .roadmap .card {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 6px;
   padding: 22px;
   position: relative;
   box-shadow: var(--shadow);
@@ -191,9 +191,9 @@
 .roadmap .card .kind {
   font-family: var(--mono);
   font-size: 10px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.02em;
   color: var(--ink-dim);
-  text-transform: uppercase;
+  text-transform: none;
   margin-bottom: 12px;
 }
 .roadmap .card p {
@@ -224,7 +224,7 @@
   color: var(--ink-mid);
   background: var(--surface-2);
   border-left: 3px solid var(--amber);
-  border-radius: 0 8px 8px 0;
+  border-radius: 0 6px 6px 0;
   padding: 11px 14px;
   margin-top: 6px;
 }
@@ -242,7 +242,7 @@
   margin-top: 16px;
   background: var(--amber-soft);
   border: 1px dashed var(--amber-line);
-  border-radius: 10px;
+  border-radius: 6px;
   padding: 14px 16px;
   font-size: 13.5px;
   color: var(--ink-mid);
@@ -250,9 +250,9 @@
 .roadmap .callout .lbl {
   font-family: var(--mono);
   font-size: 10px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.02em;
   color: var(--amber);
-  text-transform: uppercase;
+  text-transform: none;
   display: block;
   margin-bottom: 6px;
 }
@@ -293,7 +293,7 @@
 .roadmap .stop .code {
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.02em;
   color: var(--amber);
 }
 .roadmap .stop h3 {
@@ -333,7 +333,7 @@
   gap: 14px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 6px;
   padding: 14px 16px;
 }
 .roadmap .drow .dn {
@@ -356,7 +356,7 @@
 .roadmap .code-block {
   background: var(--bg-2);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 6px;
   margin: 16px 0;
   overflow: hidden;
 }
@@ -426,8 +426,8 @@
 .roadmap .res .rk {
   font-family: var(--mono);
   font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-transform: none;
   color: var(--ink-dim);
   flex: none;
 }
@@ -441,8 +441,8 @@
 .roadmap .res-group-label {
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-transform: none;
   color: var(--cyan);
   margin: 20px 0 10px;
 }
@@ -481,8 +481,8 @@
 .roadmap .eyebrow {
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-transform: none;
   color: var(--amber);
   font-weight: 500;
   display: block;
@@ -493,15 +493,15 @@
 .roadmap .flip {
   background: var(--surface);
   border: 1px solid var(--amber-line);
-  border-radius: 14px;
+  border-radius: 6px;
   padding: 22px 24px;
   box-shadow: var(--shadow);
 }
 .roadmap .flip .lbl {
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-transform: none;
   color: var(--amber);
   display: block;
   margin-bottom: 10px;
@@ -523,15 +523,15 @@
 .roadmap .firstmove {
   background: linear-gradient(180deg, var(--surface-2), var(--surface));
   border: 1px solid var(--cyan-line);
-  border-radius: 14px;
+  border-radius: 6px;
   padding: 24px;
   box-shadow: var(--shadow);
 }
 .roadmap .firstmove .kick {
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-transform: none;
   color: var(--cyan);
   margin-bottom: 12px;
 }
@@ -610,7 +610,7 @@
 .roadmap .tbl {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 6px;
   overflow: hidden;
   margin-bottom: 16px;
   box-shadow: var(--shadow);
@@ -618,8 +618,8 @@
 .roadmap .tbl .cap {
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-transform: none;
   color: var(--amber);
   padding: 12px 16px;
   border-bottom: 1px solid var(--line);
@@ -668,7 +668,7 @@
   background: var(--surface);
   border: 1px solid var(--line);
   border-left: 3px solid var(--amber);
-  border-radius: 0 12px 12px 0;
+  border-radius: 0 6px 6px 0;
   padding: 20px 22px;
 }
 .roadmap .deliver h3 {
@@ -712,17 +712,17 @@
 
 /* ---------- trava de escopo ("esta quinzena NÃO vou") ---------- */
 .roadmap .rm-guard {
-  background: rgba(224, 108, 108, 0.07);
-  border: 1px solid rgba(224, 108, 108, 0.32);
-  border-radius: 12px;
+  background: color-mix(in srgb, var(--coral) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--coral) 32%, transparent);
+  border-radius: 6px;
   padding: 20px 22px;
 }
 .roadmap .rm-guard .lbl {
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--coral, #e06c6c);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--coral, var(--coral));
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -758,7 +758,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  color: var(--coral, #e06c6c);
+  color: var(--coral, var(--coral));
   font-weight: 700;
   font-size: 12px;
 }
@@ -772,7 +772,7 @@
   margin-top: 22px;
   background: var(--surface);
   border: 1px solid var(--cyan-line);
-  border-radius: 12px;
+  border-radius: 6px;
   padding: 20px;
 }
 .roadmap .qbox h3 {

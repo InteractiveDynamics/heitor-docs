@@ -11,7 +11,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 const config = {
   title: 'PIBIC',
   tagline: 'Documentação do meu projeto de Iniciação Científica',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon.svg',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -86,9 +86,9 @@ const config = {
   // Descobre a doc publicada por último (home e rota /ultima).
   plugins: ['./plugins/ultima-doc.js'],
 
-  // Fontes do design system (Space Grotesk display, Inter body, JetBrains Mono dados)
+  // Fontes do design system: família IBM Plex (Sans Condensed títulos, Sans corpo, Mono dados)
   stylesheets: [
-    'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap',
+    'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap',
   ],
   headTags: [
     {
@@ -109,7 +109,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Card social (opcional, troque a imagem quando quiser)
-      image: 'img/docusaurus-social-card.jpg',
+      image: 'img/card-social.png',
       // A estética é um painel escuro de telemetria — modo escuro fixo.
       colorMode: {
         defaultMode: 'dark',

@@ -1,86 +1,54 @@
 /**
- * Home — estética "painel de telemetria / dossiê de engenharia".
- * Usa os tokens globais (--cyan, --surface, --mono...) definidos em custom.css.
+ * Home — "regolito e folha dourada".
+ * Usa os tokens globais (--cyan = dourado, --surface, --mono...) de custom.css.
+ * A peça marcante é o desenho do rocker-bogie no hero; o resto fica quieto.
  */
 
 .wrap {
-  max-width: 1000px;
+  max-width: 1080px;
   margin: 0 auto;
   padding: 0 24px;
 }
 
-/* ---------- faixa de telemetria ---------- */
-.telemetry {
-  border-bottom: 1px solid var(--line-soft);
-  background: linear-gradient(180deg, var(--bg-2), transparent);
-}
-.telemetry .inner {
-  max-width: 1000px;
-  margin: 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 26px;
-  align-items: center;
-  padding: 11px 24px;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  letter-spacing: 0.04em;
-  color: var(--ink-dim);
-  text-transform: uppercase;
-}
-.telemetry b {
-  color: var(--cyan);
-  font-weight: 500;
-}
-.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--green);
-  display: inline-block;
-  margin-right: 7px;
-  box-shadow: 0 0 8px var(--green);
-}
-
-/* ---------- hero ---------- */
+/* ---------- hero: texto à esquerda, desenho à direita ---------- */
 .hero {
-  padding: 76px 0 60px;
+  padding: 72px 0 64px;
   border-bottom: 1px solid var(--line-soft);
+}
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: center;
+}
+.heroText {
+  min-width: 0;
 }
 .eyebrow {
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.95rem;
   color: var(--cyan);
-  margin-bottom: 22px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.eyebrow::after {
-  content: '';
-  height: 1px;
-  flex: 1;
-  background: linear-gradient(90deg, var(--cyan-deep), transparent);
+  margin-bottom: 18px;
 }
 .title {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(2.3rem, 5.4vw, 4rem);
-  line-height: 1.03;
-  letter-spacing: -0.02em;
-  margin: 0 0 24px;
+  font-weight: 700;
+  font-size: clamp(2.4rem, 5.2vw, 3.9rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  margin: 0 0 22px;
   color: var(--ink);
 }
 .title .accent {
   color: var(--cyan);
 }
 .lede {
-  font-size: 1.12rem;
+  font-size: 1.1rem;
   color: var(--ink-mid);
-  max-width: 64ch;
+  max-width: 60ch;
   line-height: 1.62;
+  margin: 0;
 }
 .lede strong {
   color: var(--ink);
@@ -90,122 +58,241 @@
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 34px;
+  gap: 10px;
+  margin-top: 30px;
 }
 .btnPrimary,
 .btnGhost {
-  font-family: var(--mono);
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  padding: 13px 22px;
-  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 11px 18px;
+  border-radius: 6px;
   border: 1px solid var(--line);
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 .btnPrimary {
   background: var(--cyan);
   color: var(--bg-2);
-  font-weight: 500;
+  font-weight: 600;
   border-color: var(--cyan);
 }
 .btnPrimary:hover {
-  background: var(--cyan-deep);
-  border-color: var(--cyan-deep);
-  color: var(--ink);
+  background: var(--ifm-color-primary-lightest);
+  border-color: var(--ifm-color-primary-lightest);
+  color: var(--bg-2);
   text-decoration: none;
 }
 .btnGhost {
-  background: var(--surface);
-  color: var(--ink-mid);
+  background: transparent;
+  color: var(--ink);
 }
 .btnGhost:hover {
+  border-color: var(--cyan);
   color: var(--cyan);
-  border-color: var(--cyan-deep);
   text-decoration: none;
+}
+
+/* ---------- faixa de telemetria: vira ficha técnica embaixo dos botões ---------- */
+.telemetry {
+  margin-top: 30px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line);
+}
+.telemetry .inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+}
+.telemetry b {
+  color: var(--ink);
+  font-weight: 500;
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: 1px;
+}
+
+/* ---------- o desenho ---------- */
+.drawing {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.ground {
+  fill: none;
+  stroke: var(--ink-mid);
+  stroke-width: 2;
+}
+.groundFill {
+  stroke: none;
+}
+.hatch {
+  stroke: var(--line);
+  stroke-width: 1.2;
+}
+.dim {
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+.body {
+  fill: color-mix(in srgb, var(--cyan) 14%, transparent);
+  stroke: var(--cyan);
+  stroke-width: 2;
+}
+.link {
+  fill: none;
+  stroke: var(--cyan);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.wheel {
+  fill: var(--bg);
+  stroke: var(--cyan);
+  stroke-width: 2.5;
+}
+.hub,
+.pivot {
+  fill: var(--cyan);
 }
 
 /* ---------- seção do índice de frentes ---------- */
 .section {
-  padding: 62px 0 72px;
+  padding: 60px 0 76px;
 }
 .secHead {
   display: flex;
   align-items: baseline;
-  gap: 16px;
-  margin-bottom: 8px;
+  gap: 14px;
+  margin-bottom: 6px;
 }
 .secNum {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 0.85rem;
   color: var(--cyan);
   font-weight: 500;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 3px 9px;
+  border: 1px solid var(--cyan-deep);
+  border-radius: 4px;
+  padding: 2px 8px;
   flex: none;
 }
 .secTitle {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  letter-spacing: -0.015em;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
   margin: 0;
   color: var(--ink);
 }
 .secIntro {
   color: var(--ink-mid);
   max-width: 66ch;
-  margin: 14px 0 34px;
+  margin: 12px 0 30px;
   font-size: 1.02rem;
 }
 
-/* ---------- grid de frentes ---------- */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
+/* ---------- fichas agrupadas por status ---------- */
+.group + .group {
+  margin-top: 34px;
 }
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 22px 24px;
-  box-shadow: var(--shadow);
-  transition: border-color 0.15s ease, transform 0.15s ease;
-}
-.cardActive {
-  cursor: pointer;
-}
-.cardActive:hover {
-  border-color: var(--cyan-deep);
-  transform: translateY(-2px);
-  text-decoration: none;
-}
-.cardPlanned {
-  opacity: 0.72;
-}
-.cardTop {
+.groupTitle {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--ink-mid);
+  margin: 0 0 10px;
+}
+.groupTitle::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line-soft);
+}
+
+/* Uma ficha por linha: número | título + descrição | status + link. */
+.card {
+  display: grid;
+  grid-template-columns: 3.2rem minmax(0, 1fr) auto;
+  grid-template-areas:
+    'num title badge'
+    'num desc link';
+  column-gap: 18px;
+  row-gap: 4px;
+  align-items: baseline;
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--line-soft);
+  color: inherit;
+  transition: background-color 0.15s ease;
+}
+.card:hover {
+  text-decoration: none;
+  background: var(--surface);
+}
+.cardTop {
+  display: contents;
 }
 .cardNum {
+  grid-area: num;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 0.9rem;
+  color: var(--cyan);
+}
+.cardPlanned .cardNum {
   color: var(--ink-dim);
 }
+.cardTitle {
+  grid-area: title;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: var(--ink);
+  margin: 0;
+}
+.cardDesc {
+  grid-area: desc;
+  color: var(--ink-mid);
+  font-size: 0.95rem;
+  margin: 0;
+  max-width: 68ch;
+}
+.cardLink {
+  grid-area: link;
+  justify-self: end;
+  font-size: 0.9rem;
+  color: var(--cyan);
+  white-space: nowrap;
+}
+.cardPlanned .cardTitle,
+.cardPlanned .cardLink {
+  color: var(--ink-mid);
+}
 .badge {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 3px 9px;
-  border-radius: 20px;
+  grid-area: badge;
+  justify-self: end;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 1px 8px;
+  border-radius: 4px;
   border: 1px solid var(--line);
   display: inline-flex;
   align-items: center;
@@ -213,41 +300,43 @@
 }
 .badgeActive {
   color: var(--green);
-  border-color: rgba(87, 201, 138, 0.4);
+  border-color: color-mix(in srgb, var(--green) 40%, transparent);
 }
 .badgePlanned {
   color: var(--amber);
-  border-color: rgba(234, 169, 60, 0.35);
+  border-color: color-mix(in srgb, var(--amber) 35%, transparent);
 }
 .badge .pulse {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: currentColor;
-  box-shadow: 0 0 8px currentColor;
-}
-.cardTitle {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1.14rem;
-  color: var(--ink);
-  margin: 2px 0 0;
-}
-.cardDesc {
-  color: var(--ink-mid);
-  font-size: 0.94rem;
-  margin: 0;
-  flex: 1;
-}
-.cardLink {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--cyan);
-  margin-top: 4px;
 }
 
-@media screen and (max-width: 720px) {
+/* ---------- celular ---------- */
+@media screen and (max-width: 860px) {
+  .heroGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+  }
+  .drawing {
+    max-width: 440px;
+  }
+}
+@media screen and (max-width: 600px) {
   .hero {
-    padding: 48px 0 40px;
+    padding: 44px 0 40px;
+  }
+  .card {
+    grid-template-columns: 2.4rem minmax(0, 1fr);
+    grid-template-areas:
+      'num title'
+      'num badge'
+      'num desc'
+      'num link';
+  }
+  .badge,
+  .cardLink {
+    justify-self: start;
   }
 }
