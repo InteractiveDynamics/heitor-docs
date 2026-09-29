@@ -51,6 +51,7 @@ direto como componente React visual-first.
 | `DossiePonteGDExtension` | `docs/multicorpo/ponte-gdextension.mdx` | o código em `gdjolt/` (raiz do repositório) e os números medidos nas verificações headless |
 | `DossieGdChrono` | `docs/multicorpo/gdchrono-comparado.mdx` | leitura do repositório `InteractiveDynamics/GdChrono` (commit `fde5589`) |
 | `DossieRockerArticulado` | `docs/multicorpo/rocker-articulado.mdx` | execuções do banco de ensaio em `gdjolt/tools/vehicle_probe.cpp` |
+| `DossieRockerBogie` | `docs/multicorpo/rocker-bogie.mdx` | varredura do banco de ensaio (`vehicle_probe --sweep`) e a cena `gdjolt/demo/comparativo.tscn` |
 
 Esses componentes renderizam sob `.dossie .tecnica` — reaproveitam a assinatura
 do dossiê (`dossie.css`) e as peças de fluxo/régua/barras de `tecnica.css`.
@@ -100,3 +101,16 @@ for c in "--vsteps=10 --psteps=2" "--substeps=4" "--substeps=8"; do \
 
 Ao mexer em `src/rocker_rig.h`, rodar de novo antes de editar as tabelas da doc —
 a montagem é compartilhada com o nó do Godot, então mudanças ali mexem nos dois.
+
+O `DossieRockerBogie` segue o mesmo regime. A varredura de degrau das três
+montagens e o custo por quadro saem de:
+
+```bash
+cd gdjolt
+./build/tools/vehicle_probe --sweep --substeps=4      # a tabela principal
+./build/tools/vehicle_probe --sweep --substeps=8      # a checagem de que não é o solver
+./build/tools/vehicle_probe --rig=all --substeps=4 --quiet   # custo por quadro
+```
+
+Os vídeos saem de `gdjolt/demo/comparativo.tscn` com `--record=DIR` (ver o
+cabeçalho de `comparativo.gd`).

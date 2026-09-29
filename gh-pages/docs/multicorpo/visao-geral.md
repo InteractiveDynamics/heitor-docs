@@ -49,6 +49,14 @@ a compara com a `VehicleConstraint` na mesma manobra: **0,00° contra 4,34°** d
 inclinação do chassi ao passar um degrau. Descobre, de quebra, que o modelo de um
 corpo só **sobe degraus maiores que a própria roda** porque ignora a face do
 obstáculo.
+
+**7 · [Seis rodas, uma vez e meia o raio](/docs/multicorpo/rocker-bogie)** — o
+**bogie** de seis rodas, 11 corpos e 10 juntas, com a mesma massa, o mesmo
+entre-eixos e a mesma manobra. Com roda de 0,30 m de raio, ele sobe até
+**0,45 m**, enquanto o rocker de quatro rodas sobe até 0,30 m. Corrige a leitura
+da entrada 6: 0,30 m não é onde o rocker para, é o último degrau que ele ainda
+sobe. Também registra que o chassi está em **equilíbrio neutro** e que falta o
+diferencial.
 :::
 
 ## Escopo previsto
@@ -89,10 +97,12 @@ ser atrito comum de corpo rígido. E fica registrado o custo escondido: a razão
 massa entre chassi e braços exige **4 sub-passos** por quadro — com o padrão do
 Jolt, o solver para 12 cm abaixo da altura correta.
 
-Segue **em aberto**, agora com alvo numérico: o **bogie** de seis rodas, que é o
-mecanismo que vence o limite encontrado — uma roda rígida não sobe degrau maior
-que o próprio raio, e o rocker de quatro rodas para em `0,30 m`. Depois dele, o
-**terreno** e a refatoração que faz a cena nascer da física.
+O **bogie** de seis rodas, que era o alvo seguinte, está feito e medido em [Seis
+rodas, uma vez e meia o raio](/docs/multicorpo/rocker-bogie): ele sobe até
+`0,45 m`, e o rocker de quatro rodas não passa de `0,30 m`. Seguem **em aberto** o
+**diferencial** entre os rockers (hoje o chassi está em equilíbrio neutro), a
+medição com **vários veículos** num quadro, o **terreno** e a refatoração que faz
+a cena nascer da física.
 
 O `GdChrono` já roda o **Viper** sobre terreno **SCM**, o que dá alvo concreto
 para as frentes de [integração roda–solo](/docs/roda-solo/visao-geral) e

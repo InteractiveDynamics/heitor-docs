@@ -19,6 +19,7 @@ export default function DossieRockerArticulado() {
   const gdchronoHref = useBaseUrl('/docs/multicorpo/gdchrono-comparado');
   const comparativoHref = useBaseUrl('/docs/multicorpo/jolt-vs-godot');
   const roadmapHref = useBaseUrl('/docs/roadmaps/semana-2026-09-14');
+  const bogieHref = useBaseUrl('/docs/multicorpo/rocker-bogie');
 
   return (
     <div className="dossie tecnica mcorpo">
@@ -352,6 +353,15 @@ export default function DossieRockerArticulado() {
           limite geométrico correto de uma roda rígida sem ajuda.
         </p>
 
+        <div className="callout amber" style={{marginTop: 22}}>
+          <b>Correção de 28/set:</b> o rocker <b>não falha</b> em 0,30 m. Ele
+          fica uns 2 s travado na face e depois sobe, e o ensaio de 7 s acabava
+          no meio dessa espera. Com 12 s de manobra ele sobe 0,30 m e não sobe
+          0,35 m, então o limite continua no raio da roda. A tabela acima fica
+          como foi medida, e a varredura refeita com critério mais estrito está
+          em <a href={bogieHref}>Seis rodas, uma vez e meia o raio</a>.
+        </div>
+
         <div className="callout coral" style={{marginTop: 22}}>
           <b>A leitura certa da tabela:</b> o articulado não é pior — ele é{' '}
           <b>o único dos dois que obedece a geometria</b>. O outro não vence por
@@ -514,7 +524,11 @@ export default function DossieRockerArticulado() {
 
         <div className="tl">
           <div className="tl-stop">
-            <h4>O bogie — seis rodas</h4>
+            <h4>O bogie — seis rodas · ✔ feito em 28/set</h4>
+            <p>
+              Medido em <a href={bogieHref}>Seis rodas, uma vez e meia o
+              raio</a>: sobe até 0,45 m.
+            </p>
             <p>
               O rocker de quatro rodas para no degrau igual ao raio da roda.{' '}
               <b>É exatamente esse limite que o bogie existe para vencer</b>: a
@@ -587,6 +601,22 @@ export default function DossieRockerArticulado() {
               PhysicsSettings.h — mNumVelocitySteps e mNumPositionSteps
             </span>
             <span className="rk">↗ github</span>
+          </a>
+        </div>
+
+        <div className="rgrp">
+          <h4>Os vídeos · gravados em 28/set</h4>
+          <a href="https://youtu.be/9ldDGWAAwVI" target="_blank" rel="noopener noreferrer">
+            <span className="rd">
+              Lumped, rocker e bogie no degrau de 0,20 m — a comparação de inclinação desta entrada
+            </span>
+            <span className="rk">↗ youtube</span>
+          </a>
+          <a href="https://youtu.be/LW7gbjetI8E" target="_blank" rel="noopener noreferrer">
+            <span className="rd">
+              O lumped de perto, degrau de 0,40 m — a roda atravessando a face do degrau
+            </span>
+            <span className="rk">↗ youtube</span>
           </a>
         </div>
 
