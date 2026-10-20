@@ -160,7 +160,20 @@ void JoltVehicle::build_world() {
 	vehicle.mController = controller;
 
 	constraint = new VehicleConstraint(*car_body, vehicle);
-	constraint->SetVehicleCollisionTester(new VehicleCollisionTesterRay(Layers::MOVING));
+	// O raio enxerga um ponto só embaixo da roda e não vê a face do degrau. A
+	// esfera e o cilindro varrem uma forma ao longo da suspensão; a esfera usa
+	// meia largura de roda, como o banco de ensaio e o sample do Jolt.
+	switch (collision_tester) {
+		case 1:
+			constraint->SetVehicleCollisionTester(
+					new VehicleCollisionTesterCastSphere(Layers::MOVING, 0.5f * kWheelWidth));
+			break;
+		case 2:
+			constraint->SetVehicleCollisionTester(new VehicleCollisionTesterCastCylinder(Layers::MOVING));
+			break;
+		default:
+			constraint->SetVehicleCollisionTester(new VehicleCollisionTesterRay(Layers::MOVING));
+	}
 
 	physics_system->AddConstraint(constraint);
 	physics_system->AddStepListener(constraint);
@@ -300,6 +313,14 @@ bool JoltVehicle::get_four_wheel_drive() const {
 	return four_wheel_drive;
 }
 
+void JoltVehicle::set_collision_tester(int p_tester) {
+	collision_tester = std::clamp(p_tester, 0, 2);
+}
+
+int JoltVehicle::get_collision_tester() const {
+	return collision_tester;
+}
+
 void JoltVehicle::set_vehicle_mass(double p_mass) {
 	vehicle_mass = p_mass > 1.0 ? p_mass : 1.0;
 }
@@ -336,6 +357,11 @@ void JoltVehicle::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_four_wheel_drive", "awd"), &JoltVehicle::set_four_wheel_drive);
 	ClassDB::bind_method(D_METHOD("get_four_wheel_drive"), &JoltVehicle::get_four_wheel_drive);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "four_wheel_drive"), "set_four_wheel_drive", "get_four_wheel_drive");
+
+	ClassDB::bind_method(D_METHOD("set_collision_tester", "tester"), &JoltVehicle::set_collision_tester);
+	ClassDB::bind_method(D_METHOD("get_collision_tester"), &JoltVehicle::get_collision_tester);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "collision_tester", PROPERTY_HINT_ENUM, "Raio,Esfera,Cilindro"),
+			"set_collision_tester", "get_collision_tester");
 
 	ClassDB::bind_method(D_METHOD("set_vehicle_mass", "mass"), &JoltVehicle::set_vehicle_mass);
 	ClassDB::bind_method(D_METHOD("get_vehicle_mass"), &JoltVehicle::get_vehicle_mass);

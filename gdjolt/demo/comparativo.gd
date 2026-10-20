@@ -1,9 +1,14 @@
 extends Node3D
 
-# As três montagens lado a lado, contra o mesmo degrau: a VehicleConstraint (um
-# corpo só), o rocker de quatro rodas e o rocker-bogie de seis. Cada uma roda no
-# seu próprio PhysicsSystem; o que elas têm em comum é a manobra — 1 s parado
-# para assentar e depois 1,5 m/s em reta, igual ao banco de ensaio.
+# As montagens lado a lado, contra o mesmo degrau. Em comparativo.tscn são a
+# VehicleConstraint (um corpo só), o rocker de quatro rodas e o rocker-bogie de
+# seis; em testadores.tscn, a mesma VehicleConstraint com o raio e com o
+# cilindro. Cada uma roda no seu próprio PhysicsSystem; o que elas têm em comum
+# é a manobra — 1 s parado para assentar e depois 1,5 m/s em reta, igual ao
+# banco de ensaio.
+#
+# As pistas são os filhos JoltVehicle/JoltRocker da raiz, na ordem da cena; o
+# nome no placar vem do metadado "rotulo" de cada um.
 #
 # Teclas:  espaço  parte / pausa
 #          R       recomeça
@@ -69,8 +74,7 @@ func _enter_tree() -> void:
 	if Engine.has_meta("comparativo_step"):
 		step_height = Engine.get_meta("comparativo_step")
 
-	for path in ["Lumped", "Rocker", "Bogie"]:
-		var n: Node3D = get_node(path)
+	for n in _lane_nodes():
 		n.read_input = false
 		n.step_height = step_height
 
@@ -83,11 +87,9 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
-	lanes = [
-		{ "name": "laranja · lumped · 1 corpo", "node": $Lumped },
-		{ "name": "âmbar · rocker · 7 corpos", "node": $Rocker },
-		{ "name": "ciano · bogie · 11 corpos", "node": $Bogie },
-	]
+	lanes.clear()
+	for n in _lane_nodes():
+		lanes.append({ "name": n.get_meta("rotulo", n.name), "node": n })
 	for i in lanes.size():
 		lanes[i]["max_tilt"] = 0.0
 		lanes[i]["crossed_at"] = -1.0
@@ -136,13 +138,21 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_MINUS, KEY_KP_SUBTRACT:
 			_restart(max(0.0, step_height - 0.05))
 		KEY_C:
-			cam_mode = (cam_mode + 1) % 4
+			cam_mode = (cam_mode + 1) % (lanes.size() + 1)
 			_place_camera()
 
 
 func _restart(h: float) -> void:
 	Engine.set_meta("comparativo_step", snappedf(h, 0.01))
 	get_tree().reload_current_scene()
+
+
+func _lane_nodes() -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	for c in get_children():
+		if c.is_class("JoltVehicle") or c.is_class("JoltRocker"):
+			out.append(c)
+	return out
 
 
 func _chassis_z(lane: Dictionary) -> float:
@@ -155,20 +165,21 @@ func _physics_process(delta: float) -> void:
 		t += delta
 	var drive := going and t > SETTLE
 
-	# Lumped: acelerador proporcional, a mesma lei do banco de ensaio. O motor do
-	# WheeledVehicleController sairia a 19 m/s com o pé embaixo.
-	var lumped: Node3D = $Lumped
-	if drive:
-		var err: float = TARGET_SPEED - lumped.get_forward_speed()
-		var brake: float = min(1.0, -err - 0.5) if err < -0.5 else 0.0
-		lumped.set_driver_input(clamp(err, 0.0, 1.0), 0.0, brake, 0.0)
-	else:
-		lumped.set_driver_input(0.0, 0.0, 0.0, 1.0)
-
-	# Articuladas: motor no eixo com velocidade-alvo, de novo como no ensaio.
-	for n in [$Rocker, $Bogie]:
-		n.target_speed = TARGET_SPEED
-		n.set_driver_input(1.0 if drive else 0.0, 0.0)
+	for lane in lanes:
+		var n: Node3D = lane["node"]
+		if n.is_class("JoltVehicle"):
+			# Lumped: acelerador proporcional, a mesma lei do banco de ensaio. O
+			# motor do WheeledVehicleController sairia a 19 m/s com o pé embaixo.
+			if drive:
+				var err: float = TARGET_SPEED - n.get_forward_speed()
+				var brake: float = min(1.0, -err - 0.5) if err < -0.5 else 0.0
+				n.set_driver_input(clamp(err, 0.0, 1.0), 0.0, brake, 0.0)
+			else:
+				n.set_driver_input(0.0, 0.0, 0.0, 1.0)
+		else:
+			# Articuladas: motor no eixo com velocidade-alvo, como no ensaio.
+			n.target_speed = TARGET_SPEED
+			n.set_driver_input(1.0 if drive else 0.0, 0.0)
 
 	for lane in lanes:
 		var z := _chassis_z(lane)
@@ -209,7 +220,7 @@ func _update_hud() -> void:
 
 func _place_camera() -> void:
 	if cam_mode == 0 or lanes.is_empty():
-		# Vista geral de três quartos: as três pistas e a face do degrau.
+		# Vista geral de três quartos: as pistas e a face do degrau.
 		camera.cull_mask = 0xFFFFF
 		camera.look_at_from_position(Vector3(10, 4.5, -1), Vector3(-1, 0, 7))
 		return

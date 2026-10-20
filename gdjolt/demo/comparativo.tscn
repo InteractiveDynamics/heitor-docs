@@ -65,6 +65,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.75, 0)
 vehicle_mass = 1500.0
 four_wheel_drive = true
 read_input = false
+metadata/rotulo = "laranja · lumped · 1 corpo"
 
 [node name="Chassis" type="MeshInstance3D" parent="Lumped"]
 mesh = SubResource("ChassisMesh")
@@ -102,6 +103,7 @@ surface_material_override/0 = SubResource("DarkMat")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
 bogie = false
 read_input = false
+metadata/rotulo = "âmbar · rocker · 7 corpos"
 
 [node name="Chassis" type="MeshInstance3D" parent="Rocker"]
 mesh = SubResource("ChassisMesh")
@@ -135,6 +137,7 @@ surface_material_override/0 = SubResource("DarkMat")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.75, 0)
 bogie = true
 read_input = false
+metadata/rotulo = "ciano · bogie · 11 corpos"
 
 [node name="Chassis" type="MeshInstance3D" parent="Bogie"]
 mesh = SubResource("ChassisMesh")

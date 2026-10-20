@@ -22,7 +22,7 @@ O Godot vira renderizador e input. Quem simula é o Jolt.
 | `src/jolt_layers.h` | Camadas de colisão e filtros |
 | `src/jolt_runtime.h` | Contagem de uso do `RegisterTypes` do Jolt, que é global do processo |
 | `tools/vehicle_probe.cpp` | Banco de ensaio **sem o Godot no caminho**: monta as três plataformas e submete todas à mesma manobra |
-| `demo/` | Projeto Godot: `main.tscn` (veículo), `rocker.tscn` (plataforma articulada) e `comparativo.tscn` (as três lado a lado, com placar e gravação de vídeo) |
+| `demo/` | Projeto Godot: `main.tscn` (veículo), `rocker.tscn` (plataforma articulada) `comparativo.tscn` (as três lado a lado, com placar e gravação de vídeo) e `testadores.tscn` (a mesma `VehicleConstraint` com raio e com cilindro, propriedade `collision_tester`) |
 
 ## Como compilar
 
@@ -70,7 +70,13 @@ $GODOT --headless --path demo --script verify_rocker.gd   # a plataforma articul
 ./build/tools/vehicle_probe --rig=bogie        # o rocker-bogie de seis rodas
 ./build/tools/vehicle_probe --rig=all          # as três: lumped, rocker e bogie
 ./build/tools/vehicle_probe --sweep --substeps=4   # degrau de 0,10 a 0,50 m nas três
+./build/tools/vehicle_probe --testers --substeps=4 # raio × esfera × cilindro na VehicleConstraint
 ```
+
+O `--testers` compara os três testadores de colisão da `VehicleConstraint` com
+as montagens articuladas, medindo quanto a roda dianteira se sobrepõe ao degrau
+(penetração, no perfil lateral) e a maior velocidade vertical dela (o "pulo"
+quando o raio encontra o topo).
 
 "Subiu" quer dizer que a **roda traseira** passou da face do degrau. A varredura
 dá 12 s de manobra e imprime o tempo de travessia: o que passar dos ~5,1 s de
@@ -97,7 +103,9 @@ folgadamente nos 16 700 µs de um quadro a 60 Hz.
 
 `demo/comparativo.tscn` põe as três montagens lado a lado, cada uma no seu
 próprio `PhysicsSystem`, com piloto automático e a manobra do banco de ensaio.
-As opções e as teclas estão no cabeçalho de `demo/comparativo.gd`.
+As opções e as teclas estão no cabeçalho de `demo/comparativo.gd`. O
+`demo/testadores.tscn` usa o mesmo script e as mesmas opções, com duas pistas: o
+raio e o cilindro.
 
 ```bash
 $GODOT --path demo comparativo.tscn -- --step=0.40              # interativa

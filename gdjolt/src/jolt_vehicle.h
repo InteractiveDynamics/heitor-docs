@@ -56,6 +56,8 @@ public:
 	double get_step_height() const;
 	void set_four_wheel_drive(bool p_awd);
 	bool get_four_wheel_drive() const;
+	void set_collision_tester(int p_tester);
+	int get_collision_tester() const;
 	void set_read_input(bool p_read);
 	bool get_read_input() const;
 
@@ -86,6 +88,9 @@ private:
 	// tração do banco de ensaio, senão o vídeo compara coisas diferentes.
 	double step_height = 0.0;
 	bool four_wheel_drive = false;
+	// Como a roda enxerga o chão: 0 = raio (um ponto embaixo da roda),
+	// 1 = esfera, 2 = cilindro com a forma da roda. Ver --testers no banco.
+	int collision_tester = 0;
 
 	float in_forward = 0.0f;
 	float in_right = 0.0f;

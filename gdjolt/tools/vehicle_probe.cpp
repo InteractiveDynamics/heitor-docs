@@ -23,6 +23,11 @@
 //   --rig=all      as três, uma depois da outra ("both" continua sendo lumped
 //                  e rocker, como na primeira versão do ensaio).
 //
+//   --testers      compara os três testadores de colisão da VehicleConstraint
+//                  (raio, esfera, cilindro) contra as montagens articuladas,
+//                  medindo quanto a roda atravessa a face do degrau e o "pulo"
+//                  do chassi.
+//
 //   --sweep        varre o degrau de 0,10 a 0,50 m nas três montagens e
 //                  imprime só a tabela de quem sobe o quê.
 //
@@ -146,6 +151,10 @@ public:
 	virtual void Drive(World &w, bool go) = 0;
 	virtual const Body *Chassis() const = 0;
 
+	/// Centro da roda dianteira (lado 0), em coordenadas do mundo. É onde se
+	/// mede se a roda atravessa a face do degrau.
+	virtual RVec3 FrontWheelCenter() const = 0;
+
 	/// Uma linha de telemetria específica da plataforma (ângulos das juntas,
 	/// comprimento da suspensão...). Vazio é aceitável.
 	virtual void DetailRow(char *out, size_t n) const { out[0] = '\0'; (void)n; }
@@ -178,10 +187,28 @@ static WheelSettingsWV *MakeWheelWV(Vec3Arg position, float max_steer, float han
 	return w;
 }
 
+/// Como a VehicleConstraint procura o chão embaixo de cada roda.
+enum class Tester { Ray, Sphere, Cylinder };
+
+static const char *TesterName(Tester t) {
+	switch (t) {
+		case Tester::Sphere: return "esfera";
+		case Tester::Cylinder: return "cilindro";
+		default: return "raio";
+	}
+}
+
 class LumpedRig final : public Rig {
 public:
+	explicit LumpedRig(Tester tester = Tester::Ray) : mTester(tester) {}
+
 	const char *Name() const override { return "lumped"; }
 	const Body *Chassis() const override { return mBody; }
+
+	RVec3 FrontWheelCenter() const override {
+		// A roda não é corpo: a posição vem da constraint (roda 0 = dianteira).
+		return mConstraint->GetWheelWorldTransform(0, Vec3::sAxisX(), Vec3::sAxisY()).GetTranslation();
+	}
 
 	void Build(World &w, RVec3Arg origin) override {
 		// Um corpo rígido SÓ. As rodas não são corpos: são dados na constraint.
@@ -222,7 +249,21 @@ public:
 		v.mController = ctrl;
 
 		mConstraint = new VehicleConstraint(*mBody, v);
-		mConstraint->SetVehicleCollisionTester(new VehicleCollisionTesterRay(Layers::MOVING));
+		// O raio enxerga um ponto só embaixo da roda. A esfera e o cilindro
+		// varrem uma forma para baixo — ainda ao longo da suspensão, mas com a
+		// largura da roda. A esfera usa meia largura de roda, como no sample
+		// VehicleConstraintTest do Jolt.
+		switch (mTester) {
+			case Tester::Sphere:
+				mConstraint->SetVehicleCollisionTester(
+						new VehicleCollisionTesterCastSphere(Layers::MOVING, 0.5f * kWheelWidth));
+				break;
+			case Tester::Cylinder:
+				mConstraint->SetVehicleCollisionTester(new VehicleCollisionTesterCastCylinder(Layers::MOVING));
+				break;
+			default:
+				mConstraint->SetVehicleCollisionTester(new VehicleCollisionTesterRay(Layers::MOVING));
+		}
 
 		w.system->AddConstraint(mConstraint);
 		w.system->AddStepListener(mConstraint);
@@ -256,6 +297,7 @@ public:
 	}
 
 private:
+	Tester mTester;
 	Body *mBody = nullptr;
 	Ref<VehicleConstraint> mConstraint;
 };
@@ -281,6 +323,11 @@ public:
 
 	const char *Name() const override { return mParams.bogie ? "bogie" : "rocker"; }
 	const Body *Chassis() const override { return mParts.chassis; }
+
+	RVec3 FrontWheelCenter() const override {
+		// Nas duas variantes a roda 0 é a dianteira do lado 0.
+		return mParts.wheels[0]->GetCenterOfMassPosition();
+	}
 
 	void Build(World &w, RVec3Arg origin) override {
 		// A montagem em si vive em src/rocker_rig.h, compartilhada com o nó do
@@ -331,6 +378,13 @@ struct TrialResult {
 	float final_height = 0.0f;
 	bool climbed = false;
 	float cross_time = -1.0f; ///< s desde a partida até a roda traseira passar da face
+	/// Quanto a roda dianteira se sobrepôs ao degrau (m), no perfil lateral.
+	/// Roda que colide de verdade fica perto de 0; roda de raio atravessa.
+	float max_penetration = 0.0f;
+	/// Maior velocidade vertical da roda dianteira na subida (m/s): o "pulo".
+	/// Medida pela diferença de altura entre quadros, que vale tanto para a
+	/// roda de verdade quanto para a roda da VehicleConstraint, que não é corpo.
+	float max_vy = 0.0f;
 	double step_us_min = 1e18, step_us_med = 0.0, step_us_max = 0.0;
 };
 
@@ -396,6 +450,7 @@ static TrialResult RunTrial(Rig &rig, float step_height, int total_steps, bool v
 	timings.reserve(total_steps);
 
 	char detail[128];
+	float prev_wheel_y = -1e9f;
 
 	if (verbose) {
 		std::printf("\n  passo |   z    | altura | incl.° |%s\n", rig.DetailHeader());
@@ -423,6 +478,28 @@ static TrialResult RunTrial(Rig &rig, float step_height, int total_steps, bool v
 		// até a roda dianteira chegar perto da ponta final da laje: descer dela
 		// do outro lado é outra manobra, e com o ensaio longo da varredura a
 		// queda contaminava a inclinação máxima.
+		if (go && step_height > 0.0f && z < obstacle_z + 6.0f) {
+			// Penetração: quanto o círculo da roda (vista lateral, plano z-y) se
+			// sobrepõe ao retângulo do degrau. Rolar por cima da quina não conta —
+			// só a roda que está DENTRO do degrau. Centro dentro do degrau conta
+			// como raio inteiro mais a profundidade.
+			RVec3 wc = rig.FrontWheelCenter();
+			const float zc = (float)wc.GetZ(), yc = (float)wc.GetY();
+			const float z0 = obstacle_z, z1 = obstacle_z + 8.0f;
+			const float dz = std::max({ z0 - zc, 0.0f, zc - z1 });
+			const float dy = std::max({ 0.0f - yc, 0.0f, yc - step_height });
+			float pen;
+			if (dz == 0.0f && dy == 0.0f) {
+				pen = kWheelRadius + std::min({ zc - z0, z1 - zc, yc, step_height - yc });
+			} else {
+				pen = kWheelRadius - std::sqrt(dz * dz + dy * dy);
+			}
+			r.max_penetration = std::max(r.max_penetration, pen);
+			if (prev_wheel_y > -1e8f) {
+				r.max_vy = std::max(r.max_vy, (yc - prev_wheel_y) / kDeltaTime);
+			}
+			prev_wheel_y = yc;
+		}
 		if (go && z < obstacle_z + 6.0f) {
 			r.max_tilt = std::max(r.max_tilt, tilt);
 			if (std::abs(z - obstacle_z) < 0.5f) {
@@ -471,6 +548,7 @@ int main(int argc, char **argv) {
 	int psteps = 2;  // padrão do Jolt
 	int substeps = 1;
 	bool sweep = false;
+	bool testers = false;
 
 	for (int i = 1; i < argc; ++i) {
 		if (std::strncmp(argv[i], "--rig=", 6) == 0) {
@@ -487,6 +565,8 @@ int main(int argc, char **argv) {
 			substeps = std::atoi(argv[i] + 11);
 		} else if (std::strcmp(argv[i], "--quiet") == 0) {
 			verbose = false;
+		} else if (std::strcmp(argv[i], "--testers") == 0) {
+			testers = true;
 		} else if (std::strcmp(argv[i], "--sweep") == 0) {
 			sweep = true;
 		}
@@ -508,7 +588,41 @@ int main(int argc, char **argv) {
 		return std::strcmp(rig_name, name) == 0;
 	};
 
-	if (sweep) {
+	if (testers) {
+		// A pergunta do professor: o problema do raio é ele enxergar um ponto
+		// só. Trocar por uma forma resolve? As montagens articuladas, em que a
+		// roda é um cilindro de verdade, entram como referência.
+		const int n = std::max(total_steps, 720);
+		std::printf("=== testadores de colisão · %d passos · %d sub-passo(s) ===\n", n, substeps);
+		std::printf("    penetração = quanto a roda dianteira se sobrepõe ao degrau (perfil lateral)\n");
+		std::printf("    pulo = maior velocidade vertical da roda dianteira na subida\n\n");
+		std::printf("degrau | montagem          | subiu | travessia | incl.máx | penetração | pulo\n");
+		std::printf("-------+-------------------+-------+-----------+----------+------------+---------\n");
+		const float alturas[] = { 0.10f, 0.20f, 0.30f, 0.40f, 0.50f };
+		for (float h : alturas) {
+			for (int k = 0; k < 5; ++k) {
+				LumpedRig ray(Tester::Ray), sphere(Tester::Sphere), cyl(Tester::Cylinder);
+				RockerRig rocker(false), bogie(true);
+				Rig *rig = k == 0 ? (Rig *)&ray : k == 1 ? (Rig *)&sphere : k == 2 ? (Rig *)&cyl
+						: k == 3 ? (Rig *)&rocker : (Rig *)&bogie;
+				char nome[32];
+				std::snprintf(nome, sizeof nome, "%s", k < 3 ? "" : rig->Name());
+				if (k < 3) {
+					std::snprintf(nome, sizeof nome, "lumped · %s", TesterName((Tester)k));
+				}
+				TrialResult r = RunTrial(*rig, h, n, false, vsteps, psteps, substeps);
+				char trav[16] = "—";
+				if (r.climbed) {
+					std::snprintf(trav, sizeof trav, "%.1f s", (double)r.cross_time);
+				}
+				std::printf("%.2f m | %-17s | %-5s | %9s | %7.2f° | %7.3f m  | %4.2f m/s\n",
+						(double)h, nome, r.climbed ? "sim" : "NAO", trav, (double)r.max_tilt,
+						(double)r.max_penetration, (double)r.max_vy);
+			}
+			std::printf("-------+-------------------+-------+-----------+----------+------------+---------\n");
+			std::fflush(stdout);
+		}
+	} else if (sweep) {
 		// A varredura responde de uma vez até onde cada montagem sobe. Roda
 		// sempre as três, calada, e com mais tempo de manobra: quem sobe devagar
 		// não pode ser contado como quem não sobe.
