@@ -26,7 +26,15 @@
 //   --testers      compara os três testadores de colisão da VehicleConstraint
 //                  (raio, esfera, cilindro) contra as montagens articuladas,
 //                  medindo quanto a roda atravessa a face do degrau e o "pulo"
-//                  do chassi.
+//                  da roda dianteira.
+//
+//   --tester=X     raio | esfera | cilindro: o testador do lumped fora do
+//                  --testers (ex.: --rig=lumped --tester=cilindro --steps=720).
+//
+//   --susp-lift=X  sobe o ponto de onde o testador varre, mantendo a roda, a
+//   --susp-min=X   mola e o curso no lugar; encurta o batente de compressão.
+//                  Só no lumped. Serviram para mostrar que o cilindro para em
+//                  0,40 m por causa da face do degrau, não da suspensão.
 //
 //   --sweep        varre o degrau de 0,10 a 0,50 m nas três montagens e
 //                  imprime só a tabela de quem sobe o quê.
@@ -173,13 +181,24 @@ public:
 // plataforma A · lumped — a VehicleConstraint que já existia
 // ---------------------------------------------------------------------------
 
+// Geometria da suspensão do lumped, ajustável para o experimento do limite do
+// cilindro (--susp-lift, --susp-min). O padrão é o de sempre.
+//
+// O testador de colisão varre a partir do ponto de fixação (mPosition), não da
+// roda. --susp-lift sobe esse ponto e alonga os dois comprimentos na mesma
+// medida: a roda, o curso e a mola ficam onde estavam, só a varredura começa
+// mais alto. --susp-min encurta o batente de compressão: mais curso para a roda
+// subir em relação ao chassi.
+static float gSuspLift = 0.0f;
+static float gSuspMin = 0.3f;
+
 static WheelSettingsWV *MakeWheelWV(Vec3Arg position, float max_steer, float hand_brake) {
 	WheelSettingsWV *w = new WheelSettingsWV;
-	w->mPosition = position;
+	w->mPosition = position + Vec3(0, gSuspLift, 0);
 	w->mRadius = kWheelRadius;
 	w->mWidth = kWheelWidth;
-	w->mSuspensionMinLength = 0.3f;
-	w->mSuspensionMaxLength = 0.5f;
+	w->mSuspensionMinLength = gSuspMin + gSuspLift;
+	w->mSuspensionMaxLength = 0.5f + gSuspLift;
 	w->mSuspensionSpring.mFrequency = 1.5f;
 	w->mSuspensionSpring.mDamping = 0.5f;
 	w->mMaxSteerAngle = max_steer;
@@ -549,6 +568,7 @@ int main(int argc, char **argv) {
 	int substeps = 1;
 	bool sweep = false;
 	bool testers = false;
+	Tester tester = Tester::Ray;
 
 	for (int i = 1; i < argc; ++i) {
 		if (std::strncmp(argv[i], "--rig=", 6) == 0) {
@@ -565,6 +585,15 @@ int main(int argc, char **argv) {
 			substeps = std::atoi(argv[i] + 11);
 		} else if (std::strcmp(argv[i], "--quiet") == 0) {
 			verbose = false;
+		} else if (std::strncmp(argv[i], "--tester=", 9) == 0) {
+			const char *t = argv[i] + 9;
+			tester = std::strcmp(t, "cilindro") == 0 ? Tester::Cylinder
+					: std::strcmp(t, "esfera") == 0	 ? Tester::Sphere
+													 : Tester::Ray;
+		} else if (std::strncmp(argv[i], "--susp-lift=", 12) == 0) {
+			gSuspLift = (float)std::atof(argv[i] + 12);
+		} else if (std::strncmp(argv[i], "--susp-min=", 11) == 0) {
+			gSuspMin = (float)std::atof(argv[i] + 11);
 		} else if (std::strcmp(argv[i], "--testers") == 0) {
 			testers = true;
 		} else if (std::strcmp(argv[i], "--sweep") == 0) {
@@ -667,7 +696,7 @@ int main(int argc, char **argv) {
 
 		if (wants("lumped")) {
 			std::printf("\n--- lumped · VehicleConstraint, um corpo -------------------\n");
-			LumpedRig rig;
+			LumpedRig rig(tester);
 			rows.push_back({"lumped", RunTrial(rig, step_height, total_steps, verbose, vsteps, psteps, substeps)});
 		}
 		if (wants("rocker")) {

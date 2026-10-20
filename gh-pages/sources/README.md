@@ -123,5 +123,8 @@ e da cena `gdjolt/demo/testadores.tscn`, que usa a propriedade
 cd gdjolt
 ./build/tools/vehicle_probe --testers --substeps=4    # a tabela
 ./build/tools/vehicle_probe --testers --substeps=8    # a checagem de que não é o solver
+./build/tools/vehicle_probe --testers --substeps=4 --susp-lift=0.4   # seção 04: não é o ponto de partida
+./build/tools/vehicle_probe --testers --substeps=4 --susp-min=0.1    # seção 04: não é o batente
+./build/tools/vehicle_probe --rig=lumped --tester=cilindro --step-height=0.40 --steps=720 --substeps=4
 cd demo && godot --path . --fixed-fps 60 testadores.tscn -- --step=0.40 --cam=0 --secs=13 --record=/tmp/q
 ```

@@ -78,6 +78,15 @@ as montagens articuladas, medindo quanto a roda dianteira se sobrepõe ao degrau
 (penetração, no perfil lateral) e a maior velocidade vertical dela (o "pulo"
 quando o raio encontra o topo).
 
+Para olhar um testador sozinho, passo a passo, e mexer na geometria da
+suspensão do lumped:
+
+```bash
+./build/tools/vehicle_probe --rig=lumped --tester=cilindro --step-height=0.40 --steps=720 --substeps=4
+./build/tools/vehicle_probe --testers --substeps=4 --susp-lift=0.4   # varredura começa 40 cm mais alto
+./build/tools/vehicle_probe --testers --substeps=4 --susp-min=0.1    # batente de compressão mais curto
+```
+
 "Subiu" quer dizer que a **roda traseira** passou da face do degrau. A varredura
 dá 12 s de manobra e imprime o tempo de travessia: o que passar dos ~5,1 s de
 andar livre é tempo brigando com a face.

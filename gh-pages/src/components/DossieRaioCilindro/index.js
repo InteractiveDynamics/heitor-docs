@@ -263,8 +263,9 @@ constraint->SetVehicleCollisionTester(new VehicleCollisionTesterCastCylinder(Lay
           <li>
             <b>O cilindro resolve quase tudo.</b> A roda entra uns 2 cm, contra
             1 cm da roda de verdade, e o pulo cai para 1,4–4,4 m/s. O limite
-            passa a ser o mesmo do rocker de quatro rodas: sobe 0,30 m, que é o
-            raio da roda, e não sobe 0,40 m.
+            passa a ser o do rocker de quatro rodas: sobe 0,30 m, que é o raio
+            da roda, e não sobe 0,40 m (a seção 04 mostra que é a face do
+            degrau que segura).
           </li>
           <li>
             <b>A esfera não serve.</b> Ela tem 0,10 m de raio, um terço da roda,
@@ -303,13 +304,82 @@ constraint->SetVehicleCollisionTester(new VehicleCollisionTesterCastCylinder(Lay
       <section>
         <div className="sec-head">
           <span className="sec-num">04</span>
-          <h2>O que ainda não está provado</h2>
+          <h2>O que segura o cilindro em 0,40 m</h2>
         </div>
-        <div className="callout amber">
-          <b>O limite do cilindro em 0,40 m</b> pode vir do curso da suspensão
-          (0,30 a 0,50 m) e não da face do degrau. O número bate com o do
-          rocker, mas a causa ainda não foi separada.
+        <p className="sec-intro">
+          A primeira versão desta entrada deixou uma dúvida em aberto: o
+          cilindro parar em 0,40 m podia ser o <b>curso da suspensão</b>, e não
+          a face do degrau. Lendo o Jolt, a suspeita tinha fundamento: o
+          cilindro não varre a partir da roda, e sim do <b>ponto onde a
+          suspensão se prende ao chassi</b>, descendo até o fim do curso. Uma
+          quina acima desse ponto não é vista, e a roda bateria no batente de
+          compressão. O banco ganhou duas opções para separar as causas.
+          (Atualizado em 20/out.)
+        </p>
+
+        <div className="tbl-wrap">
+          <table className="ctab">
+            <thead>
+              <tr>
+                <th>Variante do cilindro</th>
+                <th>O que muda</th>
+                <th>0,30 m</th>
+                <th>0,40 m</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="mono">padrão</td>
+                <td>—</td>
+                <td>
+                  <b className="yes">sobe</b>
+                </td>
+                <td>
+                  <b className="no">não</b>
+                </td>
+              </tr>
+              <tr>
+                <td className="mono">--susp-lift=0.2 / 0.4</td>
+                <td>a varredura começa 20 / 40 cm mais alto (roda, mola e curso no mesmo lugar)</td>
+                <td>
+                  <b className="yes">sobe</b>
+                </td>
+                <td>
+                  <b className="no">não</b>
+                </td>
+              </tr>
+              <tr>
+                <td className="mono">--susp-min=0.1</td>
+                <td>batente de compressão 20 cm mais curto: mais curso para a roda subir</td>
+                <td>
+                  <b className="yes">sobe</b>
+                </td>
+                <td>
+                  <b className="no">não</b>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+
+        <p style={{marginTop: 22}}>
+          Nenhuma das duas muda nada, com 4 e com 8 sub-passos. A telemetria
+          mostra o motivo: travado em 0,40 m, o chassi para em{' '}
+          <code>z = 4,28</code>, o que põe a frente da roda dianteira em 5,98,
+          encostada na face (z = 6). A mola dianteira fica em ~0,42 m, longe do
+          batente de 0,30 m. <b>Quem segura é a face do degrau.</b>
+        </p>
+
+        <div className="callout" style={{marginTop: 22}}>
+          <b>É o mesmo limite físico do rocker:</b> uma roda empurrada na
+          horizontal não sobe uma quina mais alta que o próprio eixo, porque o
+          contato passa a empurrar a roda para baixo. Afinando a altura, o
+          cilindro sobe 0,33 m e fica no limite em 0,35 m (sobe com 4
+          sub-passos, não com 8). O rocker sobe 0,30 m e não sobe 0,35 m. Os
+          dois param logo acima do raio da roda.
+        </div>
+
+        <h3 style={{marginTop: 30}}>A ressalva que continua</h3>
         <div className="callout coral" style={{marginTop: 16}}>
           <b>Travado na face, o cilindro fica ruidoso.</b> Em 0,50 m com 8
           sub-passos a roda chega a 9,6 m/s de pulo e o chassi a 13,6°: ela
