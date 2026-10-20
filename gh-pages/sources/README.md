@@ -114,3 +114,14 @@ cd gdjolt
 
 Os vídeos saem de `gdjolt/demo/comparativo.tscn` com `--record=DIR` (ver o
 cabeçalho de `comparativo.gd`).
+
+O `DossieRaioCilindro` (o teste do shapecast) sai do modo `--testers` do banco
+e da cena `gdjolt/demo/testadores.tscn`, que usa a propriedade
+`collision_tester` do `JoltVehicle`:
+
+```bash
+cd gdjolt
+./build/tools/vehicle_probe --testers --substeps=4    # a tabela
+./build/tools/vehicle_probe --testers --substeps=8    # a checagem de que não é o solver
+cd demo && godot --path . --fixed-fps 60 testadores.tscn -- --step=0.40 --cam=0 --secs=13 --record=/tmp/q
+```
