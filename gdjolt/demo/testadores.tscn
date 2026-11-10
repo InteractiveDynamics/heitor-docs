@@ -21,6 +21,9 @@ albedo_color = Color(0.95, 0.55, 0.35, 1)
 [sub_resource type="StandardMaterial3D" id="CylMat"]
 albedo_color = Color(0.85, 0.64, 0.25, 1)
 
+[sub_resource type="StandardMaterial3D" id="MolaMat"]
+albedo_color = Color(0.36, 0.58, 0.82, 1)
+
 [sub_resource type="StandardMaterial3D" id="DarkMat"]
 albedo_color = Color(0.1, 0.1, 0.12, 1)
 
@@ -50,7 +53,7 @@ current = true
 fov = 55.0
 
 [node name="Raio" type="JoltVehicle" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0.75, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.75, 0)
 vehicle_mass = 1500.0
 four_wheel_drive = true
 collision_tester = 0
@@ -90,7 +93,7 @@ mesh = SubResource("WheelMesh")
 surface_material_override/0 = SubResource("DarkMat")
 
 [node name="Cilindro" type="JoltVehicle" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.75, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
 vehicle_mass = 1500.0
 four_wheel_drive = true
 collision_tester = 2
@@ -126,6 +129,32 @@ surface_material_override/0 = SubResource("DarkMat")
 
 [node name="Mesh" type="MeshInstance3D" parent="Cilindro/Wheel3"]
 transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Mola" type="JoltCar" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.75, 0)
+read_input = false
+max_steer_deg = 0.0
+metadata/rotulo = "roda de verdade · com mola"
+
+[node name="Chassis" type="MeshInstance3D" parent="Mola"]
+mesh = SubResource("ChassisMesh")
+surface_material_override/0 = SubResource("MolaMat")
+
+[node name="Wheel0" type="MeshInstance3D" parent="Mola"]
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel1" type="MeshInstance3D" parent="Mola"]
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel2" type="MeshInstance3D" parent="Mola"]
+mesh = SubResource("WheelMesh")
+surface_material_override/0 = SubResource("DarkMat")
+
+[node name="Wheel3" type="MeshInstance3D" parent="Mola"]
 mesh = SubResource("WheelMesh")
 surface_material_override/0 = SubResource("DarkMat")
 

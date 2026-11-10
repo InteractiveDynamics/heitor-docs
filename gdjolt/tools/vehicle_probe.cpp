@@ -20,7 +20,12 @@
 //                  corpos, dez juntas. Mesmo entre-eixos, bitola e massa do
 //                  rocker de quatro — muda só o mecanismo.
 //
-//   --rig=all      as três, uma depois da outra ("both" continua sendo lumped
+//   --rig=carro    o carro com rodas de verdade: chassi + quatro rodas que são
+//                  corpos, presas por SixDOFConstraint com mola no curso
+//                  vertical. Cinco corpos, quatro juntas. É o lumped com as
+//                  rodas promovidas a corpo (src/car_rig.h).
+//
+//   --rig=all      as quatro, uma depois da outra ("both" continua sendo lumped
 //                  e rocker, como na primeira versão do ensaio).
 //
 //   --testers      compara os três testadores de colisão da VehicleConstraint
@@ -36,8 +41,12 @@
 //                  Só no lumped. Serviram para mostrar que o cilindro para em
 //                  0,40 m por causa da face do degrau, não da suspensão.
 //
-//   --sweep        varre o degrau de 0,10 a 0,50 m nas três montagens e
+//   --sweep        varre o degrau de 0,10 a 0,50 m nas quatro montagens e
 //                  imprime só a tabela de quem sobe o quê.
+//
+//   --friction=X   atrito do chão e das rodas-corpo (rocker, bogie, carro).
+//                  Acima do raio da roda, quem sobe é quem escala a face por
+//                  atrito; este botão mostra o quanto o limite depende dele.
 //
 // A métrica principal é a INCLINAÇÃO DO CHASSI durante a passagem pelo degrau.
 // É ela que diz se o mecanismo está fazendo o que o rocker-bogie existe para
@@ -67,6 +76,7 @@
 #include <Jolt/Physics/Vehicle/WheeledVehicleController.h>
 #include <Jolt/RegisterTypes.h>
 
+#include "../src/car_rig.h"
 #include "../src/jolt_layers.h"
 #include "../src/rocker_rig.h"
 
@@ -128,7 +138,7 @@ static constexpr float kAxleZ = kHalfLength - 2.0f * kWheelRadius; // 1.4
 // O atrito PADRÃO de corpo no Jolt é 0.2 (BodyCreationSettings.h:107) — baixo
 // demais: a roda acionada por motor patina em vez de subir o degrau. Este valor
 // é parâmetro do experimento, não detalhe.
-static constexpr float kGroundFriction = 1.0f;
+static float gFriction = 1.0f; // --friction
 static constexpr float kWheelFriction = 1.0f;
 
 // A manobra padrão.
@@ -297,7 +307,11 @@ public:
 			float v = mBody->GetLinearVelocity().Dot(mBody->GetRotation().RotateAxisZ());
 			float err = kTargetSpeed - v;
 			float throttle = std::min(1.0f, std::max(0.0f, err));
-			float brake = err < -0.5f ? std::min(1.0f, -err - 0.5f) : 0.0f;
+			// O freio entra assim que passa do alvo, com ganho alto: com o pé fora
+			// do acelerador a marcha lenta engatada ainda empurra o carro. Até
+			// 3/nov ele só entrava acima de 2,0 m/s, e o lumped batia no degrau a
+			// 1,6–1,9 m/s enquanto as outras montagens batiam a 1,5.
+			float brake = std::min(1.0f, std::max(0.0f, -10.0f * err));
 			c->SetDriverInput(throttle, 0.0f, brake, 0.0f);
 		} else {
 			c->SetDriverInput(0.0f, 0.0f, 0.0f, 1.0f);
@@ -338,7 +352,10 @@ private:
 
 class RockerRig final : public Rig {
 public:
-	explicit RockerRig(bool bogie) { mParams.bogie = bogie; }
+	explicit RockerRig(bool bogie) {
+		mParams.bogie = bogie;
+		mParams.friction = gFriction;
+	}
 
 	const char *Name() const override { return mParams.bogie ? "bogie" : "rocker"; }
 	const Body *Chassis() const override { return mParts.chassis; }
@@ -383,6 +400,68 @@ public:
 private:
 	RockerParams mParams;
 	RockerParts mParts;
+};
+
+// ---------------------------------------------------------------------------
+// plataforma C · carro — o lumped com as rodas promovidas a corpo
+//
+//   chassi ─┬─ SixDOF (curso com mola, giro com motor) ──→ 4 rodas cilíndricas
+//
+// A pergunta do professor: a roda que é corpo, presa por junta e mola, colide
+// com o degrau do jeito certo? Aqui a mola existe, ao contrário do rocker.
+// ---------------------------------------------------------------------------
+
+class CarRig final : public Rig {
+public:
+	const char *Name() const override { return "carro"; }
+	const Body *Chassis() const override { return mParts.chassis; }
+	const CarParams &Params() const { return mParams; }
+
+	RVec3 FrontWheelCenter() const override {
+		// Roda 0 = dianteira do lado 0, como nas outras montagens.
+		return mParts.wheels[0]->GetCenterOfMassPosition();
+	}
+
+	void Build(World &w, RVec3Arg origin) override {
+		// A roda nasce com a suspensão toda estendida, 0,68 m abaixo do chassi.
+		// Na altura de nascimento comum (0,75 m) ela nasceria 23 cm dentro do
+		// chão; sobe o chassi só o bastante para a roda nascer encostando. O
+		// lumped não precisa disso porque a roda dele não é corpo.
+		const float wheel_y = (float)origin.GetY() + mParams.AttachY() - mParams.susp_max;
+		const float lift = std::max(0.0f, mParams.wheel_radius - wheel_y);
+		mParts = BuildCar(*w.system, *w.bi, w.group_filter, origin + RVec3(0, Real(lift), 0), mParams);
+	}
+
+	void Drive(World &w, bool go) override {
+		DriveCar(mParts, *w.bi, mParams, go ? 1.0f : 0.0f, 0.0f, kTargetSpeed);
+	}
+
+	const char *DetailHeader() const override { return "  comp0  comp1  comp2  comp3  torque"; }
+
+	void DetailRow(char *out, size_t n) const override {
+		float torque = 0.0f;
+		for (int i = 0; i < kCarWheels; ++i) {
+			torque += std::abs(mParts.joints[i]->GetTotalLambdaMotorRotation().GetX());
+		}
+		std::snprintf(out, n, " %6.3f %6.3f %6.3f %6.3f %7.1f",
+				(double)mParts.Compression(0), (double)mParts.Compression(1),
+				(double)mParts.Compression(2), (double)mParts.Compression(3), (double)torque);
+	}
+
+private:
+	CarParams mParams = MeasuredParams();
+	CarParts mParts;
+
+	static CarParams MeasuredParams() {
+		CarParams p;
+		// A manobra nunca esterça, e o esterço é uma junta complacente (motor de
+		// posição a 10 Hz): com 1 sub-passo ele deixava a dianteira 2,5° torta e
+		// o carro derivava 0,7 m de lado em chão plano. Medido sem esterço; a
+		// pista da cena dos testadores usa max_steer_deg = 0 também.
+		p.max_steer_deg = 0.0f;
+		p.friction = gFriction;
+		return p;
+	}
 };
 
 // ---------------------------------------------------------------------------
@@ -438,7 +517,7 @@ static TrialResult RunTrial(Rig &rig, float step_height, int total_steps, bool v
 		BodyCreationSettings floor(new BoxShape(Vec3(100.0f, 1.0f, 100.0f)),
 				RVec3(0.0_r, -1.0_r, 0.0_r), Quat::sIdentity(),
 				EMotionType::Static, Layers::NON_MOVING);
-		floor.mFriction = kGroundFriction;
+		floor.mFriction = gFriction;
 		Body *b = w.bi->CreateBody(floor);
 		w.bi->AddBody(b->GetID(), EActivation::DontActivate);
 	}
@@ -450,14 +529,16 @@ static TrialResult RunTrial(Rig &rig, float step_height, int total_steps, bool v
 				new BoxShape(Vec3(20.0f, 0.5f * step_height, 4.0f)),
 				RVec3(0.0_r, Real(0.5f * step_height), Real(obstacle_z + 4.0f)),
 				Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
-		step.mFriction = kGroundFriction;
+		step.mFriction = gFriction;
 		Body *b = w.bi->CreateBody(step);
 		w.bi->AddBody(b->GetID(), EActivation::DontActivate);
 	}
 
 	// --- a plataforma -------------------------------------------------------
-	// Nasce um pouco acima do chão, com o MESMO valor para as duas montagens:
+	// Nasce um pouco acima do chão, com o MESMO valor para todas as montagens:
 	// se a queda inicial fosse diferente, ela já criaria diferença de inclinação.
+	// A exceção é o carro, que sobe o próprio chassi até a roda-corpo nascer
+	// encostando (CarRig::Build); o segundo de assentamento absorve a diferença.
 	rig.Build(w, RVec3(0.0_r, Real(kSpawnHeight), 0.0_r));
 
 	physics_system.OptimizeBroadPhase();
@@ -594,6 +675,8 @@ int main(int argc, char **argv) {
 			gSuspLift = (float)std::atof(argv[i] + 12);
 		} else if (std::strncmp(argv[i], "--susp-min=", 11) == 0) {
 			gSuspMin = (float)std::atof(argv[i] + 11);
+		} else if (std::strncmp(argv[i], "--friction=", 11) == 0) {
+			gFriction = (float)std::atof(argv[i] + 11);
 		} else if (std::strcmp(argv[i], "--testers") == 0) {
 			testers = true;
 		} else if (std::strcmp(argv[i], "--sweep") == 0) {
@@ -612,7 +695,7 @@ int main(int argc, char **argv) {
 			return true;
 		}
 		if (std::strcmp(rig_name, "both") == 0) {
-			return std::strcmp(name, "bogie") != 0;
+			return std::strcmp(name, "lumped") == 0 || std::strcmp(name, "rocker") == 0;
 		}
 		return std::strcmp(rig_name, name) == 0;
 	};
@@ -622,18 +705,19 @@ int main(int argc, char **argv) {
 		// só. Trocar por uma forma resolve? As montagens articuladas, em que a
 		// roda é um cilindro de verdade, entram como referência.
 		const int n = std::max(total_steps, 720);
-		std::printf("=== testadores de colisão · %d passos · %d sub-passo(s) ===\n", n, substeps);
+		std::printf("=== testadores de colisão · %d passos · %d sub-passo(s) · atrito %.2f ===\n", n, substeps, (double)gFriction);
 		std::printf("    penetração = quanto a roda dianteira se sobrepõe ao degrau (perfil lateral)\n");
 		std::printf("    pulo = maior velocidade vertical da roda dianteira na subida\n\n");
 		std::printf("degrau | montagem          | subiu | travessia | incl.máx | penetração | pulo\n");
 		std::printf("-------+-------------------+-------+-----------+----------+------------+---------\n");
 		const float alturas[] = { 0.10f, 0.20f, 0.30f, 0.40f, 0.50f };
 		for (float h : alturas) {
-			for (int k = 0; k < 5; ++k) {
+			for (int k = 0; k < 6; ++k) {
 				LumpedRig ray(Tester::Ray), sphere(Tester::Sphere), cyl(Tester::Cylinder);
 				RockerRig rocker(false), bogie(true);
+				CarRig car;
 				Rig *rig = k == 0 ? (Rig *)&ray : k == 1 ? (Rig *)&sphere : k == 2 ? (Rig *)&cyl
-						: k == 3 ? (Rig *)&rocker : (Rig *)&bogie;
+						: k == 3 ? (Rig *)&rocker : k == 4 ? (Rig *)&bogie : (Rig *)&car;
 				char nome[32];
 				std::snprintf(nome, sizeof nome, "%s", k < 3 ? "" : rig->Name());
 				if (k < 3) {
@@ -653,21 +737,22 @@ int main(int argc, char **argv) {
 		}
 	} else if (sweep) {
 		// A varredura responde de uma vez até onde cada montagem sobe. Roda
-		// sempre as três, calada, e com mais tempo de manobra: quem sobe devagar
+		// sempre as quatro, calada, e com mais tempo de manobra: quem sobe devagar
 		// não pode ser contado como quem não sobe.
 		const int sweep_steps = std::max(total_steps, 720); // 12 s
-		std::printf("=== varredura de degrau · %d passos · solver %d vel · %d pos · %d sub-passo(s) ===\n",
-				sweep_steps, vsteps, psteps, substeps);
+		std::printf("=== varredura de degrau · %d passos · solver %d vel · %d pos · %d sub-passo(s) · atrito %.2f ===\n",
+				sweep_steps, vsteps, psteps, substeps, (double)gFriction);
 		std::printf("    subiu = a roda traseira passou da face · tempo de travessia (andar livre: %.1f s) · inclinação máxima\n\n",
 				(double)((kAxleZ + kWheelRadius + 6.0f) / kTargetSpeed));
-		std::printf("degrau  |        lumped         |        rocker         |        bogie\n");
-		std::printf("--------+-----------------------+-----------------------+-----------------------\n");
+		std::printf("degrau  |        lumped         |        rocker         |        bogie          |        carro\n");
+		std::printf("--------+-----------------------+-----------------------+-----------------------+-----------------------\n");
 		for (int hi = 10; hi <= 50; hi += 5) {
 			const float h = hi / 100.0f;
 			LumpedRig lumped;
 			RockerRig rocker(false);
 			RockerRig bogie(true);
-			Rig *rigs[] = { &lumped, &rocker, &bogie };
+			CarRig car;
+			Rig *rigs[] = { &lumped, &rocker, &bogie, &car };
 			std::printf("%.2f m ", (double)h);
 			for (Rig *rig : rigs) {
 				TrialResult r = RunTrial(*rig, h, sweep_steps, false, vsteps, psteps, substeps);
@@ -684,7 +769,7 @@ int main(int argc, char **argv) {
 		std::printf("=== banco de ensaio · degrau de %.2f m · %d passos ===\n",
 				(double)step_height, total_steps);
 		std::printf("    atrito chao/roda %.2f · velocidade-alvo %.1f m/s · massa total %.0f kg\n",
-				(double)kGroundFriction, (double)kTargetSpeed, (double)kTotalMass);
+				(double)gFriction, (double)kTargetSpeed, (double)kTotalMass);
 		std::printf("    solver: %d vel · %d pos · %d sub-passo(s) por quadro\n",
 				vsteps, psteps, substeps);
 
@@ -708,6 +793,17 @@ int main(int argc, char **argv) {
 			std::printf("\n--- bogie · 11 corpos, 10 juntas ---------------------------\n");
 			RockerRig rig(true);
 			rows.push_back({"bogie", RunTrial(rig, step_height, total_steps, verbose, vsteps, psteps, substeps)});
+		}
+		if (wants("carro")) {
+			std::printf("\n--- carro · 5 corpos, 4 juntas com mola -------------------\n");
+			CarRig rig;
+			const CarParams &cp = rig.Params();
+			// A conta que a mola parada tem que bater: comp0..3 no fim do
+			// assentamento ≈ afundamento esperado.
+			std::printf("    mola: %.0f kg por roda · %.1f Hz · %.1f → k = %.0f N/m · c = %.0f N·s/m · afunda %.3f m parado\n",
+					(double)cp.SprungMassPerWheel(), (double)cp.spring_hz, (double)cp.spring_damping,
+					(double)cp.Stiffness(), (double)cp.Damping(), (double)cp.StaticSag());
+			rows.push_back({"carro", RunTrial(rig, step_height, total_steps, verbose, vsteps, psteps, substeps)});
 		}
 
 		std::printf("\n=== resumo ===\n");

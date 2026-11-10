@@ -19,10 +19,12 @@ O Godot vira renderizador e input. Quem simula é o Jolt.
 | `src/jolt_vehicle.{h,cpp}` | `VehicleConstraint` de quatro rodas — **um corpo só**, modelo *lumped*. Degrau e tração nas quatro opcionais, para a cena comparativa |
 | `src/jolt_rocker.{h,cpp}` | A plataforma **articulada**: rocker de 4 rodas (7 corpos, 6 juntas) ou, com `bogie = true`, rocker-bogie de 6 (11 corpos, 10 juntas) |
 | `src/rocker_rig.h` | As duas montagens articuladas, compartilhadas entre o nó do Godot e o banco de ensaio |
+| `src/jolt_car.{h,cpp}` | O **carro com rodas de verdade**: chassi + 4 rodas que são corpos, presas por `SixDOFConstraint` com mola no curso vertical (5 corpos, 4 juntas) |
+| `src/car_rig.h` | A montagem do carro, compartilhada entre o nó do Godot e o banco de ensaio |
 | `src/jolt_layers.h` | Camadas de colisão e filtros |
 | `src/jolt_runtime.h` | Contagem de uso do `RegisterTypes` do Jolt, que é global do processo |
 | `tools/vehicle_probe.cpp` | Banco de ensaio **sem o Godot no caminho**: monta as três plataformas e submete todas à mesma manobra |
-| `demo/` | Projeto Godot: `main.tscn` (veículo), `rocker.tscn` (plataforma articulada) `comparativo.tscn` (as três lado a lado, com placar e gravação de vídeo) e `testadores.tscn` (a mesma `VehicleConstraint` com raio e com cilindro, propriedade `collision_tester`) |
+| `demo/` | Projeto Godot: `main.tscn` (veículo), `rocker.tscn` (plataforma articulada) `comparativo.tscn` (as três lado a lado, com placar e gravação de vídeo) e `testadores.tscn` (a mesma `VehicleConstraint` com raio e com cilindro, propriedade `collision_tester`, e o carro com mola) |
 
 ## Como compilar
 
@@ -57,6 +59,7 @@ GODOT=~/Downloads/Godot_v4.7-stable_linux.x86_64
 $GODOT --headless --path demo --script verify.gd          # a ponte
 $GODOT --headless --path demo --script verify_vehicle.gd  # a física lumped
 $GODOT --headless --path demo --script verify_rocker.gd   # a plataforma articulada
+$GODOT --headless --path demo --script verify_car.gd      # o carro com mola
 ```
 
 ## O banco de ensaio
@@ -68,8 +71,10 @@ $GODOT --headless --path demo --script verify_rocker.gd   # a plataforma articul
 ./build/tools/vehicle_probe --vsteps=30 --psteps=6   # iterações do solver
 ./build/tools/vehicle_probe --step-height=0.30 --quiet
 ./build/tools/vehicle_probe --rig=bogie        # o rocker-bogie de seis rodas
-./build/tools/vehicle_probe --rig=all          # as três: lumped, rocker e bogie
-./build/tools/vehicle_probe --sweep --substeps=4   # degrau de 0,10 a 0,50 m nas três
+./build/tools/vehicle_probe --rig=carro        # o carro com rodas de verdade e mola
+./build/tools/vehicle_probe --rig=all          # as quatro: lumped, rocker, bogie e carro
+./build/tools/vehicle_probe --sweep --substeps=4   # degrau de 0,10 a 0,50 m nas quatro
+./build/tools/vehicle_probe --sweep --substeps=4 --friction=0.7   # o mesmo, com menos atrito
 ./build/tools/vehicle_probe --testers --substeps=4 # raio × esfera × cilindro na VehicleConstraint
 ```
 

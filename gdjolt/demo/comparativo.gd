@@ -3,11 +3,11 @@ extends Node3D
 # As montagens lado a lado, contra o mesmo degrau. Em comparativo.tscn são a
 # VehicleConstraint (um corpo só), o rocker de quatro rodas e o rocker-bogie de
 # seis; em testadores.tscn, a mesma VehicleConstraint com o raio e com o
-# cilindro. Cada uma roda no seu próprio PhysicsSystem; o que elas têm em comum
+# cilindro, e o carro com rodas de verdade presas por junta com mola. Cada uma roda no seu próprio PhysicsSystem; o que elas têm em comum
 # é a manobra — 1 s parado para assentar e depois 1,5 m/s em reta, igual ao
 # banco de ensaio.
 #
-# As pistas são os filhos JoltVehicle/JoltRocker da raiz, na ordem da cena; o
+# As pistas são os filhos JoltVehicle/JoltRocker/JoltCar da raiz, na ordem da cena; o
 # nome no placar vem do metadado "rotulo" de cada um.
 #
 # Teclas:  espaço  parte / pausa
@@ -150,7 +150,7 @@ func _restart(h: float) -> void:
 func _lane_nodes() -> Array[Node3D]:
 	var out: Array[Node3D] = []
 	for c in get_children():
-		if c.is_class("JoltVehicle") or c.is_class("JoltRocker"):
+		if c.is_class("JoltVehicle") or c.is_class("JoltRocker") or c.is_class("JoltCar"):
 			out.append(c)
 	return out
 
@@ -172,12 +172,14 @@ func _physics_process(delta: float) -> void:
 			# motor do WheeledVehicleController sairia a 19 m/s com o pé embaixo.
 			if drive:
 				var err: float = TARGET_SPEED - n.get_forward_speed()
-				var brake: float = min(1.0, -err - 0.5) if err < -0.5 else 0.0
+				# Freio com ganho alto assim que passa do alvo: a marcha lenta
+				# engatada empurra o carro mesmo sem acelerador (corrigido em 3/nov).
+				var brake: float = clamp(-10.0 * err, 0.0, 1.0)
 				n.set_driver_input(clamp(err, 0.0, 1.0), 0.0, brake, 0.0)
 			else:
 				n.set_driver_input(0.0, 0.0, 0.0, 1.0)
 		else:
-			# Articuladas: motor no eixo com velocidade-alvo, como no ensaio.
+			# Articuladas e carro com mola: motor no eixo com velocidade-alvo, como no ensaio.
 			n.target_speed = TARGET_SPEED
 			n.set_driver_input(1.0 if drive else 0.0, 0.0)
 
