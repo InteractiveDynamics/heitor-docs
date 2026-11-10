@@ -128,3 +128,26 @@ cd gdjolt
 ./build/tools/vehicle_probe --rig=lumped --tester=cilindro --step-height=0.40 --steps=720 --substeps=4
 cd demo && godot --path . --fixed-fps 60 testadores.tscn -- --step=0.40 --cam=0 --secs=13 --record=/tmp/q
 ```
+
+O `DossieRodaComMola` (o carro com rodas de verdade e mola) sai de
+`gdjolt/src/car_rig.h`, do `--rig=carro` do banco e da pista "Mola" da cena
+`gdjolt/demo/testadores.tscn`. Desde 3/nov o lumped segura 1,5 m/s de verdade
+(freio corrigido): as tabelas de antes dessa data nas outras entradas ficaram
+como foram medidas, com nota de correção.
+
+```bash
+cd gdjolt
+./build/tools/vehicle_probe --rig=carro --step-height=0 --steps=180 --substeps=4   # seção 01: a mola parada afunda 0,110 m
+./build/tools/vehicle_probe --rig=lumped --step-height=0 --steps=60 --substeps=4   # seção 01: o lumped afunda 0,137 m
+./build/tools/vehicle_probe --testers --substeps=8    # seção 02: a tabela (o pulo só converge com 8)
+./build/tools/vehicle_probe --testers --substeps=4    # seção 02: a checagem de penetração e inclinação
+./build/tools/vehicle_probe --sweep --substeps=4      # seção 03: μ = 1
+./build/tools/vehicle_probe --sweep --substeps=8
+./build/tools/vehicle_probe --sweep --substeps=4 --friction=0.7   # seção 03: μ = 0,7
+./build/tools/vehicle_probe --sweep --substeps=8 --friction=0.7
+./build/tools/vehicle_probe --rig=carro --step-height=0.30 --steps=720 --substeps=4 --friction=0.5   # μ = 0,5 não sobe
+cd demo && godot --path . --fixed-fps 60 testadores.tscn -- --step=0.20 --cam=3 --secs=11 --record=/tmp/q
+```
+
+A compressão máxima da seção 03 (batente a partir de 0,40 m) saiu de uma cópia
+temporária do banco que imprime a telemetria em todo passo, não a cada 30.

@@ -249,6 +249,15 @@ export default function DossieRockerArticulado() {
           </table>
         </div>
 
+        <div className="callout amber" style={{marginTop: 22}}>
+          <b>Correção de 3/nov:</b> a velocidade-alvo comum não segurava o
+          lumped em 1,5 m/s. O freio só entrava acima de 2,0 m/s, e com o pé
+          fora do acelerador a marcha lenta engatada ainda empurrava o carro,
+          que andava a 1,6–1,9 m/s. Com o freio corrigido, a inclinação no
+          obstáculo vai de 4,34° para <b>4,41°</b> e a máxima de 4,43° para{' '}
+          <b>4,48°</b>. A altura final não muda, e o rocker continua em 0,10°. A tabela acima fica como foi medida.
+        </div>
+
         <p style={{marginTop: 22}}>
           E o mecanismo aparece na telemetria: quando a roda dianteira encontra o
           degrau, os braços giram <b>−4,1°</b> e o chassi <b>não se mexe</b>. O

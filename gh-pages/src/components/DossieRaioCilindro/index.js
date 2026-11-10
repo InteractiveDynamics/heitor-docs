@@ -247,6 +247,19 @@ constraint->SetVehicleCollisionTester(new VehicleCollisionTesterCastCylinder(Lay
           </table>
         </div>
 
+        <div className="callout amber" style={{marginTop: 22}}>
+          <b>Correção de 3/nov:</b> o lumped deste ensaio batia no degrau mais
+          rápido que as montagens articuladas. O freio do acelerador
+          proporcional só entrava acima de 2,0 m/s, e a marcha lenta engatada
+          empurrava o carro: ele andava a 1,6–1,9 m/s, não a 1,5. Com o freio
+          corrigido, o degrau de 0,20 m dá, com 4 sub-passos, raio{' '}
+          <b>0,200 m · 13,9 m/s</b> e cilindro <b>0,023 m · 2,3 m/s</b> (com 8
+          sub-passos, 12,2 e 2,0 m/s). A penetração não muda, e o pulo do raio
+          continua seis vezes o do cilindro. A conclusão fica de pé. A tabela
+          acima fica como foi medida, e a rodada nova está na entrada do carro
+          com mola.
+        </div>
+
         <Video id={VIDEOS.geral40} title="Raio contra cilindro, degrau de 0,40 m">
           Raio contra cilindro, degrau de 0,40 m — o raio "sobe", o cilindro
           para na face, como o rocker

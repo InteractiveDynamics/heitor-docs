@@ -319,6 +319,18 @@ export default function DossieRockerBogie() {
           </table>
         </div>
 
+        <div className="callout amber" style={{marginTop: 22}}>
+          <b>Correção de 3/nov:</b> os 4,2 s do lumped ficavam abaixo dos 5,1 s
+          de andar livre porque ele andava mais rápido que o alvo, a 1,6–1,9 m/s.
+          O freio só entrava acima de 2,0 m/s, e a marcha lenta engatada
+          empurrava o carro. Com o freio corrigido, ele atravessa todos os
+          degraus em <b>5,1 s</b>, exatamente o tempo de andar livre, e as
+          inclinações mudam em até 0,13° (0,20 m: 4,48°; 0,50 m: 10,89°). A
+          leitura de baixo continua valendo e fica mais clara: a face do degrau
+          não segura o lumped nem por um décimo de segundo. As colunas do rocker
+          e do bogie não mudam. A tabela acima fica como foi medida.
+        </div>
+
         <Video id="asxpnhdJ-Lk" title="As três montagens lado a lado, degrau de 0,40 m">
           As três lado a lado, degrau de 0,40 m — o bogie sobe, o rocker empaca,
           o lumped atravessa a face
