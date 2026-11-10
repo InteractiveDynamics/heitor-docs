@@ -9,6 +9,9 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
  * prefere é a roda como corpo, presa por junta com mola. O teste do shapecast
  * (14/out) confirmou o diagnóstico em números; esta semana constrói o carro.
  *
+ * Prazo estendido em 3/nov: as semanas de 26/out e 2/nov passaram sem commit
+ * nem roadmap. O plano é o mesmo, com as datas novas, até sexta, 6/nov.
+ *
  * Reutiliza src/css/roadmap.css (escopo `.roadmap`).
  */
 export default function RoadmapRodaComMola() {
@@ -16,6 +19,7 @@ export default function RoadmapRodaComMola() {
   const bogieHref = useBaseUrl('/docs/multicorpo/rocker-bogie');
   const anteriorHref = useBaseUrl('/docs/roadmaps/semana-2026-09-28');
   const rodaSoloHref = useBaseUrl('/docs/roda-solo/visao-geral');
+  const molaHref = useBaseUrl('/docs/multicorpo/roda-com-mola');
 
   return (
     <div className="roadmap">
@@ -26,7 +30,7 @@ export default function RoadmapRodaComMola() {
           <span className="sep mono">·······</span>
           <span className="goal">QUANTO A RODA DE VERDADE ENTRA NO DEGRAU</span>
         </div>
-        <span className="eyebrow">Semana · 19 out → 26 out</span>
+        <span className="eyebrow">Semana · 19 out → 26 out · prazo estendido até 6 nov</span>
         <h1>
           Roda de verdade, <span className="accent">com mola</span>
         </h1>
@@ -48,6 +52,15 @@ export default function RoadmapRodaComMola() {
           prioridade, e parte foi semana sem roadmap de novo. O teste do
           shapecast só saiu em 14/out. A regra de roadmap toda segunda continua
           valendo, e este aqui é o da semana que já começou.
+        </div>
+
+        <div className="callout coral" style={{marginTop: 14}}>
+          <span className="lbl">◈ prazo estendido · 3/nov</span>
+          Nada do que estava marcado para 23/out saiu. As semanas de{' '}
+          <b>26/out e 2/nov passaram sem commit e sem roadmap</b>. Em vez de
+          abrir um plano novo, estendo este: o que falta continua sendo o carro
+          com mola, a comparação, o vídeo e a escolha do modelo 3D. O prazo
+          passa para <b>sexta, 6 de novembro</b>.
         </div>
       </header>
 
@@ -144,7 +157,7 @@ export default function RoadmapRodaComMola() {
 
         <div className="spine">
           <div className="stop seam">
-            <div className="code">TER–QUA · 20–21 OUT</div>
+            <div className="code">TER · 3 NOV <span className="mono">(era 20–21/out)</span></div>
             <h3>O carro com suspensão por junta</h3>
             <ol className="steps">
               <li>
@@ -172,7 +185,7 @@ export default function RoadmapRodaComMola() {
             <span className="doit">↳ --rig=carro no vehicle_probe</span>
           </div>
           <div className="stop">
-            <div className="code">QUI · 22 OUT</div>
+            <div className="code">QUA · 4 NOV <span className="mono">(era 22/out)</span></div>
             <h3>Medir e gravar</h3>
             <ol className="steps">
               <li>
@@ -189,7 +202,7 @@ export default function RoadmapRodaComMola() {
             <span className="doit">↳ a tabela com a quinta coluna e o vídeo</span>
           </div>
           <div className="stop final">
-            <div className="code">SEX · 23 OUT</div>
+            <div className="code">QUI–SEX · 5–6 NOV <span className="mono">(era 23/out)</span></div>
             <h3>Publicar e escolher o modelo 3D</h3>
             <ol className="steps">
               <li>
@@ -198,7 +211,9 @@ export default function RoadmapRodaComMola() {
               <li>
                 Levantar candidatos de modelo 3D off-road (Baja, jipe, buggy):
                 licença de uso, escala real, rodas como peças separadas e número
-                de polígonos que o Godot aguenta. Escrever a nota de decisão.
+                de polígonos que o Godot aguenta. Procurar os candidatos com
+                calma, sem pressa de decidir sozinho, e só então escrever a nota
+                de decisão.
               </li>
             </ol>
             <span className="doit">↳ entrada publicada, modelo escolhido</span>
@@ -277,20 +292,35 @@ export default function RoadmapRodaComMola() {
             <li>
               <b>O limite do cilindro explicado</b>: é a face, não a suspensão.
             </li>
+            <li>
+              <b>3/nov · o carro com rodas de verdade e mola</b>, no banco (
+              <code>--rig=carro</code>) e no Godot (<code>JoltCar</code>, pista
+              na cena dos testadores), revisado pelo <code>revisor-fisico</code>{' '}
+              antes de medir. A mola parada afunda 11,0 cm, o que a conta manda.
+            </li>
+            <li>
+              <b>3/nov · a comparação</b> com raio, cilindro, rocker e bogie: no
+              degrau de 0,20 m a roda entra 1,6 cm e pula a 1,2 m/s. Acima do
+              raio, o limite depende do atrito. Entrada publicada:{' '}
+              <a href={molaHref}>A roda de verdade, com mola</a>.
+            </li>
+            <li>
+              <b>3/nov · o lumped corrigido</b>: ele andava a 1,6–1,9 m/s em vez
+              de 1,5. Freio consertado e nota de correção nas três entradas
+              antigas.
+            </li>
+            <li>
+              <b>Os quatro vídeos</b> da roda com mola (raio, cilindro e mola
+              nos degraus de 0,20 e 0,40 m), embutidos na entrada.
+            </li>
           </ul>
         </div>
         <div className="deliver" style={{marginTop: 18}}>
-          <h3>Até sexta, 23 de outubro</h3>
+          <h3>Até sexta, 6 de novembro <span className="mono">(era 23/out)</span></h3>
           <ul>
             <li>
-              <b>O carro com rodas de verdade e mola</b>, no banco e no Godot.
-            </li>
-            <li>
-              <b>A comparação</b> com raio, cilindro, rocker e bogie, e o vídeo.
-            </li>
-            <li>
-              <b>A entrada publicada</b> e a <b>nota de escolha</b> do modelo 3D
-              off-road.
+              <b>A nota de escolha</b> do modelo 3D off-road. Não saiu até 6/nov
+              e passou para o roadmap de 9–16/nov.
             </li>
           </ul>
         </div>
